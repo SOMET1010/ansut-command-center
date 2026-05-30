@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { sendHubMessage } from "@/lib/notifications.functions";
 
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
@@ -73,6 +74,23 @@ function PublicEventPage() {
       }
       return;
     }
+
+    // Confirmation WhatsApp (best-effort, ne bloque pas l'UI)
+    if (form.phone.trim()) {
+      const startsAt = new Date(event.starts_at).toLocaleString("fr-FR", {
+        dateStyle: "long",
+        timeStyle: "short",
+      });
+      const message = `Bonjour ${form.full_name.trim()}, votre inscription à "${event.name}" est confirmée.\nDate : ${startsAt}${event.location ? `\nLieu : ${event.location}` : ""}\n\nMerci — ANSUT EVENT.`;
+      sendHubMessage({
+        data: {
+          to: form.phone.replace(/\s+/g, ""),
+          content: message,
+          channel: "WhatsApp",
+        },
+      }).catch((err) => console.warn("Hub notify failed", err));
+    }
+
     setDone(true);
   }
 
