@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Download, Search } from "lucide-react";
+import { ArrowLeft, Download, Search, IdCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { toCSV, downloadCSV } from "@/lib/csv";
+import { downloadBadge } from "@/lib/badges";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
   head: () => ({ meta: [{ title: "Participants — ANSUT EVENT" }] }),
@@ -26,8 +27,10 @@ type Reg = {
   organization: string | null;
   position: string | null;
   status: string;
+  qr_token: string;
   created_at: string;
 };
+
 
 function RegistrationsPage() {
   const { id } = Route.useParams();
