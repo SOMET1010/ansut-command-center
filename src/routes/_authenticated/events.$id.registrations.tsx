@@ -124,6 +124,7 @@ function RegistrationsPage() {
                 <TableHead>Organisation</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Inscrit le</TableHead>
+                <TableHead className="text-right">Badge</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -137,10 +138,26 @@ function RegistrationsPage() {
                     <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{r.status}</span>
                   </TableCell>
                   <TableCell>{new Date(r.created_at).toLocaleDateString("fr-FR")}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={async () => {
+                        try {
+                          await downloadBadge(r.qr_token);
+                        } catch (err) {
+                          toast.error(err instanceof Error ? err.message : "Erreur badge");
+                        }
+                      }}
+                    >
+                      <IdCard className="mr-2 h-4 w-4" /> PDF
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
         )}
       </div>
     </div>
