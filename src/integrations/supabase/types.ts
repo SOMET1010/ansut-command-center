@@ -263,6 +263,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      register_for_event: {
+        Args: {
+          p_email: string
+          p_event_id: string
+          p_full_name: string
+          p_organization: string
+          p_phone: string
+          p_position: string
+        }
+        Returns: string
+      }
       super_admin_exists: { Args: never; Returns: boolean }
     }
     Enums: {
