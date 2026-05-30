@@ -1,12 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { Calendar, MapPin, CheckCircle2 } from "lucide-react";
+import { Calendar, MapPin, CheckCircle2, IdCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { sendHubMessage, buildRegistrationTemplateParams } from "@/lib/notifications.functions";
+import { downloadBadge } from "@/lib/badges";
+
 
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
