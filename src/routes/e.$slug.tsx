@@ -77,16 +77,23 @@ function PublicEventPage() {
 
     // Confirmation WhatsApp (best-effort, ne bloque pas l'UI)
     if (form.phone.trim()) {
-      const startsAt = new Date(event.starts_at).toLocaleString("fr-FR", {
-        dateStyle: "long",
-        timeStyle: "short",
+      const params = buildRegistrationTemplateParams({
+        fullName: form.full_name,
+        eventName: event.name,
+        startsAt: event.starts_at,
+        location: event.location,
       });
-      const message = `Bonjour ${form.full_name.trim()}, votre inscription à "${event.name}" est confirmée.\nDate : ${startsAt}${event.location ? `\nLieu : ${event.location}` : ""}\n\nMerci — ANSUT EVENT.`;
+      const fallbackText = `Bonjour ${params[0]}, votre inscription à "${params[1]}" est confirmée.\nDate : ${params[2]}\nLieu : ${params[3]}\n\nMerci — ANSUT EVENT.`;
       sendHubMessage({
         data: {
           to: form.phone.replace(/\s+/g, ""),
-          content: message,
           channel: "WhatsApp",
+          content: fallbackText,
+          template: {
+            name: "ansut_event_confirmation",
+            languageCode: "fr",
+            parameters: params,
+          },
         },
       }).catch((err) => console.warn("Hub notify failed", err));
     }
