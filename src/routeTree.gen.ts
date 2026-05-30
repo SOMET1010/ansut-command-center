@@ -13,11 +13,16 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
+import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
+import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
+import { Route as AuthenticatedEventsIdRegistrationsRouteImport } from './routes/_authenticated/events.$id.registrations'
+import { Route as AuthenticatedEventsIdEditRouteImport } from './routes/_authenticated/events.$id.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -36,6 +41,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ESlugRoute = ESlugRouteImport.update({
+  id: '/e/$slug',
+  path: '/e/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPollsRoute = AuthenticatedPollsRouteImport.update({
@@ -64,6 +74,28 @@ const AuthenticatedCheckinRoute = AuthenticatedCheckinRouteImport.update({
   path: '/checkin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedEventsNewRoute = AuthenticatedEventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedEventsRoute,
+} as any)
+const AuthenticatedAdminSetupRoute = AuthenticatedAdminSetupRouteImport.update({
+  id: '/admin/setup',
+  path: '/admin/setup',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedEventsIdRegistrationsRoute =
+  AuthenticatedEventsIdRegistrationsRouteImport.update({
+    id: '/$id/registrations',
+    path: '/$id/registrations',
+    getParentRoute: () => AuthenticatedEventsRoute,
+  } as any)
+const AuthenticatedEventsIdEditRoute =
+  AuthenticatedEventsIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AuthenticatedEventsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,9 +103,14 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/events': typeof AuthenticatedEventsRoute
+  '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/e/$slug': typeof ESlugRoute
+  '/admin/setup': typeof AuthenticatedAdminSetupRoute
+  '/events/new': typeof AuthenticatedEventsNewRoute
+  '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
+  '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -81,9 +118,14 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/events': typeof AuthenticatedEventsRoute
+  '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/e/$slug': typeof ESlugRoute
+  '/admin/setup': typeof AuthenticatedAdminSetupRoute
+  '/events/new': typeof AuthenticatedEventsNewRoute
+  '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
+  '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,9 +135,14 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/events': typeof AuthenticatedEventsRoute
+  '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
+  '/e/$slug': typeof ESlugRoute
+  '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
+  '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
+  '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
+  '/_authenticated/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -108,6 +155,11 @@ export interface FileRouteTypes {
     | '/events'
     | '/participants'
     | '/polls'
+    | '/e/$slug'
+    | '/admin/setup'
+    | '/events/new'
+    | '/events/$id/edit'
+    | '/events/$id/registrations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,6 +170,11 @@ export interface FileRouteTypes {
     | '/events'
     | '/participants'
     | '/polls'
+    | '/e/$slug'
+    | '/admin/setup'
+    | '/events/new'
+    | '/events/$id/edit'
+    | '/events/$id/registrations'
   id:
     | '__root__'
     | '/'
@@ -129,6 +186,11 @@ export interface FileRouteTypes {
     | '/_authenticated/events'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
+    | '/e/$slug'
+    | '/_authenticated/admin/setup'
+    | '/_authenticated/events/new'
+    | '/_authenticated/events/$id/edit'
+    | '/_authenticated/events/$id/registrations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,6 +198,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  ESlugRoute: typeof ESlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -166,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e/$slug': {
+      id: '/e/$slug'
+      path: '/e/$slug'
+      fullPath: '/e/$slug'
+      preLoaderRoute: typeof ESlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/polls': {
@@ -203,23 +273,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCheckinRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/events/new': {
+      id: '/_authenticated/events/new'
+      path: '/new'
+      fullPath: '/events/new'
+      preLoaderRoute: typeof AuthenticatedEventsNewRouteImport
+      parentRoute: typeof AuthenticatedEventsRoute
+    }
+    '/_authenticated/admin/setup': {
+      id: '/_authenticated/admin/setup'
+      path: '/admin/setup'
+      fullPath: '/admin/setup'
+      preLoaderRoute: typeof AuthenticatedAdminSetupRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/events/$id/registrations': {
+      id: '/_authenticated/events/$id/registrations'
+      path: '/$id/registrations'
+      fullPath: '/events/$id/registrations'
+      preLoaderRoute: typeof AuthenticatedEventsIdRegistrationsRouteImport
+      parentRoute: typeof AuthenticatedEventsRoute
+    }
+    '/_authenticated/events/$id/edit': {
+      id: '/_authenticated/events/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/events/$id/edit'
+      preLoaderRoute: typeof AuthenticatedEventsIdEditRouteImport
+      parentRoute: typeof AuthenticatedEventsRoute
+    }
   }
 }
+
+interface AuthenticatedEventsRouteChildren {
+  AuthenticatedEventsNewRoute: typeof AuthenticatedEventsNewRoute
+  AuthenticatedEventsIdEditRoute: typeof AuthenticatedEventsIdEditRoute
+  AuthenticatedEventsIdRegistrationsRoute: typeof AuthenticatedEventsIdRegistrationsRoute
+}
+
+const AuthenticatedEventsRouteChildren: AuthenticatedEventsRouteChildren = {
+  AuthenticatedEventsNewRoute: AuthenticatedEventsNewRoute,
+  AuthenticatedEventsIdEditRoute: AuthenticatedEventsIdEditRoute,
+  AuthenticatedEventsIdRegistrationsRoute:
+    AuthenticatedEventsIdRegistrationsRoute,
+}
+
+const AuthenticatedEventsRouteWithChildren =
+  AuthenticatedEventsRoute._addFileChildren(AuthenticatedEventsRouteChildren)
 
 interface AuthenticatedRouteChildren {
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
+  AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
   AuthenticatedParticipantsRoute: typeof AuthenticatedParticipantsRoute
   AuthenticatedPollsRoute: typeof AuthenticatedPollsRoute
+  AuthenticatedAdminSetupRoute: typeof AuthenticatedAdminSetupRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedEventsRoute: AuthenticatedEventsRoute,
+  AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
   AuthenticatedParticipantsRoute: AuthenticatedParticipantsRoute,
   AuthenticatedPollsRoute: AuthenticatedPollsRoute,
+  AuthenticatedAdminSetupRoute: AuthenticatedAdminSetupRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -231,7 +347,18 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  ESlugRoute: ESlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
