@@ -35,6 +35,8 @@ type Reg = {
 
 
 
+const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
+
 function RegistrationsPage() {
   const { id } = Route.useParams();
   const [eventName, setEventName] = useState("");
@@ -42,6 +44,9 @@ function RegistrationsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [exporting, setExporting] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -57,7 +62,7 @@ function RegistrationsPage() {
 
   useEffect(() => { load(); }, [id]);
 
-  const filtered = regs.filter((r) => {
+  const filtered = useMemo(() => regs.filter((r) => {
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
     const q = search.toLowerCase();
     const matchesSearch = !q ||
@@ -65,19 +70,58 @@ function RegistrationsPage() {
       r.email.toLowerCase().includes(q) ||
       (r.organization?.toLowerCase().includes(q) ?? false);
     return matchesStatus && matchesSearch;
-  });
+  }), [regs, search, statusFilter]);
+
+  // Réinitialise la page quand les filtres changent
+  useEffect(() => { setPage(1); }, [search, statusFilter, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  async function runBackgroundCSV(
+    label: string,
+    rows: Record<string, unknown>[],
+    columns: { key: string; label: string }[],
+    filename: string,
+  ) {
+    if (rows.length === 0) {
+      toast.info("Rien à exporter.");
+      return;
+    }
+    setExporting(true);
+    const toastId = toast.loading(`${label} : préparation (0/${rows.length})...`);
+    try {
+      const csv = await toCSVChunked(rows, columns, {
+        chunkSize: 500,
+        onProgress: (done, total) => {
+          toast.loading(`${label} : ${done}/${total}...`, { id: toastId });
+        },
+      });
+      downloadCSV(filename, csv);
+      toast.success(`${label} exporté (${rows.length} lignes)`, { id: toastId });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur export", { id: toastId });
+    } finally {
+      setExporting(false);
+    }
+  }
 
   function exportCSV() {
-    const csv = toCSV(filtered as unknown as Record<string, unknown>[], [
-      { key: "full_name", label: "Nom" },
-      { key: "email", label: "Email" },
-      { key: "phone", label: "Téléphone" },
-      { key: "organization", label: "Organisation" },
-      { key: "position", label: "Poste" },
-      { key: "status", label: "Statut" },
-      { key: "created_at", label: "Inscrit le" },
-    ]);
-    downloadCSV(`inscriptions-${eventName || id}.csv`, csv);
+    void runBackgroundCSV(
+      "Inscriptions",
+      filtered as unknown as Record<string, unknown>[],
+      [
+        { key: "full_name", label: "Nom" },
+        { key: "email", label: "Email" },
+        { key: "phone", label: "Téléphone" },
+        { key: "organization", label: "Organisation" },
+        { key: "position", label: "Poste" },
+        { key: "status", label: "Statut" },
+        { key: "created_at", label: "Inscrit le" },
+      ],
+      `inscriptions-${eventName || id}.csv`,
+    );
   }
 
   async function exportCheckins() {
@@ -112,14 +156,18 @@ function RegistrationsPage() {
           : "",
         scanner: r.checked_in_by ? scannerMap.get(r.checked_in_by) ?? r.checked_in_by : "",
       }));
-    const csv = toCSV(rows as unknown as Record<string, unknown>[], [
-      { key: "full_name", label: "Nom" },
-      { key: "email", label: "Email" },
-      { key: "status", label: "Statut" },
-      { key: "checked_in_at", label: "Heure check-in" },
-      { key: "scanner", label: "Scanné par" },
-    ]);
-    downloadCSV(`checkins-${eventName || id}.csv`, csv);
+    void runBackgroundCSV(
+      "Check-ins",
+      rows as unknown as Record<string, unknown>[],
+      [
+        { key: "full_name", label: "Nom" },
+        { key: "email", label: "Email" },
+        { key: "status", label: "Statut" },
+        { key: "checked_in_at", label: "Heure check-in" },
+        { key: "scanner", label: "Scanné par" },
+      ],
+      `checkins-${eventName || id}.csv`,
+    );
   }
 
 
