@@ -182,10 +182,10 @@ function RegistrationsPage() {
           <p className="mt-1 text-muted-foreground">{eventName} — {filtered.length} inscrit{filtered.length > 1 ? "s" : ""}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={exportCheckins} disabled={regs.every((r) => !r.checked_in_at)}>
+          <Button variant="outline" onClick={exportCheckins} disabled={exporting || regs.every((r) => !r.checked_in_at)}>
             <Download className="mr-2 h-4 w-4" /> Export check-ins
           </Button>
-          <Button onClick={exportCSV} disabled={filtered.length === 0}>
+          <Button onClick={exportCSV} disabled={exporting || filtered.length === 0}>
             <Download className="mr-2 h-4 w-4" /> Exporter CSV
           </Button>
         </div>
