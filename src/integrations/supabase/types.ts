@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       event_registrations: {
         Row: {
+          checked_in_at: string | null
+          checked_in_by: string | null
           created_at: string
           email: string
           event_id: string
@@ -30,6 +32,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          checked_in_at?: string | null
+          checked_in_by?: string | null
           created_at?: string
           email: string
           event_id: string
@@ -44,6 +48,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          checked_in_at?: string | null
+          checked_in_by?: string | null
           created_at?: string
           email?: string
           event_id?: string
@@ -234,6 +240,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_in_registration: {
+        Args: { p_qr_token: string }
+        Returns: {
+          already_checked_in: boolean
+          checked_at: string
+          email: string
+          event_id: string
+          event_name: string
+          full_name: string
+          job_position: string
+          organization: string
+          reg_status: string
+          registration_id: string
+        }[]
+      }
       claim_first_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
@@ -241,6 +262,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      register_for_event: {
+        Args: {
+          p_email: string
+          p_event_id: string
+          p_full_name: string
+          p_organization: string
+          p_phone: string
+          p_position: string
+        }
+        Returns: string
       }
       super_admin_exists: { Args: never; Returns: boolean }
     }

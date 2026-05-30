@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Download, Search } from "lucide-react";
+import { ArrowLeft, Download, Search, IdCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { toCSV, downloadCSV } from "@/lib/csv";
+import { downloadBadge } from "@/lib/badges";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
   head: () => ({ meta: [{ title: "Participants — ANSUT EVENT" }] }),
@@ -26,8 +27,10 @@ type Reg = {
   organization: string | null;
   position: string | null;
   status: string;
+  qr_token: string;
   created_at: string;
 };
+
 
 function RegistrationsPage() {
   const { id } = Route.useParams();
@@ -121,6 +124,7 @@ function RegistrationsPage() {
                 <TableHead>Organisation</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Inscrit le</TableHead>
+                <TableHead className="text-right">Badge</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -134,10 +138,26 @@ function RegistrationsPage() {
                     <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{r.status}</span>
                   </TableCell>
                   <TableCell>{new Date(r.created_at).toLocaleDateString("fr-FR")}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={async () => {
+                        try {
+                          await downloadBadge(r.qr_token);
+                        } catch (err) {
+                          toast.error(err instanceof Error ? err.message : "Erreur badge");
+                        }
+                      }}
+                    >
+                      <IdCard className="mr-2 h-4 w-4" /> PDF
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
         )}
       </div>
     </div>
