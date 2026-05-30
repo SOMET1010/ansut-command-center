@@ -362,22 +362,8 @@ function Landing() {
           </div>
 
           {/* Newsletter */}
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col justify-center rounded-2xl bg-card p-6 shadow-sm"
-          >
-            <h3 className="text-lg font-bold">Restez informé</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Recevez les dernières actualités, mises à jour et annonces du SUTEL.
-            </p>
-            <div className="mt-4 flex gap-2">
-              <Input type="email" required placeholder="Votre adresse email" />
-              <Button type="submit">
-                <Send className="mr-2 h-4 w-4" />
-                S'abonner
-              </Button>
-            </div>
-          </form>
+          <NewsletterForm />
+
         </div>
       </section>
 
