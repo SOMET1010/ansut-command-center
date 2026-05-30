@@ -29,7 +29,10 @@ type Reg = {
   status: string;
   qr_token: string;
   created_at: string;
+  checked_in_at: string | null;
+  checked_in_by: string | null;
 };
+
 
 
 function RegistrationsPage() {
