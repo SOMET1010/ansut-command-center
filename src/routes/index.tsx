@@ -204,10 +204,17 @@ function Landing() {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                  <Link to={ev?.slug ? "/e/$slug" : "/signup"} params={ev?.slug ? { slug: ev.slug } : undefined as never}>
-                    <Calendar className="mr-2 h-4 w-4" />
-                    S'inscrire au SUTEL 2026
-                  </Link>
+                  {ev?.slug ? (
+                    <Link to="/e/$slug" params={{ slug: ev.slug }}>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      S'inscrire au SUTEL 2026
+                    </Link>
+                  ) : (
+                    <Link to="/signup">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      S'inscrire au SUTEL 2026
+                    </Link>
+                  )}
                 </Button>
                 <Button
                   asChild
