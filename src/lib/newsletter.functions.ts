@@ -27,7 +27,11 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
     }
 
     // Envoi de l'email de confirmation via le Hub ANSUT (channel Email).
-    // Best-effort : si le Hub n'est pas configuré, l'inscription reste valide.
+    // L'inscription DB reste valide même si l'email échoue ; on renvoie
+    // un statut détaillé pour que l'UI puisse l'afficher.
+    let emailStatus: "sent" | "skipped" | "failed" = "skipped";
+    let emailError: string | undefined;
+
     try {
       const baseUrl = process.env.ANSUT_HUB_URL;
       const username = process.env.ANSUT_HUB_USERNAME;
@@ -57,16 +61,24 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
             content,
           }),
         });
-        if (!res.ok) {
+
+        if (res.ok) {
+          emailStatus = "sent";
+        } else {
           const body = await res.text().catch(() => "");
           console.warn("Hub newsletter email failed", res.status, body);
+          emailStatus = "failed";
+          emailError = `Hub ${res.status}`;
         }
       } else {
         console.warn("ANSUT Hub non configuré — email de confirmation ignoré");
+        emailError = "Hub non configuré";
       }
     } catch (err) {
       console.warn("Hub newsletter email exception", err);
+      emailStatus = "failed";
+      emailError = err instanceof Error ? err.message : "Erreur réseau Hub";
     }
 
-    return { ok: true as const };
+    return { ok: true as const, emailStatus, emailError };
   });
