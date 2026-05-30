@@ -39,13 +39,25 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const matches = useMatches();
+  const activeMatch = matches[matches.length - 1];
+  const routeId = activeMatch?.routeId ?? "(unknown)";
+  const pathname = activeMatch?.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
+  const isDebug =
+    import.meta.env.DEV ||
+    (typeof window !== "undefined" && window.location.search.includes("debug=1"));
+
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+    reportLovableError(error, {
+      boundary: "tanstack_root_error_component",
+      routeId,
+      pathname,
+    });
+  }, [error, routeId, pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+      <div className="w-full max-w-2xl text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This page didn't load
         </h1>
@@ -69,6 +81,37 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             Go home
           </a>
         </div>
+
+        {isDebug && (
+          <details
+            open
+            className="mt-8 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-left"
+          >
+            <summary className="cursor-pointer text-sm font-semibold text-destructive">
+              Debug details ({error.name || "Error"})
+            </summary>
+            <dl className="mt-3 grid grid-cols-[110px_1fr] gap-x-3 gap-y-1 text-xs">
+              <dt className="font-medium text-muted-foreground">Route ID</dt>
+              <dd className="font-mono break-all">{routeId}</dd>
+              <dt className="font-medium text-muted-foreground">Pathname</dt>
+              <dd className="font-mono break-all">{pathname}</dd>
+              <dt className="font-medium text-muted-foreground">Match chain</dt>
+              <dd className="font-mono break-all">
+                {matches.map((m) => m.routeId).join(" → ") || "(none)"}
+              </dd>
+              <dt className="font-medium text-muted-foreground">Message</dt>
+              <dd className="font-mono break-all text-destructive">{error.message}</dd>
+            </dl>
+            {error.stack && (
+              <pre className="mt-3 max-h-72 overflow-auto rounded bg-background/60 p-3 text-[11px] leading-relaxed text-foreground">
+                {error.stack}
+              </pre>
+            )}
+            <p className="mt-3 text-[11px] text-muted-foreground">
+              Add <code className="font-mono">?debug=1</code> to any URL to show this panel in production.
+            </p>
+          </details>
+        )}
       </div>
     </div>
   );
