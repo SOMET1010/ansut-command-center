@@ -303,6 +303,4 @@ function RegistrationsPage() {
     </div>
   );
 }
-    </div>
-  );
-}
+
