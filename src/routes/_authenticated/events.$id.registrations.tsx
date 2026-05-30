@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, Download, Search, IdCard } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { toCSV, downloadCSV } from "@/lib/csv";
+import { toCSVChunked, downloadCSV } from "@/lib/csv";
 import { downloadBadge } from "@/lib/badges";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
