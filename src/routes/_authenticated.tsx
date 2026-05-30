@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LayoutDashboard, Calendar, QrCode, Vote, Users, LogOut } from "lucide-react";
+import { LayoutDashboard, Calendar, QrCode, Vote, Users, LogOut, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ const navItems = [
   { to: "/checkin", label: "Check-in", icon: QrCode },
   { to: "/polls", label: "Live Polling", icon: Vote },
   { to: "/participants", label: "Participants", icon: Users },
+  { to: "/admin/setup", label: "Administration", icon: ShieldCheck },
 ];
 
 function AuthLayout() {

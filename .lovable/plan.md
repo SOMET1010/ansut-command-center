@@ -1,92 +1,74 @@
-# Plan — ANSUT EVENT (MVP SUTEL 3)
+# Plan — Phase 2 : CRUD événements + inscriptions publiques
 
-## Hypothèses à confirmer
-1. **Charte graphique ANSUT** : je n'ai pas reçu de fichier. Si tu peux me confirmer les couleurs primaires/secondaires + logo (upload PNG/SVG), je les intègre dès la phase 1. Sinon je pars sur une base institutionnelle (bleu/blanc) à ajuster.
-2. **APIs OTP Radar/Cockpit** : tu mentionnes des API internes pour WhatsApp / Telegram / Email. J'aurai besoin des **endpoints (URL)** et du nom à donner aux secrets. À défaut, je peux démarrer avec l'auth OTP **Email natif Lovable Cloud**, puis brancher Radar quand les endpoints sont fournis.
-3. **Multi-tenant** : un seul tenant pour le MVP SUTEL 3, mais le schéma DB est conçu dès le départ avec une table `organizations` et `organization_id` sur toutes les ressources, RLS scopée.
+## Problème de démarrage (à résoudre en premier)
+Aucun utilisateur n'a actuellement le rôle `org_admin` → personne ne peut créer d'événement à cause des RLS. Solution :
+- **Seed** : créer l'organisation **ANSUT** (slug `ansut`) en base
+- **Bootstrap admin** : fonction `claim_first_admin()` security-definer — le premier utilisateur connecté qui l'appelle devient `super_admin` automatiquement (puis verrouillée). Bouton visible uniquement si aucun super_admin n'existe encore.
 
-## Stack
-- **Frontend** : TanStack Start + React + Tailwind + shadcn/ui (déjà en place), PWA (manifest + service worker)
-- **Backend** : Lovable Cloud (Supabase Postgres + Auth + Storage)
-- **OTP** : Server functions `createServerFn` qui appellent les API Radar/Cockpit (à fournir)
-- **QR code** : `qrcode` (génération) + `html5-qrcode` (scan check-in)
-- **Realtime** : Supabase Realtime pour live polling
-- **Charts** : Recharts pour le dashboard
+## Base de données (1 migration)
 
-## Architecture multi-tenant (dès le départ)
-
+Nouvelle table :
 ```text
-organizations (tenant)
-  └─ events
-      ├─ event_registrations (participants accrédités)
-      ├─ sessions (agenda)
-      │   └─ polls (live polling)
-      │       └─ poll_responses
-      ├─ documents (bibliothèque)
-      ├─ sponsors
-      ├─ notifications
-      └─ check_ins (scan QR)
-
-users (auth.users)
-  └─ user_roles (RBAC : super_admin, org_admin, staff, sponsor, participant)
+event_registrations
+  id, event_id (FK), user_id (nullable, pour inscriptions anonymes),
+  full_name, email, phone, organization, position,
+  status ('pending' | 'confirmed' | 'cancelled' | 'checked_in'),
+  qr_token (UUID unique, généré côté serveur en Phase 3),
+  created_at, updated_at
+  UNIQUE (event_id, email)
 ```
 
-RLS sur **toutes** les tables, scopée par `organization_id` + rôle.
+RLS :
+- **INSERT** public (`anon` + `authenticated`) — n'importe qui peut s'inscrire à un événement `published`
+- **SELECT** : admins/staff de l'organisation, ou le participant lui-même (par `user_id` si connecté)
+- **UPDATE/DELETE** : admins/staff uniquement
+- Validation trigger : refuse l'insert si l'événement n'est pas `published` ou si capacité atteinte
 
-## Phases de livraison
+Fonctions :
+- `claim_first_admin()` → assigne `super_admin` à `auth.uid()` si aucun n'existe
+- `set_updated_at` déjà en place
 
-### Phase 1 — Fondations (livraison 1)
-- Activer Lovable Cloud
-- Schéma DB : `organizations`, `user_roles` (enum app_role), `events`, fonction `has_role()` security definer
-- Auth Email + mot de passe (fallback) + structure pour OTP WhatsApp/Telegram quand endpoints fournis
-- Layout shell : sidebar admin, header, navigation rôle-aware
-- Routes : `/login`, `/_authenticated/dashboard`, `/_authenticated/events`
-- Design system : tokens couleurs ANSUT dans `styles.css`
+Seed : insert `organizations (name='ANSUT', slug='ansut', primary_color='#1d3a8a')`
 
-### Phase 2 — Gestion événements + inscriptions
-- CRUD événements (admin) : nom, dates, lieu, capacité, visuel
-- Page publique d'événement avec formulaire d'inscription
-- Table `event_registrations` (statut: pending/confirmed/checked_in)
-- Notification OTP/email à la confirmation
-- Liste participants côté admin (filtres, export CSV)
+## Frontend
 
-### Phase 3 — Badges QR + check-in
-- Génération badge PDF/PNG avec QR signé (HMAC pour anti-fraude)
-- Page staff `/staff/checkin` : scan caméra QR, validation temps réel
-- Historique check-ins par session
-- Stats live (présents/inscrits)
+### Admin (sous `/_authenticated/`)
+- **`/events`** (refonte) : liste avec actions (Voir, Éditer, Publier/Dépublier, Supprimer), bouton "Nouvel événement", filtres statut
+- **`/events/new`** : formulaire création (name, slug auto, description, location, starts_at, ends_at, capacity, cover_url, status)
+- **`/events/$id/edit`** : édition du même formulaire
+- **`/events/$id/registrations`** : liste participants + export CSV + recherche + filtre statut
+- **`/admin/setup`** (visible si aucun super_admin) : bouton "Devenir administrateur" → appelle `claim_first_admin()`
 
-### Phase 4 — Agenda + Live Polling
-- Sessions liées à événement (titre, horaire, salle, intervenant)
-- Vue agenda participant (timeline jour)
-- Module Live Polling type Kahoot :
-  - Admin crée question (QCM, vrai/faux, nuage de mots)
-  - Lancement live → participants répondent depuis mobile
-  - Affichage résultats temps réel (Supabase Realtime)
-  - Mode projection écran
+### Public
+- **`/e/$slug`** : page publique d'événement
+  - Hero (cover, nom, dates, lieu)
+  - Description
+  - Formulaire d'inscription (nom, email, téléphone, organisation, poste)
+  - Message de confirmation après envoi
+  - SEO : title/description/og spécifiques à l'événement (via loader)
 
-### Phase 5 — Contenus + Dashboard + PWA
-- Bibliothèque documentaire (upload Storage, catégories, droits par rôle)
-- Sponsors/exposants (logos, descriptions, niveau)
-- Networking léger : annuaire participants opt-in + demande de RDV
-- Dashboard analytics : inscriptions, taux check-in, participation polls, top sessions
-- Notifications in-app + push (via OTP channels)
-- PWA : manifest, installable, mode offline lecture agenda
+### Composants partagés
+- `EventForm` (réutilisé new/edit) avec validation Zod
+- `RegistrationForm` (page publique)
+- `CSVExport` util pour la liste participants
 
-## Sécurité (non négociable)
-- RLS activée sur toutes les tables publiques
-- Rôles dans table séparée `user_roles` + fonction `has_role()` (jamais sur profiles)
-- QR codes signés HMAC server-side
-- Validation Zod sur toutes les inputs server functions
-- Secrets API Radar/Cockpit stockés via `add_secret` (jamais en clair)
+## Notifications (placeholder)
+Pour ne pas bloquer Phase 2 sur les APIs Radar/Cockpit :
+- Message de confirmation in-app affiché après inscription
+- Stub `sendRegistrationNotification(registration)` côté server function — log uniquement. Branchement réel API OTP en **Phase 2.5** dès que tu fournis les endpoints.
 
-## Hors-scope MVP (V2/V3)
-GED avancée, IA matchmaking, analytics prédictifs, exploitation interministérielle, mémoire institutionnelle — préparés au niveau du schéma mais pas développés.
+## Sidebar
+Ajout : lien "Setup admin" conditionnel (si aucun super_admin)
 
-## Démarrage proposé
-Je commence par **Phase 1** dès ton accord. Pour aller plus vite tu peux m'envoyer en parallèle :
-- Logo + couleurs ANSUT
-- Endpoints API Radar/Cockpit (URL + format payload OTP)
-- 1 capture des maquettes Figma si possible
+## Hors-scope de cette phase
+- Génération QR + badges PDF (Phase 3)
+- Envoi réel WhatsApp/Telegram/Email (attente endpoints Radar/Cockpit)
+- Multi-organisation côté UI (UI fixée à ANSUT pour MVP SUTEL 3 ; le schéma reste multi-tenant)
 
-Réponds **"Go phase 1"** pour lancer.
+## Livrables
+- 1 migration DB (table `event_registrations` + fonctions + seed ANSUT)
+- 6 nouveaux fichiers route
+- 2 composants formulaires + 1 util CSV
+- Sidebar mise à jour
+
+Réponds **"Go"** pour lancer.
