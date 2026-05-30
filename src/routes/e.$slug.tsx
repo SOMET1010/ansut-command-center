@@ -37,10 +37,13 @@ function PublicEventPage() {
   const [event, setEvent] = useState<PublicEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [done, setDone] = useState(false);
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [downloadingBadge, setDownloadingBadge] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     full_name: "", email: "", phone: "", organization: "", position: "",
   });
+
 
   useEffect(() => {
     supabase
