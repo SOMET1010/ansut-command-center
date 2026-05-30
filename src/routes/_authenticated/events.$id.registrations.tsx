@@ -80,6 +80,49 @@ function RegistrationsPage() {
     downloadCSV(`inscriptions-${eventName || id}.csv`, csv);
   }
 
+  async function exportCheckins() {
+    const checked = regs.filter((r) => r.checked_in_at);
+    if (checked.length === 0) {
+      toast.info("Aucun check-in à exporter.");
+      return;
+    }
+    // Récupère les noms des scanneurs (profils)
+    const scannerIds = Array.from(
+      new Set(checked.map((r) => r.checked_in_by).filter(Boolean) as string[]),
+    );
+    const scannerMap = new Map<string, string>();
+    if (scannerIds.length > 0) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", scannerIds);
+      (profs ?? []).forEach((p) => {
+        scannerMap.set(p.id, p.full_name || p.email || p.id.slice(0, 8));
+      });
+    }
+    const rows = checked
+      .slice()
+      .sort((a, b) => (a.checked_in_at! < b.checked_in_at! ? -1 : 1))
+      .map((r) => ({
+        full_name: r.full_name,
+        email: r.email,
+        status: r.status,
+        checked_in_at: r.checked_in_at
+          ? new Date(r.checked_in_at).toLocaleString("fr-FR")
+          : "",
+        scanner: r.checked_in_by ? scannerMap.get(r.checked_in_by) ?? r.checked_in_by : "",
+      }));
+    const csv = toCSV(rows as unknown as Record<string, unknown>[], [
+      { key: "full_name", label: "Nom" },
+      { key: "email", label: "Email" },
+      { key: "status", label: "Statut" },
+      { key: "checked_in_at", label: "Heure check-in" },
+      { key: "scanner", label: "Scanné par" },
+    ]);
+    downloadCSV(`checkins-${eventName || id}.csv`, csv);
+  }
+
+
   return (
     <div className="p-8">
       <Button variant="ghost" size="sm" asChild className="mb-4">
