@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ComingSoon } from "./checkin";
+import { ComingSoon } from "@/components/coming-soon";
 
 export const Route = createFileRoute("/_authenticated/polls")({
   head: () => ({ meta: [{ title: "Live Polling — ANSUT EVENT" }] }),
