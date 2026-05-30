@@ -71,23 +71,84 @@ export const sendHubMessage = createServerFn({ method: "POST" })
     }
     if (data.content) payload.content = data.content;
 
-    try {
+    // Texte de repli garanti (même si l'appelant n'a rien passé)
+    const fallbackText =
+      (typeof payload.content === "string" && payload.content) ||
+      (data.template
+        ? buildFallbackFromTemplate(data.template.name, data.template.parameters ?? [])
+        : "");
+    if (data.channel !== "Email" && fallbackText) {
+      payload.content = fallbackText;
+    }
+
+    const send = async (body: Record<string, unknown>) => {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(body),
       });
       const text = await res.text();
-      if (!res.ok) {
-        console.error("Hub send failed", res.status, text);
-        return { ok: false, error: `Hub ${res.status}`, body: text };
+      return { status: res.status, ok: res.ok, text };
+    };
+
+    // Détecte une réponse du Hub indiquant que le template n'a pas pu être appliqué
+    const looksLikeTemplateError = (status: number, body: string) => {
+      if (status === 404 || status === 422) return true;
+      const b = body.toLowerCase();
+      return (
+        b.includes("template") &&
+        (b.includes("not found") ||
+          b.includes("introuvable") ||
+          b.includes("unknown") ||
+          b.includes("invalid") ||
+          b.includes("not approved") ||
+          b.includes("non approuv"))
+      );
+    };
+
+    try {
+      // 1ère tentative : avec template + content de repli
+      let attempt = await send(payload);
+      if (attempt.ok) return { ok: true, body: attempt.text };
+
+      // 2nde tentative : texte simple si le template a été rejeté et qu'on a un fallback
+      if (
+        data.template &&
+        fallbackText &&
+        looksLikeTemplateError(attempt.status, attempt.text)
+      ) {
+        console.warn(
+          "Hub template rejeté, repli sur texte simple",
+          data.template.name,
+          attempt.status,
+        );
+        const { whatsAppTemplate: _omit, ...rest } = payload;
+        const retry = await send({ ...rest, content: fallbackText });
+        if (retry.ok) {
+          return { ok: true, body: retry.text, fallback: true as const };
+        }
+        console.error("Hub fallback aussi en échec", retry.status, retry.text);
+        return { ok: false, error: `Hub ${retry.status}`, body: retry.text };
       }
-      return { ok: true, body: text };
+
+      console.error("Hub send failed", attempt.status, attempt.text);
+      return { ok: false, error: `Hub ${attempt.status}`, body: attempt.text };
     } catch (err) {
       console.error("Hub send exception", err);
       return { ok: false, error: "Erreur réseau Hub" as const };
     }
   });
+
+/** Texte minimal généré à partir des paramètres du template si rien d'autre n'est fourni. */
+function buildFallbackFromTemplate(name: string, params: string[]): string {
+  if (name === "ansut_event_confirmation" && params.length >= 3) {
+    const [fullName, eventName, date, location] = params;
+    return `Bonjour ${fullName}, votre inscription à "${eventName}" est confirmée.\nDate : ${date}${
+      location ? `\nLieu : ${location}` : ""
+    }\n\nMerci — ANSUT EVENT.`;
+  }
+  return params.filter(Boolean).join(" — ");
+}
 
 /**
  * Construit les variables ordonnées pour le template de confirmation d'inscription.
