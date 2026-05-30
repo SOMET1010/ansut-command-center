@@ -228,7 +228,7 @@ function RegistrationsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((r) => (
+              {paged.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.full_name}</TableCell>
                   <TableCell>{r.email}</TableCell>
@@ -260,6 +260,49 @@ function RegistrationsPage() {
 
         )}
       </div>
+
+      {!loading && filtered.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <span>
+              Affichage {(currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, filtered.length)} sur {filtered.length}
+            </span>
+            <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+              <SelectTrigger className="h-8 w-[110px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((n) => (
+                  <SelectItem key={n} value={String(n)}>{n} / page</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="tabular-nums">
+              Page {currentPage} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
     </div>
   );
 }
