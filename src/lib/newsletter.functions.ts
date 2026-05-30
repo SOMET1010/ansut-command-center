@@ -57,8 +57,11 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
             password,
             channel: "Email",
             to: data.email,
+            cc: null,
+            bcc: null,
             subject: "Bienvenue sur la newsletter SUTEL 2026",
             content,
+            ishtml: false,
           }),
         });
 
