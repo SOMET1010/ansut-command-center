@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, Download, Search, IdCard } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { toCSV, downloadCSV } from "@/lib/csv";
+import { toCSVChunked, downloadCSV } from "@/lib/csv";
 import { downloadBadge } from "@/lib/badges";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
@@ -35,6 +35,8 @@ type Reg = {
 
 
 
+const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
+
 function RegistrationsPage() {
   const { id } = Route.useParams();
   const [eventName, setEventName] = useState("");
@@ -42,6 +44,9 @@ function RegistrationsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [exporting, setExporting] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -57,7 +62,7 @@ function RegistrationsPage() {
 
   useEffect(() => { load(); }, [id]);
 
-  const filtered = regs.filter((r) => {
+  const filtered = useMemo(() => regs.filter((r) => {
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
     const q = search.toLowerCase();
     const matchesSearch = !q ||
@@ -65,19 +70,58 @@ function RegistrationsPage() {
       r.email.toLowerCase().includes(q) ||
       (r.organization?.toLowerCase().includes(q) ?? false);
     return matchesStatus && matchesSearch;
-  });
+  }), [regs, search, statusFilter]);
+
+  // Réinitialise la page quand les filtres changent
+  useEffect(() => { setPage(1); }, [search, statusFilter, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  async function runBackgroundCSV(
+    label: string,
+    rows: Record<string, unknown>[],
+    columns: { key: string; label: string }[],
+    filename: string,
+  ) {
+    if (rows.length === 0) {
+      toast.info("Rien à exporter.");
+      return;
+    }
+    setExporting(true);
+    const toastId = toast.loading(`${label} : préparation (0/${rows.length})...`);
+    try {
+      const csv = await toCSVChunked(rows, columns, {
+        chunkSize: 500,
+        onProgress: (done, total) => {
+          toast.loading(`${label} : ${done}/${total}...`, { id: toastId });
+        },
+      });
+      downloadCSV(filename, csv);
+      toast.success(`${label} exporté (${rows.length} lignes)`, { id: toastId });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur export", { id: toastId });
+    } finally {
+      setExporting(false);
+    }
+  }
 
   function exportCSV() {
-    const csv = toCSV(filtered as unknown as Record<string, unknown>[], [
-      { key: "full_name", label: "Nom" },
-      { key: "email", label: "Email" },
-      { key: "phone", label: "Téléphone" },
-      { key: "organization", label: "Organisation" },
-      { key: "position", label: "Poste" },
-      { key: "status", label: "Statut" },
-      { key: "created_at", label: "Inscrit le" },
-    ]);
-    downloadCSV(`inscriptions-${eventName || id}.csv`, csv);
+    void runBackgroundCSV(
+      "Inscriptions",
+      filtered as unknown as Record<string, unknown>[],
+      [
+        { key: "full_name", label: "Nom" },
+        { key: "email", label: "Email" },
+        { key: "phone", label: "Téléphone" },
+        { key: "organization", label: "Organisation" },
+        { key: "position", label: "Poste" },
+        { key: "status", label: "Statut" },
+        { key: "created_at", label: "Inscrit le" },
+      ],
+      `inscriptions-${eventName || id}.csv`,
+    );
   }
 
   async function exportCheckins() {
@@ -112,14 +156,18 @@ function RegistrationsPage() {
           : "",
         scanner: r.checked_in_by ? scannerMap.get(r.checked_in_by) ?? r.checked_in_by : "",
       }));
-    const csv = toCSV(rows as unknown as Record<string, unknown>[], [
-      { key: "full_name", label: "Nom" },
-      { key: "email", label: "Email" },
-      { key: "status", label: "Statut" },
-      { key: "checked_in_at", label: "Heure check-in" },
-      { key: "scanner", label: "Scanné par" },
-    ]);
-    downloadCSV(`checkins-${eventName || id}.csv`, csv);
+    void runBackgroundCSV(
+      "Check-ins",
+      rows as unknown as Record<string, unknown>[],
+      [
+        { key: "full_name", label: "Nom" },
+        { key: "email", label: "Email" },
+        { key: "status", label: "Statut" },
+        { key: "checked_in_at", label: "Heure check-in" },
+        { key: "scanner", label: "Scanné par" },
+      ],
+      `checkins-${eventName || id}.csv`,
+    );
   }
 
 
@@ -134,10 +182,10 @@ function RegistrationsPage() {
           <p className="mt-1 text-muted-foreground">{eventName} — {filtered.length} inscrit{filtered.length > 1 ? "s" : ""}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={exportCheckins} disabled={regs.every((r) => !r.checked_in_at)}>
+          <Button variant="outline" onClick={exportCheckins} disabled={exporting || regs.every((r) => !r.checked_in_at)}>
             <Download className="mr-2 h-4 w-4" /> Export check-ins
           </Button>
-          <Button onClick={exportCSV} disabled={filtered.length === 0}>
+          <Button onClick={exportCSV} disabled={exporting || filtered.length === 0}>
             <Download className="mr-2 h-4 w-4" /> Exporter CSV
           </Button>
         </div>
@@ -180,7 +228,7 @@ function RegistrationsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((r) => (
+              {paged.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.full_name}</TableCell>
                   <TableCell>{r.email}</TableCell>
@@ -212,6 +260,47 @@ function RegistrationsPage() {
 
         )}
       </div>
+
+      {!loading && filtered.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <span>
+              Affichage {(currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, filtered.length)} sur {filtered.length}
+            </span>
+            <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+              <SelectTrigger className="h-8 w-[110px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((n) => (
+                  <SelectItem key={n} value={String(n)}>{n} / page</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="tabular-nums">
+              Page {currentPage} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
