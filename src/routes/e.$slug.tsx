@@ -62,13 +62,13 @@ function PublicEventPage() {
     e.preventDefault();
     if (!event) return;
     setSubmitting(true);
-    const { error } = await supabase.from("event_registrations").insert({
-      event_id: event.id,
-      full_name: form.full_name.trim(),
-      email: form.email.trim().toLowerCase(),
-      phone: form.phone || null,
-      organization: form.organization || null,
-      position: form.position || null,
+    const { data: token, error } = await supabase.rpc("register_for_event", {
+      p_event_id: event.id,
+      p_full_name: form.full_name,
+      p_email: form.email,
+      p_phone: form.phone,
+      p_organization: form.organization,
+      p_position: form.position,
     });
     setSubmitting(false);
     if (error) {
@@ -79,6 +79,8 @@ function PublicEventPage() {
       }
       return;
     }
+    setQrToken(token as string);
+
 
     // Confirmation WhatsApp (best-effort, ne bloque pas l'UI)
     if (form.phone.trim()) {
