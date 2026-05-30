@@ -155,9 +155,29 @@ function PublicEventPage() {
               <CheckCircle2 className="mx-auto h-12 w-12 text-primary" />
               <h2 className="mt-4 text-xl font-semibold">Inscription confirmée</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Merci ! Un email de confirmation vous sera envoyé. Votre badge sera disponible avant l'événement.
+                Merci ! Téléchargez votre badge ci-dessous et présentez-le à l'entrée.
               </p>
+              {qrToken && (
+                <Button
+                  className="mt-6"
+                  disabled={downloadingBadge}
+                  onClick={async () => {
+                    setDownloadingBadge(true);
+                    try {
+                      await downloadBadge(qrToken);
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Erreur badge");
+                    } finally {
+                      setDownloadingBadge(false);
+                    }
+                  }}
+                >
+                  <IdCard className="mr-2 h-4 w-4" />
+                  {downloadingBadge ? "Génération..." : "Télécharger mon badge"}
+                </Button>
+              )}
             </div>
+
           ) : (
             <>
               <h2 className="text-xl font-semibold">S'inscrire</h2>
