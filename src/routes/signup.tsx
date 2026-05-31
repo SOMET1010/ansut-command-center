@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,13 @@ export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Créer un compte — ANSUT EVENT" }] }),
   component: SignupPage,
 });
+
+const perks = [
+  "Inscription en ligne au SUTEL 2026",
+  "Génération automatique de votre badge QR",
+  "Accès au programme et au live polling",
+  "Tableaux de bord et statistiques en temps réel",
+];
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -39,37 +47,142 @@ function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm">
-        <div className="mb-6 text-center">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">A</div>
+    <div className="grid min-h-screen lg:grid-cols-2">
+      {/* LEFT — Branded navy panel */}
+      <div
+        className="relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex"
+        style={{ background: "var(--gradient-hero)" }}
+      >
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+        <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-accent/25 blur-[120px]" />
+
+        <Link to="/" className="relative flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-xl font-bold text-accent-foreground shadow-lg">
+            A
+          </div>
+          <div className="leading-tight">
+            <div className="font-display text-lg font-bold">ANSUT EVENT</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">
+              Plateforme officielle du SUTEL
+            </div>
+          </div>
+        </Link>
+
+        <div className="relative">
+          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1">
+            <span className="flex h-2 w-2 animate-pulse rounded-full bg-accent" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
+              Rejoignez SUTEL 2026
+            </span>
+          </div>
+          <h2 className="mt-6 font-display text-4xl font-extrabold leading-tight">
+            Créez votre compte et préparez
+            <br />
+            <span className="bg-gradient-to-r from-white to-[oklch(0.75_0.08_245)] bg-clip-text text-transparent">
+              votre événement.
+            </span>
+          </h2>
+          <p className="mt-4 max-w-md text-base text-white/70">
+            En quelques clics, accédez à toutes les fonctionnalités de la plateforme officielle ANSUT.
+          </p>
+
+          <ul className="mt-8 space-y-3">
+            {perks.map((p) => (
+              <li key={p} className="flex items-start gap-3 text-sm text-white/80">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="relative text-xs text-white/40">
+          © 2026 ANSUT. Tous droits réservés.
+        </div>
+      </div>
+
+      {/* RIGHT — Form */}
+      <div className="flex items-center justify-center bg-background px-6 py-12">
+        <div className="w-full max-w-md">
+          <Link to="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
+              A
+            </div>
             <span className="text-lg font-semibold">ANSUT EVENT</span>
           </Link>
-          <h1 className="mt-4 text-2xl font-semibold">Créer un compte</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Rejoignez la plateforme</p>
+
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
+            Créer un compte
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Rejoignez la plateforme officielle du SUTEL 2026.
+          </p>
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Nom complet</Label>
+              <Input
+                id="fullName"
+                required
+                placeholder="Jean Dupont"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="h-11"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">E-mail</Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                placeholder="vous@ansut.ci"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-11"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Mot de passe</Label>
+              <Input
+                id="password"
+                type="password"
+                required
+                minLength={6}
+                placeholder="6 caractères minimum"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-11"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="h-11 w-full rounded-xl bg-accent font-bold text-accent-foreground shadow-lg hover:bg-accent/90"
+              disabled={loading}
+            >
+              {loading ? "Création..." : (
+                <>
+                  Créer mon compte
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Déjà un compte ?{" "}
+            <Link to="/login" className="font-semibold text-accent hover:underline">
+              Se connecter
+            </Link>
+          </p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Nom complet</Label>
-            <Input id="fullName" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Mot de passe</Label>
-            <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Création..." : "Créer mon compte"}
-          </Button>
-        </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Déjà un compte ?{" "}
-          <Link to="/login" className="font-medium text-primary hover:underline">Se connecter</Link>
-        </p>
       </div>
     </div>
   );
