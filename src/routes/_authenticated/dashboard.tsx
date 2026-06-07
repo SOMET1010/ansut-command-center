@@ -8,6 +8,7 @@ import { KPICard } from "@/components/ansut/KPICard";
 import { SectionGrid } from "@/components/ansut/SectionGrid";
 import { SutaPanel } from "@/components/ansut/SutaPanel";
 import { AlertBanner } from "@/components/ansut/AlertBanner";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
@@ -49,7 +50,7 @@ function Dashboard() {
         accréditations VIP avant J-7.
       </AlertBanner>
 
-      <SectionGrid title="Indicateurs opérationnels" cols={4}>
+      <SectionGrid title="Indicateurs opérationnels" cols={4} withLogo logoSuffix="SUTEL 2026 · ANSUT">
         <KPICard
           label="Événements"
           value={eventsCount ?? "—"}
@@ -76,7 +77,7 @@ function Dashboard() {
         />
       </SectionGrid>
 
-      <SectionGrid title="Actions Direction" cols={3}>
+      <SectionGrid title="Actions Direction" cols={3} withLogo logoSuffix="Console DG">
         <QuickAction
           to="/events"
           icon={Calendar}
@@ -132,8 +133,11 @@ function QuickAction({
   return (
     <Link
       to={to}
-      className="card-elevated card-elevated-hover group flex flex-col rounded-lg border border-border bg-card p-4 transition-transform hover:-translate-y-0.5"
+      className="card-elevated card-elevated-hover group relative flex flex-col rounded-lg border border-border bg-card p-4 transition-transform hover:-translate-y-0.5"
     >
+      <div className="absolute right-3 top-3 opacity-80 transition-opacity group-hover:opacity-100">
+        <AnsutLogo size="sm" />
+      </div>
       <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
         <Icon className="h-4 w-4" />
       </div>

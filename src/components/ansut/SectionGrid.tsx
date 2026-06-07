@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { AnsutLogo } from "./Logo";
 
 export function SectionGrid({
   title,
@@ -6,12 +7,16 @@ export function SectionGrid({
   children,
   className,
   cols = 3,
+  withLogo = false,
+  logoSuffix,
 }: {
   title?: string;
   action?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   cols?: 2 | 3 | 4;
+  withLogo?: boolean;
+  logoSuffix?: string;
 }) {
   const colsCls =
     cols === 2
@@ -23,9 +28,19 @@ export function SectionGrid({
     <section className={cn("", className)}>
       {(title || action) && (
         <header className="mb-3 flex items-center justify-between gap-3">
-          {title ? (
-            <h2 className="font-display text-base font-semibold text-foreground">{title}</h2>
-          ) : <span />}
+          <div className="flex items-center gap-2.5">
+            {withLogo && <AnsutLogo size="sm" />}
+            {title ? (
+              <div className="flex flex-col leading-tight">
+                <h2 className="font-display text-base font-semibold text-foreground">{title}</h2>
+                {withLogo && logoSuffix ? (
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    {logoSuffix}
+                  </span>
+                ) : null}
+              </div>
+            ) : <span />}
+          </div>
           {action}
         </header>
       )}
