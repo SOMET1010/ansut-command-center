@@ -502,6 +502,197 @@ export type Database = {
           },
         ]
       }
+      event_conversations: {
+        Row: {
+          id: string
+          event_id: string
+          participant_a: string
+          participant_b: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          participant_a: string
+          participant_b: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          participant_a?: string
+          participant_b?: string
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_conversations_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_conversations_participant_a_fkey"; columns: ["participant_a"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_conversations_participant_b_fkey"; columns: ["participant_b"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+        ]
+      }
+      event_messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          sender_id?: string
+          content?: string
+          read_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_messages_conversation_id_fkey"; columns: ["conversation_id"]; referencedRelation: "event_conversations"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_messages_sender_id_fkey"; columns: ["sender_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+        ]
+      }
+      event_speakers: {
+        Row: {
+          id: string
+          event_id: string
+          full_name: string
+          title: string | null
+          organization: string | null
+          bio: string | null
+          photo_url: string | null
+          linkedin_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          full_name: string
+          title?: string | null
+          organization?: string | null
+          bio?: string | null
+          photo_url?: string | null
+          linkedin_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          full_name?: string
+          title?: string | null
+          organization?: string | null
+          bio?: string | null
+          photo_url?: string | null
+          linkedin_url?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_speakers_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+        ]
+      }
+      event_sessions: {
+        Row: {
+          id: string
+          event_id: string
+          title: string
+          description: string | null
+          session_type: string
+          track: string | null
+          location: string | null
+          starts_at: string
+          ends_at: string
+          capacity: number | null
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          title: string
+          description?: string | null
+          session_type?: string
+          track?: string | null
+          location?: string | null
+          starts_at: string
+          ends_at: string
+          capacity?: number | null
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          title?: string
+          description?: string | null
+          session_type?: string
+          track?: string | null
+          location?: string | null
+          starts_at?: string
+          ends_at?: string
+          capacity?: number | null
+          sort_order?: number
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_sessions_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+        ]
+      }
+      event_session_speakers: {
+        Row: {
+          id: string
+          session_id: string
+          speaker_id: string
+          role: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          speaker_id: string
+          role?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          speaker_id?: string
+          role?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_session_speakers_session_id_fkey"; columns: ["session_id"]; referencedRelation: "event_sessions"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_session_speakers_speaker_id_fkey"; columns: ["speaker_id"]; referencedRelation: "event_speakers"; referencedColumns: ["id"] },
+        ]
+      }
+      session_bookmarks: {
+        Row: {
+          id: string
+          session_id: string
+          participant_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          participant_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          participant_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "session_bookmarks_session_id_fkey"; columns: ["session_id"]; referencedRelation: "event_sessions"; referencedColumns: ["id"] },
+          { foreignKeyName: "session_bookmarks_participant_id_fkey"; columns: ["participant_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -552,6 +743,14 @@ export type Database = {
         Returns: string
       }
       super_admin_exists: { Args: never; Returns: boolean }
+      get_or_create_conversation: {
+        Args: {
+          p_event_id: string
+          p_participant_a: string
+          p_participant_b: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role:
