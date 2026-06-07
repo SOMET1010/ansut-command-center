@@ -127,7 +127,7 @@ function Landing() {
       <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-primary/95 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-xl font-bold text-accent-foreground">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-xl font-bold text-secondary-foreground">
               A
             </div>
             <div className="leading-tight">
@@ -151,7 +151,7 @@ function Landing() {
             <Button asChild variant="ghost" className="text-white hover:bg-white/10 hover:text-white">
               <Link to="/login">Connexion</Link>
             </Button>
-            <Button asChild className="rounded-full bg-accent text-accent-foreground shadow-lg hover:bg-accent/90">
+            <Button asChild variant="ansut-orange" className="rounded-full shadow-sm">
               <Link to="/signup">Créer un compte</Link>
             </Button>
           </div>
@@ -177,16 +177,16 @@ function Landing() {
               backgroundSize: "60px 60px",
             }}
           />
-          <div className="absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-accent/20 blur-[120px]" />
+          <div className="absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-secondary/20 blur-[120px]" />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="grid items-start gap-12 lg:grid-cols-12">
             {/* LEFT */}
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1">
-                <span className="flex h-2 w-2 animate-pulse rounded-full bg-accent" />
-                <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
+              <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1">
+                <span className="flex h-2 w-2 animate-pulse rounded-full bg-secondary" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-secondary">
                   {ev?.name?.includes("SUTEL") ? ev.name : "SUTEL 2026"} • {formatDates(ev?.starts_at, ev?.ends_at)}
                 </span>
               </div>
@@ -257,7 +257,7 @@ function Landing() {
               <div className="overflow-hidden rounded-3xl bg-white p-8 text-foreground shadow-2xl">
                 <div className="mb-6 flex items-center justify-between">
                   <h2 className="text-xl font-bold">Programme du jour</h2>
-                  <Link to="/events" className="text-sm font-semibold text-accent hover:underline">
+                  <Link to="/events" className="text-sm font-semibold text-primary hover:underline">
                     Voir tout
                   </Link>
                 </div>
@@ -285,7 +285,7 @@ function Landing() {
                           <span>{r.end}</span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className="inline-block rounded bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent">
+                          <span className="inline-block rounded bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
                             Conférence
                           </span>
                           <p className="mt-1 line-clamp-2 text-sm font-medium leading-snug">
@@ -316,9 +316,9 @@ function Landing() {
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+            <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1">
+              <Sparkles className="h-3.5 w-3.5 text-secondary" />
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-secondary">
                 Tout en un seul endroit
               </p>
             </div>
@@ -327,30 +327,30 @@ function Landing() {
               <br />
               pour un événement réussi
             </h2>
-            <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-accent" />
+            <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-primary" />
           </div>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div
                 key={f.title}
-                className="group relative flex flex-col rounded-3xl border border-border bg-secondary/40 p-8 transition-all hover:-translate-y-1 hover:border-accent/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
+                className="group relative flex flex-col rounded-3xl border border-border bg-muted p-8 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
               >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-accent shadow-sm transition-transform group-hover:scale-110">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-primary shadow-sm transition-transform group-hover:scale-110">
                   <f.icon className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">{f.title}</h3>
                 <ul className="mt-4 flex-1 space-y-2.5 text-sm text-muted-foreground">
                   {f.items.map((it) => (
                     <li key={it} className="flex items-start gap-3">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       <span>{it}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
                   to={f.href}
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent transition-all hover:gap-3"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all hover:gap-3"
                 >
                   {f.cta}
                   <ArrowRight className="h-4 w-4" />
@@ -381,7 +381,7 @@ function Landing() {
 
               <div className="flex justify-center">
                 <div className="relative">
-                  <div className="absolute -inset-10 rounded-full bg-accent/30 blur-[100px]" />
+                  <div className="absolute -inset-10 rounded-full bg-secondary/30 blur-[100px]" />
                   <div className="relative flex h-[420px] w-64 flex-col items-center justify-center rounded-[2.5rem] border-[8px] border-white/10 bg-primary p-6 shadow-2xl">
                     <div className="mb-8 h-32 w-32 rounded-xl bg-white p-2">
                       <div className="grid h-full w-full grid-cols-5 gap-0.5 p-2">
@@ -395,7 +395,7 @@ function Landing() {
                     </div>
                     <div className="text-center">
                       <div className="text-lg font-bold">SUTEL 2026</div>
-                      <div className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                      <div className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-secondary">
                         Participant
                       </div>
                       <div className="mx-auto mt-4 h-1 w-12 rounded-full bg-white/20" />
@@ -424,7 +424,7 @@ function Landing() {
       </section>
 
       {/* PARTNERS */}
-      <section className="border-t border-border bg-secondary/40 py-16">
+      <section className="border-t border-border bg-muted py-16">
         <div className="mx-auto max-w-7xl px-6">
           <p className="text-center text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
             Ils nous font confiance
@@ -443,7 +443,7 @@ function Landing() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-border bg-primary py-12 text-sm text-white/60">
+      <footer className="border-t border-border bg-primary py-12 text-sm text-white/75">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
           <div>
             © {new Date().getFullYear()} <span className="font-bold text-white">ANSUT</span> — Agence Nationale du Service Universel des Télécommunications
@@ -474,15 +474,15 @@ function StatCard({
     <div
       className={`rounded-2xl border p-4 backdrop-blur-sm transition-all hover:bg-white/10 ${
         highlight
-          ? "border-accent/40 bg-accent/10"
+          ? "border-secondary/40 bg-secondary/10"
           : "border-white/10 bg-white/5"
       }`}
     >
-      <div className={`mb-2 ${highlight ? "text-accent" : "text-accent"}`}>
+      <div className={`mb-2 ${highlight ? "text-secondary" : "text-white/70"}`}>
         <Icon className="h-5 w-5" />
       </div>
       <div className="text-2xl font-bold leading-none text-white">{value}</div>
-      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/60">
+      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/70">
         {label}
       </div>
     </div>
@@ -492,12 +492,12 @@ function StatCard({
 function BadgeStep({ num, title, desc }: { num: string; title: string; desc: string }) {
   return (
     <div className="flex gap-6">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10 font-bold text-accent">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-secondary/40 bg-secondary/15 font-bold text-secondary">
         {num}
       </div>
       <div>
         <h4 className="font-bold text-white">{title}</h4>
-        <p className="mt-1 text-sm text-white/60">{desc}</p>
+        <p className="mt-1 text-sm text-white/75">{desc}</p>
       </div>
     </div>
   );
