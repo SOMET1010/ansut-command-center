@@ -16,6 +16,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnsutLogo } from "@/components/ansut/Logo";
+import {
+  COCKPIT_NAV_SECTIONS,
+  getCockpitBreadcrumbLabel,
+  type CockpitNavTo,
+} from "@/lib/cockpit-nav";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
