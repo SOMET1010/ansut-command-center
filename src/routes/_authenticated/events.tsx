@@ -173,9 +173,11 @@ function EventsPage() {
             </div>
             <h2 className="mt-4 text-lg font-semibold">Aucun événement</h2>
             <p className="mt-1 text-sm text-muted-foreground">Commencez par en créer un.</p>
-            <Button onClick={() => navigate({ to: "/events/new" })} className="mt-4 rounded-xl">
-              <Plus className="mr-2 h-4 w-4" /> Créer un événement
-            </Button>
+            <IfSuperAdmin>
+              <Button onClick={() => navigate({ to: "/events/new" })} className="mt-4 rounded-xl">
+                <Plus className="mr-2 h-4 w-4" /> Créer un événement
+              </Button>
+            </IfSuperAdmin>
           </div>
         ) : (
           <Table>
@@ -223,20 +225,22 @@ function EventsPage() {
                             <Users className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="sm" asChild title="Éditer">
-                          <Link to="/events/$id/edit" params={{ id: ev.id }}>
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => togglePublishMut.mutate(ev)} disabled={togglePublishMut.isPending} title={ev.status === "published" ? "Dépublier" : "Publier"}>
-                          {ev.status === "published" ? "Dépublier" : "Publier"}
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => duplicateMut.mutate(ev)} disabled={duplicateMut.isPending} title="Dupliquer">
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => remove(ev)} title="Supprimer">
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <IfSuperAdmin>
+                          <Button variant="ghost" size="sm" asChild title="Éditer">
+                            <Link to="/events/$id/edit" params={{ id: ev.id }}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => togglePublishMut.mutate(ev)} disabled={togglePublishMut.isPending} title={ev.status === "published" ? "Dépublier" : "Publier"}>
+                            {ev.status === "published" ? "Dépublier" : "Publier"}
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => duplicateMut.mutate(ev)} disabled={duplicateMut.isPending} title="Dupliquer">
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => remove(ev)} title="Supprimer">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </IfSuperAdmin>
                       </div>
                     </TableCell>
                   </TableRow>
