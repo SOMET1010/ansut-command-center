@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Calendar, Users, QrCode, Vote, ArrowRight, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Calendar, Users, QrCode, Vote, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ExecHero } from "@/components/ansut/ExecHero";
@@ -16,14 +16,17 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const [eventsCount, setEventsCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    supabase
-      .from("events")
-      .select("*", { count: "exact", head: true })
-      .then(({ count }) => setEventsCount(count ?? 0));
-  }, []);
+  const { data: eventsCount } = useQuery({
+    queryKey: ["dashboard", "events-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("events")
+        .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+    staleTime: 30_000,
+  });
 
   return (
     <div className="section-gap">
