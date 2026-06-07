@@ -113,7 +113,7 @@ function CheckinPage() {
               <div className={`flex items-start gap-3 rounded-md border-l-4 p-3 ${
                 result.already_checked_in
                   ? "border-signal-warning bg-ansut-orange-light"
-                  : "border-signal-ok bg-accent"
+                  : "border-signal-ok bg-signal-ok/10"
               }`}>
                 <CheckCircle2 className={`mt-0.5 h-6 w-6 ${
                   result.already_checked_in ? "text-signal-warning" : "text-signal-ok"
