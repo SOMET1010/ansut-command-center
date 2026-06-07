@@ -83,22 +83,25 @@ function maskRecipient(to: string, channel: NotifyChannel): string {
 
 async function logAudit(input: SendViaHubInput, result: SendViaHubResult) {
   try {
+    const payload = {
+      channel: input.channel,
+      recipient_masked: maskRecipient(input.to, input.channel),
+      purpose: input.audit?.purpose ?? "unspecified",
+      event_id: input.audit?.eventId ?? null,
+      registration_id: input.audit?.registrationId ?? null,
+      whatsapp_template: input.whatsAppTemplate?.name ?? null,
+      result: result.ok
+        ? { ok: true, fallback: result.fallback ?? null }
+        : { ok: false, error: result.error },
+    };
+    // Round-trip via JSON to satisfy the Database `Json` type narrowing.
+    const safePayload = JSON.parse(JSON.stringify(payload));
     await supabaseAdmin.from("audit_trail").insert({
       table_name: "notifications",
       action: result.ok ? "NOTIFY_SENT" : "NOTIFY_FAILED",
       organization_id: input.audit?.organizationId ?? null,
       user_id: input.audit?.userId ?? null,
-      payload: {
-        channel: input.channel,
-        recipient_masked: maskRecipient(input.to, input.channel),
-        purpose: input.audit?.purpose ?? "unspecified",
-        event_id: input.audit?.eventId ?? null,
-        registration_id: input.audit?.registrationId ?? null,
-        whatsapp_template: input.whatsAppTemplate?.name ?? null,
-        result: result.ok
-          ? { ok: true, fallback: result.ok && result.fallback ? result.fallback : null }
-          : { ok: false, error: result.error },
-      },
+      payload: safePayload,
     });
   } catch (err) {
     // Audit ne doit JAMAIS casser un envoi.
