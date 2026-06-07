@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
 import { Route as MessagesSlugRouteImport } from './routes/messages.$slug'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
+import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
@@ -27,6 +28,7 @@ import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
 import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
 import { Route as ApiPublicAuthRecoverRouteImport } from './routes/api/public/auth/recover'
+import { Route as AuthenticatedEventsIdSessionsRouteImport } from './routes/_authenticated/events.$id.sessions'
 import { Route as AuthenticatedEventsIdRegistrationsRouteImport } from './routes/_authenticated/events.$id.registrations'
 import { Route as AuthenticatedEventsIdEditRouteImport } from './routes/_authenticated/events.$id.edit'
 
@@ -72,6 +74,11 @@ const MessagesSlugRoute = MessagesSlugRouteImport.update({
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
   path: '/e/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendaSlugRoute = AgendaSlugRouteImport.update({
+  id: '/agenda/$slug',
+  path: '/agenda/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPollsRoute = AuthenticatedPollsRouteImport.update({
@@ -120,6 +127,12 @@ const ApiPublicAuthRecoverRoute = ApiPublicAuthRecoverRouteImport.update({
   path: '/api/public/auth/recover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedEventsIdSessionsRoute =
+  AuthenticatedEventsIdSessionsRouteImport.update({
+    id: '/$id/sessions',
+    path: '/$id/sessions',
+    getParentRoute: () => AuthenticatedEventsRoute,
+  } as any)
 const AuthenticatedEventsIdRegistrationsRoute =
   AuthenticatedEventsIdRegistrationsRouteImport.update({
     id: '/$id/registrations',
@@ -144,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/agenda/$slug': typeof AgendaSlugRoute
   '/e/$slug': typeof ESlugRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
@@ -151,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
+  '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
@@ -165,6 +180,7 @@ export interface FileRoutesByTo {
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/agenda/$slug': typeof AgendaSlugRoute
   '/e/$slug': typeof ESlugRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
@@ -172,6 +188,7 @@ export interface FileRoutesByTo {
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
+  '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
@@ -188,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
+  '/agenda/$slug': typeof AgendaSlugRoute
   '/e/$slug': typeof ESlugRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
@@ -195,6 +213,7 @@ export interface FileRoutesById {
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/_authenticated/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
+  '/_authenticated/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
@@ -211,6 +230,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/participants'
     | '/polls'
+    | '/agenda/$slug'
     | '/e/$slug'
     | '/messages/$slug'
     | '/networking/$slug'
@@ -218,6 +238,7 @@ export interface FileRouteTypes {
     | '/events/new'
     | '/events/$id/edit'
     | '/events/$id/registrations'
+    | '/events/$id/sessions'
     | '/api/public/auth/recover'
     | '/api/public/auth/token'
   fileRoutesByTo: FileRoutesByTo
@@ -232,6 +253,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/participants'
     | '/polls'
+    | '/agenda/$slug'
     | '/e/$slug'
     | '/messages/$slug'
     | '/networking/$slug'
@@ -239,6 +261,7 @@ export interface FileRouteTypes {
     | '/events/new'
     | '/events/$id/edit'
     | '/events/$id/registrations'
+    | '/events/$id/sessions'
     | '/api/public/auth/recover'
     | '/api/public/auth/token'
   id:
@@ -254,6 +277,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
+    | '/agenda/$slug'
     | '/e/$slug'
     | '/messages/$slug'
     | '/networking/$slug'
@@ -261,6 +285,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events/new'
     | '/_authenticated/events/$id/edit'
     | '/_authenticated/events/$id/registrations'
+    | '/_authenticated/events/$id/sessions'
     | '/api/public/auth/recover'
     | '/api/public/auth/token'
   fileRoutesById: FileRoutesById
@@ -272,6 +297,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  AgendaSlugRoute: typeof AgendaSlugRoute
   ESlugRoute: typeof ESlugRoute
   MessagesSlugRoute: typeof MessagesSlugRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
@@ -344,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ESlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agenda/$slug': {
+      id: '/agenda/$slug'
+      path: '/agenda/$slug'
+      fullPath: '/agenda/$slug'
+      preLoaderRoute: typeof AgendaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/polls': {
       id: '/_authenticated/polls'
       path: '/polls'
@@ -407,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAuthRecoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/events/$id/sessions': {
+      id: '/_authenticated/events/$id/sessions'
+      path: '/$id/sessions'
+      fullPath: '/events/$id/sessions'
+      preLoaderRoute: typeof AuthenticatedEventsIdSessionsRouteImport
+      parentRoute: typeof AuthenticatedEventsRoute
+    }
     '/_authenticated/events/$id/registrations': {
       id: '/_authenticated/events/$id/registrations'
       path: '/$id/registrations'
@@ -428,6 +468,7 @@ interface AuthenticatedEventsRouteChildren {
   AuthenticatedEventsNewRoute: typeof AuthenticatedEventsNewRoute
   AuthenticatedEventsIdEditRoute: typeof AuthenticatedEventsIdEditRoute
   AuthenticatedEventsIdRegistrationsRoute: typeof AuthenticatedEventsIdRegistrationsRoute
+  AuthenticatedEventsIdSessionsRoute: typeof AuthenticatedEventsIdSessionsRoute
 }
 
 const AuthenticatedEventsRouteChildren: AuthenticatedEventsRouteChildren = {
@@ -435,6 +476,7 @@ const AuthenticatedEventsRouteChildren: AuthenticatedEventsRouteChildren = {
   AuthenticatedEventsIdEditRoute: AuthenticatedEventsIdEditRoute,
   AuthenticatedEventsIdRegistrationsRoute:
     AuthenticatedEventsIdRegistrationsRoute,
+  AuthenticatedEventsIdSessionsRoute: AuthenticatedEventsIdSessionsRoute,
 }
 
 const AuthenticatedEventsRouteWithChildren =
@@ -469,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  AgendaSlugRoute: AgendaSlugRoute,
   ESlugRoute: ESlugRoute,
   MessagesSlugRoute: MessagesSlugRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
