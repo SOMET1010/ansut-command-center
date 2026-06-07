@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -44,28 +45,37 @@ const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
 
 function RegistrationsPage() {
   const { id } = Route.useParams();
-  const [eventName, setEventName] = useState("");
-  const [regs, setRegs] = useState<Reg[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [exporting, setExporting] = useState(false);
 
-  async function load() {
-    setLoading(true);
-    const [{ data: ev }, { data: r, error }] = await Promise.all([
-      supabase.from("events").select("name").eq("id", id).single(),
-      supabase.from("event_registrations").select("*").eq("event_id", id).order("created_at", { ascending: false }),
-    ]);
-    if (error) toast.error(error.message);
-    setEventName(ev?.name ?? "");
-    setRegs((r ?? []) as Reg[]);
-    setLoading(false);
-  }
+  const { data: eventName = "" } = useQuery({
+    queryKey: ["events", "detail-name", id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("events").select("name").eq("id", id).single();
+      if (error) throw error;
+      return data?.name ?? "";
+    },
+  });
 
-  useEffect(() => { load(); }, [id]);
+  const { data: regs = [], isLoading: loading } = useQuery({
+    queryKey: ["registrations", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("event_registrations")
+        .select("*")
+        .eq("event_id", id)
+        .order("created_at", { ascending: false });
+      if (error) {
+        toast.error(error.message);
+        throw error;
+      }
+      return (data ?? []) as Reg[];
+    },
+  });
+
 
   const filtered = useMemo(() => regs.filter((r) => {
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;

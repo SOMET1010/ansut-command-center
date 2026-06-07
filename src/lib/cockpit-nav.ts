@@ -11,7 +11,16 @@ export type CockpitNavTo =
   | "/checkin"
   | "/admin/setup";
 
-export type CockpitNavItem = { to: CockpitNavTo; label: string };
+export type CockpitNavItem = {
+  to: CockpitNavTo;
+  label: string;
+  /**
+   * When true, the item is kept in the breadcrumb registry but hidden from
+   * the sidebar (placeholder/coming-soon modules). The route file still
+   * exists and is reachable by direct URL.
+   */
+  hidden?: boolean;
+};
 export type CockpitNavSection = { label: string; items: CockpitNavItem[] };
 
 export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
@@ -23,8 +32,8 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
     label: "Modules métier",
     items: [
       { to: "/events", label: "Événements" },
-      { to: "/participants", label: "Participants" },
-      { to: "/polls", label: "Live Polling" },
+      { to: "/participants", label: "Participants", hidden: true },
+      { to: "/polls", label: "Live Polling", hidden: true },
     ],
   },
   {
@@ -36,9 +45,17 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
   },
 ];
 
+/** Full registry (including hidden) — used by the breadcrumb resolver. */
 export const COCKPIT_NAV_ITEMS: CockpitNavItem[] = COCKPIT_NAV_SECTIONS.flatMap(
   (s) => s.items,
 );
+
+/** Sections filtered for the sidebar — drops `hidden` items and empty groups. */
+export const COCKPIT_VISIBLE_NAV_SECTIONS: CockpitNavSection[] =
+  COCKPIT_NAV_SECTIONS.map((s) => ({
+    label: s.label,
+    items: s.items.filter((i) => !i.hidden),
+  })).filter((s) => s.items.length > 0);
 
 /**
  * Returns the breadcrumb label for a cockpit pathname.
