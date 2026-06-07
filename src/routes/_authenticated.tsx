@@ -26,31 +26,23 @@ export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
 });
 
-type NavTo = "/dashboard" | "/events" | "/participants" | "/polls" | "/checkin" | "/admin/setup";
-type NavItem = { to: NavTo; label: string; icon: ComponentType<{ className?: string }> };
+type IconCmp = ComponentType<{ className?: string }>;
+type NavItem = { to: CockpitNavTo; label: string; icon: IconCmp };
 type NavSection = { label: string; items: NavItem[] };
 
-const NAV_SECTIONS: NavSection[] = [
-  {
-    label: "Pilotage",
-    items: [{ to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard }],
-  },
-  {
-    label: "Modules métier",
-    items: [
-      { to: "/events", label: "Événements", icon: Calendar },
-      { to: "/participants", label: "Participants", icon: Users },
-      { to: "/polls", label: "Live Polling", icon: Vote },
-    ],
-  },
-  {
-    label: "Exécution",
-    items: [
-      { to: "/checkin", label: "Check-in", icon: QrCode },
-      { to: "/admin/setup", label: "Administration", icon: ShieldCheck },
-    ],
-  },
-];
+const ICONS: Record<CockpitNavTo, IconCmp> = {
+  "/dashboard": LayoutDashboard,
+  "/events": Calendar,
+  "/participants": Users,
+  "/polls": Vote,
+  "/checkin": QrCode,
+  "/admin/setup": ShieldCheck,
+};
+
+const NAV_SECTIONS: NavSection[] = COCKPIT_NAV_SECTIONS.map((s) => ({
+  label: s.label,
+  items: s.items.map((i) => ({ ...i, icon: ICONS[i.to] })),
+}));
 
 function AuthLayout() {
   const { isAuthenticated, loading, user, signOut } = useAuth();
