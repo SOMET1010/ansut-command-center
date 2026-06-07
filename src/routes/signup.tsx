@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Créer un compte — ANSUT EVENT" }] }),
