@@ -324,12 +324,6 @@ export type Database = {
         }
         Returns: string
       }
-      run_rls_tests: {
-        Args: never
-        Returns: {
-          result: string
-        }[]
-      }
       super_admin_exists: { Args: never; Returns: boolean }
     }
     Enums: {
