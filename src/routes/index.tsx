@@ -535,6 +535,15 @@ function StatCard({
   );
 }
 
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-sm">
+      <div className="text-lg font-bold tabular-nums leading-none text-white">{value}</div>
+      <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">{label}</div>
+    </div>
+  );
+}
+
 function BadgeStep({ num, title, desc }: { num: string; title: string; desc: string }) {
   return (
     <div className="flex gap-6">
