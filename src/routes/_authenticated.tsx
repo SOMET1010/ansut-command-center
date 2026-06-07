@@ -15,6 +15,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
@@ -90,15 +91,13 @@ function AuthLayout() {
         )}
       >
         {/* Brand */}
-        <div className={cn("flex h-14 items-center gap-3 border-b border-sidebar-border px-3", collapsed && "justify-center px-0")}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-base font-bold text-sidebar-primary-foreground">
-            A
-          </div>
+        <div className={cn("flex h-14 items-center gap-2.5 border-b border-sidebar-border px-3", collapsed && "justify-center px-0")}>
+          <AnsutLogo size={collapsed ? "sm" : "md"} />
           {!collapsed && (
             <div className="min-w-0 leading-tight">
               <div className="truncate font-display text-sm font-bold">ANSUT EVENT</div>
               <div className="truncate text-[10px] uppercase tracking-[0.18em] text-sidebar-foreground/55">
-                SUTEL 2026
+                Console DG · SUTEL 2026
               </div>
             </div>
           )}
@@ -186,7 +185,10 @@ function AuthLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* TopBar */}
         <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-border bg-card/85 px-4 backdrop-blur-md">
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2.5 text-xs">
+            <Link to="/dashboard" className="md:hidden" aria-label="Accueil console">
+              <AnsutLogo size="sm" />
+            </Link>
             <Link
               to="/dashboard"
               className="font-semibold text-muted-foreground transition-colors hover:text-foreground"

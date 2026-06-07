@@ -446,9 +446,12 @@ function Landing() {
 
       {/* FOOTER */}
       <footer className="border-t border-border bg-primary py-12 text-sm text-white/75">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-          <div>
-            © {new Date().getFullYear()} <span className="font-bold text-white">ANSUT</span> — Agence Nationale du Service Universel des Télécommunications
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
+          <div className="flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-4">
+            <AnsutLogo size="md" />
+            <div className="text-center md:text-left">
+              © {new Date().getFullYear()} <span className="font-bold text-white">ANSUT</span> — Agence Nationale du Service Universel des Télécommunications
+            </div>
           </div>
           <div className="flex gap-8 font-medium">
             <a href="#" className="hover:text-white">Mentions légales</a>
