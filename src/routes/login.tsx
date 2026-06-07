@@ -96,10 +96,8 @@ function LoginPage() {
       <div className="flex items-center justify-center bg-background px-6 py-12">
         <div className="w-full max-w-md">
           <Link to="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
-              A
-            </div>
-            <span className="text-lg font-semibold">ANSUT EVENT</span>
+            <AnsutLogo size="md" />
+            <span className="text-lg font-semibold">EVENT</span>
           </Link>
 
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
