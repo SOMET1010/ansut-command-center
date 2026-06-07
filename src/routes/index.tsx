@@ -3,12 +3,8 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import {
   Calendar,
   QrCode,
-  BarChart3,
-  Vote,
-  Users,
   Mic,
   Building2,
-  CheckCircle2,
   PlayCircle,
   MapPin,
   ArrowRight,
@@ -52,48 +48,28 @@ export const Route = createFileRoute("/")({
   notFoundComponent: () => <div className="p-8 text-center">Page introuvable.</div>,
 });
 
+// Front-office uniquement — pas de lien vers le cockpit administrateur.
 const features = [
   {
-    icon: Users,
-    title: "Participants",
-    items: ["Inscription en ligne", "Validation des demandes", "Gestion des profils"],
-    href: "/participants" as const,
-    cta: "Gérer les participants",
-  },
-  {
     icon: Mic,
-    title: "Conférences",
-    items: ["Programme détaillé", "Intervenants & modérateurs", "Salles & sessions"],
+    title: "Programme & conférences",
+    items: ["Plénières et panels", "Intervenants & modérateurs", "Salles & sessions"],
     href: "/events" as const,
     cta: "Voir le programme",
   },
   {
     icon: QrCode,
-    title: "Accréditation",
-    items: ["Génération de badges QR", "Contrôle d'accès temps réel", "Gestion des accès"],
-    href: "/checkin" as const,
-    cta: "Gérer les accès",
-  },
-  {
-    icon: Vote,
-    title: "Live Polling",
-    items: ["Sondages en direct", "Questions & votes", "Résultats instantanés"],
-    href: "/polls" as const,
-    cta: "Participer",
+    title: "Inscription & badge",
+    items: ["Inscription en ligne guidée", "Badge QR par email", "Accès aux espaces"],
+    href: "/signup" as const,
+    cta: "S'inscrire au SUTEL 2026",
   },
   {
     icon: Building2,
-    title: "Exposition",
-    items: ["Liste des exposants", "Stands & sponsors", "Plan d'exposition"],
+    title: "Exposition & partenaires",
+    items: ["Liste des exposants", "Stands & sponsors", "Plan du salon"],
     href: "/events" as const,
-    cta: "Découvrir",
-  },
-  {
-    icon: BarChart3,
-    title: "Analytics",
-    items: ["Tableaux de bord", "Statistiques en temps réel", "Rapports exportables"],
-    href: "/dashboard" as const,
-    cta: "Voir les rapports",
+    cta: "Découvrir le salon",
   },
 ];
 
@@ -154,10 +130,9 @@ function Landing() {
           <div className="hidden items-center gap-8 lg:flex">
             <Link to="/" className="text-[13px] font-medium text-white">Accueil</Link>
             <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Programme</Link>
-            <Link to="/participants" className="text-[13px] font-medium text-white/65 transition hover:text-white">Participants</Link>
             <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Exposition</Link>
             <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Partenaires</Link>
-            <Link to="/dashboard" className="text-[13px] font-medium text-white/65 transition hover:text-white">Statistiques</Link>
+            <Link to="/signup" className="text-[13px] font-medium text-white/65 transition hover:text-white">S'inscrire</Link>
           </div>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
@@ -505,35 +480,6 @@ function Landing() {
   );
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  highlight,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border p-4 backdrop-blur-sm transition-all hover:bg-white/10 ${
-        highlight
-          ? "border-secondary/40 bg-secondary/10"
-          : "border-white/10 bg-white/5"
-      }`}
-    >
-      <div className={`mb-2 ${highlight ? "text-secondary" : "text-white/70"}`}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="text-2xl font-bold leading-none text-white">{value}</div>
-      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/85">
-        {label}
-      </div>
-    </div>
-  );
-}
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
