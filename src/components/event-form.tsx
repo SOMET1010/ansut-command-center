@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -89,6 +90,7 @@ export function eventToValues(e: {
 
 export function EventForm({ initial, organizationId }: { initial: EventFormValues; organizationId: string }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [v, setV] = useState<EventFormValues>(initial);
   const [saving, setSaving] = useState(false);
   const isEdit = !!initial.id;
@@ -138,6 +140,8 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
       return;
     }
     toast.success(isEdit ? "Événement mis à jour" : "Événement créé");
+    void queryClient.invalidateQueries({ queryKey: ["events"] });
+    void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     navigate({ to: "/events" });
     void data;
   }

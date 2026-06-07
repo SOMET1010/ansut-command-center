@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,12 +45,24 @@ const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
 
 function RegistrationsPage() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [exporting, setExporting] = useState(false);
 
+  // Debounce de la recherche pour éviter trop de requêtes serveur
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Reset page quand les filtres changent
+  useEffect(() => { setPage(1); }, [debouncedSearch, statusFilter, pageSize]);
+
+  // Requête : nom de l'événement
   const { data: eventName = "" } = useQuery({
     queryKey: ["events", "detail-name", id],
     queryFn: async () => {
@@ -60,43 +72,89 @@ function RegistrationsPage() {
     },
   });
 
-  const { data: regs = [], isLoading: loading } = useQuery({
-    queryKey: ["registrations", id],
+  // Requête : compteurs totaux (indépendants de la pagination)
+  const { data: stats = { total: 0, confirmed: 0, checkedIn: 0, pending: 0 } } = useQuery({
+    queryKey: ["registrations", "stats", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("event_registrations")
-        .select("*")
+        .select("status, checked_in_at")
+        .eq("event_id", id);
+      if (error) throw error;
+      const rows = data ?? [];
+      return {
+        total: rows.length,
+        confirmed: rows.filter((r) => r.status === "confirmed").length,
+        checkedIn: rows.filter((r) => r.checked_in_at).length,
+        pending: rows.filter((r) => r.status === "pending").length,
+      };
+    },
+    staleTime: 15_000,
+  });
+
+  // Requête : pagination serveur avec filtres
+  const { data: serverResult, isLoading: loading } = useQuery({
+    queryKey: ["registrations", "page", id, page, pageSize, statusFilter, debouncedSearch],
+    queryFn: async () => {
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      let query = supabase
+        .from("event_registrations")
+        .select("*", { count: "exact" })
         .eq("event_id", id)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      // Filtre par statut côté serveur
+      if (statusFilter !== "all") {
+        query = query.eq("status", statusFilter);
+      }
+
+      // Recherche côté serveur (ilike sur nom, email, organisation)
+      if (debouncedSearch) {
+        query = query.or(
+          `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,organization.ilike.%${debouncedSearch}%`
+        );
+      }
+
+      const { data, error, count } = await query;
       if (error) {
         toast.error(error.message);
         throw error;
       }
-      return (data ?? []) as Reg[];
+      return { rows: (data ?? []) as Reg[], totalCount: count ?? 0 };
     },
+    staleTime: 10_000,
+    placeholderData: (prev) => prev, // garde les données précédentes pendant le chargement
   });
 
-
-  const filtered = useMemo(() => regs.filter((r) => {
-    const matchesStatus = statusFilter === "all" || r.status === statusFilter;
-    const q = search.toLowerCase();
-    const matchesSearch = !q ||
-      r.full_name.toLowerCase().includes(q) ||
-      r.email.toLowerCase().includes(q) ||
-      (r.organization?.toLowerCase().includes(q) ?? false);
-    return matchesStatus && matchesSearch;
-  }), [regs, search, statusFilter]);
-
-  useEffect(() => { setPage(1); }, [search, statusFilter, pageSize]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const rows = serverResult?.rows ?? [];
+  const totalCount = serverResult?.totalCount ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  // Stats
-  const confirmed = regs.filter((r) => r.status === "confirmed").length;
-  const checkedIn = regs.filter((r) => r.checked_in_at).length;
-  const pending = regs.filter((r) => r.status === "pending").length;
+  // Export CSV : charge TOUTES les données filtrées (sans pagination)
+  async function fetchAllFiltered(): Promise<Reg[]> {
+    let query = supabase
+      .from("event_registrations")
+      .select("*")
+      .eq("event_id", id)
+      .order("created_at", { ascending: false });
+
+    if (statusFilter !== "all") {
+      query = query.eq("status", statusFilter);
+    }
+    if (debouncedSearch) {
+      query = query.or(
+        `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,organization.ilike.%${debouncedSearch}%`
+      );
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data ?? []) as Reg[];
+  }
 
   async function runBackgroundCSV(
     label: string,
@@ -126,29 +184,46 @@ function RegistrationsPage() {
     }
   }
 
-  function exportCSV() {
-    void runBackgroundCSV(
-      "Inscriptions",
-      filtered as unknown as Record<string, unknown>[],
-      [
-        { key: "full_name", label: "Nom" },
-        { key: "email", label: "Email" },
-        { key: "phone", label: "Téléphone" },
-        { key: "organization", label: "Organisation" },
-        { key: "position", label: "Poste" },
-        { key: "status", label: "Statut" },
-        { key: "created_at", label: "Inscrit le" },
-      ],
-      `inscriptions-${eventName || id}.csv`,
-    );
+  async function exportCSV() {
+    try {
+      const allRows = await fetchAllFiltered();
+      void runBackgroundCSV(
+        "Inscriptions",
+        allRows as unknown as Record<string, unknown>[],
+        [
+          { key: "full_name", label: "Nom" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Téléphone" },
+          { key: "organization", label: "Organisation" },
+          { key: "position", label: "Poste" },
+          { key: "status", label: "Statut" },
+          { key: "created_at", label: "Inscrit le" },
+        ],
+        `inscriptions-${eventName || id}.csv`,
+      );
+    } catch (err) {
+      toast.error("Erreur lors du chargement des données pour l'export");
+    }
   }
 
   async function exportCheckins() {
-    const checked = regs.filter((r) => r.checked_in_at);
+    const { data: allRegs, error } = await supabase
+      .from("event_registrations")
+      .select("*")
+      .eq("event_id", id)
+      .not("checked_in_at", "is", null)
+      .order("checked_in_at", { ascending: true });
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    const checked = (allRegs ?? []) as Reg[];
     if (checked.length === 0) {
       toast.info("Aucun check-in à exporter.");
       return;
     }
+
     const scannerIds = Array.from(
       new Set(checked.map((r) => r.checked_in_by).filter(Boolean) as string[]),
     );
@@ -162,21 +237,20 @@ function RegistrationsPage() {
         scannerMap.set(p.id, p.full_name || p.email || p.id.slice(0, 8));
       });
     }
-    const rows = checked
-      .slice()
-      .sort((a, b) => (a.checked_in_at! < b.checked_in_at! ? -1 : 1))
-      .map((r) => ({
-        full_name: r.full_name,
-        email: r.email,
-        status: r.status,
-        checked_in_at: r.checked_in_at
-          ? new Date(r.checked_in_at).toLocaleString("fr-FR")
-          : "",
-        scanner: r.checked_in_by ? scannerMap.get(r.checked_in_by) ?? r.checked_in_by : "",
-      }));
+
+    const exportRows = checked.map((r) => ({
+      full_name: r.full_name,
+      email: r.email,
+      status: r.status,
+      checked_in_at: r.checked_in_at
+        ? new Date(r.checked_in_at).toLocaleString("fr-FR")
+        : "",
+      scanner: r.checked_in_by ? scannerMap.get(r.checked_in_by) ?? r.checked_in_by : "",
+    }));
+
     void runBackgroundCSV(
       "Check-ins",
-      rows as unknown as Record<string, unknown>[],
+      exportRows as unknown as Record<string, unknown>[],
       [
         { key: "full_name", label: "Nom" },
         { key: "email", label: "Email" },
@@ -200,26 +274,26 @@ function RegistrationsPage() {
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight">Participants</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {eventName} — {filtered.length} inscrit{filtered.length > 1 ? "s" : ""}
+            {eventName} — {totalCount} inscrit{totalCount > 1 ? "s" : ""} {statusFilter !== "all" || debouncedSearch ? "(filtré)" : ""}
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="rounded-xl" onClick={exportCheckins} disabled={exporting || regs.every((r) => !r.checked_in_at)}>
+          <Button variant="outline" className="rounded-xl" onClick={exportCheckins} disabled={exporting || stats.checkedIn === 0}>
             <Download className="mr-2 h-4 w-4" /> Check-ins
           </Button>
-          <Button className="rounded-xl" onClick={exportCSV} disabled={exporting || filtered.length === 0}>
+          <Button className="rounded-xl" onClick={exportCSV} disabled={exporting || totalCount === 0}>
             <Download className="mr-2 h-4 w-4" /> Exporter CSV
           </Button>
         </div>
       </div>
 
       {/* Statistiques rapides */}
-      {!loading && regs.length > 0 && (
+      {stats.total > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatCard icon={Users} label="Total" value={regs.length} />
-          <StatCard icon={CheckCircle2} label="Confirmés" value={confirmed} />
-          <StatCard icon={IdCard} label="Présents" value={checkedIn} />
-          <StatCard icon={Clock} label="En attente" value={pending} />
+          <StatCard icon={Users} label="Total" value={stats.total} />
+          <StatCard icon={CheckCircle2} label="Confirmés" value={stats.confirmed} />
+          <StatCard icon={IdCard} label="Présents" value={stats.checkedIn} />
+          <StatCard icon={Clock} label="En attente" value={stats.pending} />
         </div>
       )}
 
@@ -227,7 +301,12 @@ function RegistrationsPage() {
       <div className="flex flex-wrap gap-3">
         <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher par nom, email, organisation..." className="pl-9" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher par nom, email, organisation..."
+            className="pl-9"
+          />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
@@ -243,17 +322,21 @@ function RegistrationsPage() {
 
       {/* Tableau */}
       <div className="card-elevated overflow-hidden rounded-xl border border-border bg-card">
-        {loading ? (
+        {loading && rows.length === 0 ? (
           <div className="flex items-center justify-center py-16">
             <div className="flex flex-col items-center gap-3">
               <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               <p className="text-sm text-muted-foreground">Chargement...</p>
             </div>
           </div>
-        ) : filtered.length === 0 ? (
+        ) : totalCount === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Users className="h-10 w-10 text-muted-foreground/50" />
-            <p className="mt-3 text-sm text-muted-foreground">Aucune inscription pour le moment.</p>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {debouncedSearch || statusFilter !== "all"
+                ? "Aucun résultat pour ces filtres."
+                : "Aucune inscription pour le moment."}
+            </p>
           </div>
         ) : (
           <Table>
@@ -269,7 +352,7 @@ function RegistrationsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paged.map((r) => {
+              {rows.map((r) => {
                 const badge = STATUS_BADGE[r.status] ?? { label: r.status, className: "bg-muted text-muted-foreground" };
                 return (
                   <TableRow key={r.id} className="group">
@@ -310,11 +393,11 @@ function RegistrationsPage() {
       </div>
 
       {/* Pagination */}
-      {!loading && filtered.length > 0 && (
+      {totalCount > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <span className="tabular-nums">
-              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} sur {filtered.length}
+              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalCount)} sur {totalCount}
             </span>
             <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
               <SelectTrigger className="h-8 w-[100px]"><SelectValue /></SelectTrigger>
