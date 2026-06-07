@@ -122,7 +122,7 @@ function Landing() {
   const stats = data.stats;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       {/* STICKY NAV */}
       <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-primary/95 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
