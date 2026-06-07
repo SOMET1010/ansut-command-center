@@ -23,6 +23,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
+import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
+import { Route as ApiPublicAuthRecoverRouteImport } from './routes/api/public/auth/recover'
 import { Route as AuthenticatedEventsIdRegistrationsRouteImport } from './routes/_authenticated/events.$id.registrations'
 import { Route as AuthenticatedEventsIdEditRouteImport } from './routes/_authenticated/events.$id.edit'
 
@@ -96,6 +98,16 @@ const AuthenticatedAdminSetupRoute = AuthenticatedAdminSetupRouteImport.update({
   path: '/admin/setup',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicAuthTokenRoute = ApiPublicAuthTokenRouteImport.update({
+  id: '/api/public/auth/token',
+  path: '/api/public/auth/token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAuthRecoverRoute = ApiPublicAuthRecoverRouteImport.update({
+  id: '/api/public/auth/recover',
+  path: '/api/public/auth/recover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedEventsIdRegistrationsRoute =
   AuthenticatedEventsIdRegistrationsRouteImport.update({
     id: '/$id/registrations',
@@ -125,6 +137,8 @@ export interface FileRoutesByFullPath {
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
+  '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
+  '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +156,8 @@ export interface FileRoutesByTo {
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
+  '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
+  '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +177,8 @@ export interface FileRoutesById {
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/_authenticated/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
+  '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
+  '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,6 +198,8 @@ export interface FileRouteTypes {
     | '/events/new'
     | '/events/$id/edit'
     | '/events/$id/registrations'
+    | '/api/public/auth/recover'
+    | '/api/public/auth/token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,6 +217,8 @@ export interface FileRouteTypes {
     | '/events/new'
     | '/events/$id/edit'
     | '/events/$id/registrations'
+    | '/api/public/auth/recover'
+    | '/api/public/auth/token'
   id:
     | '__root__'
     | '/'
@@ -215,6 +237,8 @@ export interface FileRouteTypes {
     | '/_authenticated/events/new'
     | '/_authenticated/events/$id/edit'
     | '/_authenticated/events/$id/registrations'
+    | '/api/public/auth/recover'
+    | '/api/public/auth/token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -225,6 +249,8 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   ESlugRoute: typeof ESlugRoute
+  ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
+  ApiPublicAuthTokenRoute: typeof ApiPublicAuthTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -327,6 +353,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSetupRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/auth/token': {
+      id: '/api/public/auth/token'
+      path: '/api/public/auth/token'
+      fullPath: '/api/public/auth/token'
+      preLoaderRoute: typeof ApiPublicAuthTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/auth/recover': {
+      id: '/api/public/auth/recover'
+      path: '/api/public/auth/recover'
+      fullPath: '/api/public/auth/recover'
+      preLoaderRoute: typeof ApiPublicAuthRecoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/events/$id/registrations': {
       id: '/_authenticated/events/$id/registrations'
       path: '/$id/registrations'
@@ -390,6 +430,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   ESlugRoute: ESlugRoute,
+  ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,
+  ApiPublicAuthTokenRoute: ApiPublicAuthTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { ArrowRight, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { isLovablePreview } from "@/lib/auth-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,14 +22,29 @@ function ForgotPasswordPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    const redirectTo = `${window.location.origin}/reset-password`;
+    try {
+      if (isLovablePreview()) {
+        // Bypass the preview's fetch proxy via same-origin server route.
+        const res = await fetch("/api/public/auth/recover", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, redirectTo }),
+        });
+        if (!res.ok) {
+          const j = await res.json().catch(() => ({}));
+          throw new Error(j.msg || j.error || "Échec de l'envoi");
+        }
+      } else {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+        if (error) throw error;
+      }
+    } catch (err) {
+      setLoading(false);
+      toast.error(err instanceof Error ? err.message : "Échec de l'envoi");
       return;
     }
+    setLoading(false);
     setSent(true);
     toast.success("E-mail de réinitialisation envoyé");
   }

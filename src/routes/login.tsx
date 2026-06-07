@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { isLovablePreview } from "@/lib/auth-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,12 +23,31 @@ function LoginPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    try {
+      if (isLovablePreview()) {
+        // Bypass preview proxy: get tokens via same-origin route, then hydrate session.
+        const res = await fetch("/api/public/auth/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error_description || json.msg || "Connexion impossible");
+        const { error } = await supabase.auth.setSession({
+          access_token: json.access_token,
+          refresh_token: json.refresh_token,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+    } catch (err) {
+      setLoading(false);
+      toast.error(err instanceof Error ? err.message : "Connexion impossible");
       return;
     }
+    setLoading(false);
     toast.success("Connexion réussie");
     navigate({ to: "/dashboard" });
   }
