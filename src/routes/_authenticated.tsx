@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import {
   LayoutDashboard,
   Calendar,
@@ -20,12 +20,14 @@ export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
 });
 
-const NAV_SECTIONS = [
+type NavTo = "/dashboard" | "/events" | "/participants" | "/polls" | "/checkin" | "/admin/setup";
+type NavItem = { to: NavTo; label: string; icon: ComponentType<{ className?: string }> };
+type NavSection = { label: string; items: NavItem[] };
+
+const NAV_SECTIONS: NavSection[] = [
   {
     label: "Pilotage",
-    items: [
-      { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-    ],
+    items: [{ to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard }],
   },
   {
     label: "Modules métier",
@@ -42,7 +44,7 @@ const NAV_SECTIONS = [
       { to: "/admin/setup", label: "Administration", icon: ShieldCheck },
     ],
   },
-] as const;
+];
 
 function AuthLayout() {
   const { isAuthenticated, loading, user, signOut } = useAuth();
