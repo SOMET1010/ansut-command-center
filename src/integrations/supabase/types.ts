@@ -223,6 +223,109 @@ export type Database = {
           },
         ]
       }
+      event_sessions: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          description: string | null
+          ends_at: string
+          event_id: string
+          id: string
+          location: string | null
+          session_type: string
+          sort_order: number
+          starts_at: string
+          title: string
+          track: string | null
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          ends_at: string
+          event_id: string
+          id?: string
+          location?: string | null
+          session_type?: string
+          sort_order?: number
+          starts_at: string
+          title: string
+          track?: string | null
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string
+          event_id?: string
+          id?: string
+          location?: string | null
+          session_type?: string
+          sort_order?: number
+          starts_at?: string
+          title?: string
+          track?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_sessions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_speakers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          event_id: string
+          full_name: string
+          id: string
+          linkedin_url: string | null
+          organization: string | null
+          photo_url: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          event_id: string
+          full_name: string
+          id?: string
+          linkedin_url?: string | null
+          organization?: string | null
+          photo_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          event_id?: string
+          full_name?: string
+          id?: string
+          linkedin_url?: string | null
+          organization?: string | null
+          photo_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_speakers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           capacity: number | null
