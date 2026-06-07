@@ -190,7 +190,7 @@ function AuthLayout() {
               "w-full text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground",
               collapsed && !mobileOpen ? "justify-center px-0" : "justify-start",
             )}
-            onClick={() => signOut().then(() => navigate({ to: "/" }))}
+            onClick={() => signOut().then(() => navigate({ to: "/login" }))}
           >
             <LogOut className="h-4 w-4" />
             {(!collapsed || mobileOpen) && <span className="ml-2">Déconnexion</span>}
