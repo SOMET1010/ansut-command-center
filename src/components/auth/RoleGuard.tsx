@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { useEffect, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ShieldAlert } from "lucide-react";
 import { useMyRole } from "@/hooks/useMyRole";
 import { Button } from "@/components/ui/button";
