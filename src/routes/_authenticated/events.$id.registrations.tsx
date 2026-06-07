@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock, Mail } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock, Mail, MessageSquare, Phone, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ type Reg = {
   phone: string | null;
   organization: string | null;
   position: string | null;
+  telegram_username: string | null;
   status: string;
   qr_token: string;
   created_at: string;
@@ -54,6 +55,8 @@ function RegistrationsPage() {
   const [pageSize, setPageSize] = useState(25);
   const [exporting, setExporting] = useState(false);
   const [sendingReminder, setSendingReminder] = useState(false);
+  const [showChannelPicker, setShowChannelPicker] = useState(false);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>(["Email"]);
 
   // Debounce de la recherche pour éviter trop de requêtes serveur
   useEffect(() => {
@@ -280,29 +283,81 @@ function RegistrationsPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="rounded-xl"
-            disabled={sendingReminder || stats.total === 0}
-            onClick={async () => {
-              if (!confirm(`Envoyer un email de rappel à tous les inscrits (${stats.total} personnes) ?`)) return;
-              setSendingReminder(true);
-              try {
-                const result = await sendEventReminder({ data: { event_id: id } });
-                if (result.ok) {
-                  toast.success(`Rappel envoyé à ${result.sent} participant${result.sent > 1 ? "s" : ""}${result.failed ? ` (${result.failed} échec${result.failed > 1 ? "s" : ""})` : ""}`);
-                } else {
-                  toast.error(result.error || "Erreur lors de l'envoi");
-                }
-              } catch (err) {
-                toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi du rappel");
-              } finally {
-                setSendingReminder(false);
-              }
-            }}
-          >
-            <Mail className="mr-2 h-4 w-4" /> {sendingReminder ? "Envoi..." : "Rappel"}
-          </Button>
+          <div className="relative">
+            <Button
+              variant="outline"
+              className="rounded-xl"
+              disabled={sendingReminder || stats.total === 0}
+              onClick={() => setShowChannelPicker(!showChannelPicker)}
+            >
+              <Send className="mr-2 h-4 w-4" /> {sendingReminder ? "Envoi..." : "Rappel"}
+            </Button>
+            {showChannelPicker && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-border bg-card p-4 shadow-lg">
+                <p className="mb-3 text-sm font-semibold text-foreground">Canaux de notification</p>
+                <div className="space-y-2">
+                  {[
+                    { id: "Email", label: "Email", icon: Mail, desc: "Tous les inscrits avec email" },
+                    { id: "WhatsApp", label: "WhatsApp", icon: MessageSquare, desc: "Inscrits avec n° de téléphone" },
+                    { id: "SMS", label: "SMS", icon: Phone, desc: "Inscrits avec n° de téléphone" },
+                    { id: "Telegram", label: "Telegram", icon: Send, desc: "Inscrits avec ID Telegram" },
+                  ].map((ch) => (
+                    <label key={ch.id} className="flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted">
+                      <input
+                        type="checkbox"
+                        checked={selectedChannels.includes(ch.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedChannels([...selectedChannels, ch.id]);
+                          } else {
+                            setSelectedChannels(selectedChannels.filter((c) => c !== ch.id));
+                          }
+                        }}
+                        className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                      />
+                      <ch.icon className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <div className="text-sm font-medium">{ch.label}</div>
+                        <div className="text-xs text-muted-foreground">{ch.desc}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Button
+                    size="sm"
+                    className="flex-1 rounded-lg"
+                    disabled={selectedChannels.length === 0 || sendingReminder}
+                    onClick={async () => {
+                      if (!confirm(`Envoyer un rappel via ${selectedChannels.join(", ")} à ${stats.total} inscrit(s) ?`)) return;
+                      setShowChannelPicker(false);
+                      setSendingReminder(true);
+                      try {
+                        const result = await sendEventReminder({ data: { event_id: id, channels: selectedChannels } });
+                        if (result.ok) {
+                          const details = result.details ? Object.entries(result.details)
+                            .map(([ch, s]) => `${ch}: ${(s as {sent:number}).sent} envoyé(s)`)
+                            .join(", ") : "";
+                          toast.success(`Rappel envoyé — ${details}`);
+                        } else {
+                          toast.error(result.error || "Erreur lors de l'envoi");
+                        }
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi");
+                      } finally {
+                        setSendingReminder(false);
+                      }
+                    }}
+                  >
+                    Envoyer
+                  </Button>
+                  <Button size="sm" variant="ghost" className="rounded-lg" onClick={() => setShowChannelPicker(false)}>
+                    Annuler
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
           <Button variant="outline" className="rounded-xl" onClick={exportCheckins} disabled={exporting || stats.checkedIn === 0}>
             <Download className="mr-2 h-4 w-4" /> Check-ins
           </Button>
@@ -371,6 +426,7 @@ function RegistrationsPage() {
                 <TableHead>Email</TableHead>
                 <TableHead className="hidden md:table-cell">Téléphone</TableHead>
                 <TableHead className="hidden lg:table-cell">Organisation</TableHead>
+                <TableHead className="hidden xl:table-cell">Telegram</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead className="hidden sm:table-cell">Inscrit le</TableHead>
                 <TableHead className="text-right">Badge</TableHead>
@@ -385,6 +441,7 @@ function RegistrationsPage() {
                     <TableCell className="text-muted-foreground">{r.email}</TableCell>
                     <TableCell className="hidden md:table-cell">{r.phone ?? "—"}</TableCell>
                     <TableCell className="hidden lg:table-cell">{r.organization ?? "—"}</TableCell>
+                    <TableCell className="hidden xl:table-cell">{r.telegram_username ? `@${r.telegram_username}` : "—"}</TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}>
                         {badge.label}

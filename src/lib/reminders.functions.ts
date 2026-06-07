@@ -1,36 +1,62 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { type NotificationChannel, sendMultiChannel } from "./notifications.functions";
 
 /**
- * Envoi de rappels aux participants inscrits à un événement.
+ * Envoi de rappels multi-canal aux participants inscrits à un événement.
+ *
+ * Tous les canaux transitent par le Hub ANSUT :
+ *  - Email
+ *  - WhatsApp
+ *  - SMS
+ *  - Telegram
+ *
+ * L'organisateur choisit les canaux à utiliser depuis l'interface.
  *
  * Sécurité :
- *  - L'appelant fournit uniquement l'event_id.
+ *  - L'appelant fournit uniquement l'event_id et les canaux souhaités.
  *  - Le serveur récupère les données depuis la base via le service role.
- *  - Utilise le Hub ANSUT existant pour l'envoi (même infrastructure que les confirmations).
- *  - Anti-flood : un seul rappel par événement toutes les 4 heures.
+ *  - Anti-flood : un seul rappel par événement par canal toutes les 4 heures.
  */
 
 const ReminderSchema = z.object({
   event_id: z.string().uuid(),
+  channels: z
+    .array(z.enum(["Email", "WhatsApp", "SMS", "Telegram"]))
+    .min(1, "Sélectionnez au moins un canal")
+    .default(["Email"]),
 });
 
-// Anti-flood : stocke le dernier envoi par event_id
+// Anti-flood : stocke le dernier envoi par event_id + canal
 const lastReminderSent = new Map<string, number>();
 const MIN_INTERVAL_MS = 4 * 60 * 60 * 1000; // 4 heures
 
 export const sendEventReminder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ReminderSchema.parse(input))
   .handler(async ({ data }) => {
-    // Anti-flood
-    const lastSent = lastReminderSent.get(data.event_id) ?? 0;
-    if (Date.now() - lastSent < MIN_INTERVAL_MS) {
-      const remainingMin = Math.ceil((MIN_INTERVAL_MS - (Date.now() - lastSent)) / 60_000);
+    // Anti-flood par canal
+    const blockedChannels: string[] = [];
+    for (const ch of data.channels) {
+      const key = `${data.event_id}:${ch}`;
+      const lastSent = lastReminderSent.get(key) ?? 0;
+      if (Date.now() - lastSent < MIN_INTERVAL_MS) {
+        const remainingMin = Math.ceil((MIN_INTERVAL_MS - (Date.now() - lastSent)) / 60_000);
+        blockedChannels.push(`${ch} (réessayez dans ${remainingMin} min)`);
+      }
+    }
+
+    // Filtrer les canaux disponibles (non bloqués par l'anti-flood)
+    const availableChannels = data.channels.filter(
+      (ch) => !blockedChannels.some((b) => b.startsWith(ch)),
+    ) as NotificationChannel[];
+
+    if (availableChannels.length === 0) {
       return {
         ok: false as const,
-        error: `Un rappel a déjà été envoyé récemment. Réessayez dans ${remainingMin} minutes.`,
+        error: `Rappels déjà envoyés récemment : ${blockedChannels.join(", ")}`,
         sent: 0,
+        details: {},
       };
     }
 
@@ -42,22 +68,22 @@ export const sendEventReminder = createServerFn({ method: "POST" })
       .single();
 
     if (evErr || !event) {
-      return { ok: false as const, error: "Événement introuvable", sent: 0 };
+      return { ok: false as const, error: "Événement introuvable", sent: 0, details: {} };
     }
 
-    // Récupérer les inscrits confirmés (pas annulés)
+    // Récupérer les inscrits confirmés/pending
     const { data: registrations, error: regErr } = await supabaseAdmin
       .from("event_registrations")
-      .select("id, full_name, email, phone, status")
+      .select("id, full_name, email, phone, telegram_username, status")
       .eq("event_id", data.event_id)
       .in("status", ["confirmed", "pending"]);
 
     if (regErr) {
-      return { ok: false as const, error: regErr.message, sent: 0 };
+      return { ok: false as const, error: regErr.message, sent: 0, details: {} };
     }
 
     if (!registrations || registrations.length === 0) {
-      return { ok: false as const, error: "Aucun inscrit à notifier", sent: 0 };
+      return { ok: false as const, error: "Aucun inscrit à notifier", sent: 0, details: {} };
     }
 
     // Préparer le contenu du rappel
@@ -67,73 +93,79 @@ export const sendEventReminder = createServerFn({ method: "POST" })
     });
     const location = (event.location ?? "en ligne").trim() || "en ligne";
 
-    // Configuration Hub ANSUT
-    const baseUrl = process.env.ANSUT_HUB_URL;
-    const username = process.env.ANSUT_HUB_USERNAME;
-    const password = process.env.ANSUT_HUB_PASSWORD;
-
-    if (!baseUrl || !username || !password) {
-      console.error("ANSUT Hub credentials missing for reminders");
-      return { ok: false as const, error: "Hub de notification non configuré", sent: 0 };
+    // Compteurs par canal
+    const channelStats: Record<string, { sent: number; failed: number }> = {};
+    for (const ch of availableChannels) {
+      channelStats[ch] = { sent: 0, failed: 0 };
     }
 
-    const url = `${baseUrl.replace(/\/+$/, "")}/api/message/send`;
-    let sentCount = 0;
-    let failCount = 0;
-
-    // Envoyer les rappels par email (batch)
+    // Envoyer les rappels à chaque inscrit sur les canaux disponibles
     for (const reg of registrations) {
-      if (!reg.email) continue;
-
-      const emailContent = [
-        `Bonjour ${reg.full_name},`,
+      const personalizedText = [
+        `Bonjour ${reg.full_name.trim()},`,
         ``,
-        `Ceci est un rappel pour l'événement "${event.name}" auquel vous êtes inscrit(e).`,
+        `Rappel : l'événement "${event.name}" approche !`,
         ``,
         `📅 Date : ${dateStr}`,
         `📍 Lieu : ${location}`,
         ``,
-        `N'oubliez pas de vous munir de votre badge QR (reçu lors de votre inscription) pour le contrôle d'accès.`,
+        `N'oubliez pas votre badge QR pour le contrôle d'accès.`,
         ``,
         `À bientôt !`,
         `L'équipe ANSUT EVENT`,
       ].join("\n");
 
-      const payload = {
-        username,
-        password,
-        channel: "Email",
-        to: reg.email.trim(),
-        subject: `Rappel — ${event.name} · ${dateStr}`,
-        content: emailContent,
-        ishtml: false,
-      };
+      const params = [reg.full_name.trim(), event.name.trim(), dateStr, location];
 
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (res.ok) {
-          sentCount++;
+      // Déterminer les canaux applicables pour ce participant
+      const regChannels: NotificationChannel[] = [];
+      for (const ch of availableChannels) {
+        if (ch === "Email" && reg.email) regChannels.push("Email");
+        if (ch === "WhatsApp" && reg.phone) regChannels.push("WhatsApp");
+        if (ch === "SMS" && reg.phone) regChannels.push("SMS");
+        if (ch === "Telegram" && reg.telegram_username) regChannels.push("Telegram");
+      }
+
+      if (regChannels.length === 0) continue;
+
+      const { results } = await sendMultiChannel({
+        email: reg.email ?? null,
+        phone: reg.phone ?? null,
+        telegramUsername: reg.telegram_username ?? null,
+        content: personalizedText,
+        subject: `Rappel — ${event.name} · ${dateStr}`,
+        eventName: event.name,
+        params,
+        channels: regChannels,
+      });
+
+      // Comptabiliser les résultats
+      for (const [ch, result] of Object.entries(results)) {
+        if (result.ok) {
+          channelStats[ch].sent++;
         } else {
-          failCount++;
-          console.error(`Reminder send failed for ${reg.email}:`, res.status);
+          channelStats[ch].failed++;
         }
-      } catch (err) {
-        failCount++;
-        console.error(`Reminder send exception for ${reg.email}:`, err);
       }
     }
 
-    // Enregistrer l'horodatage anti-flood
-    lastReminderSent.set(data.event_id, Date.now());
+    // Enregistrer l'horodatage anti-flood pour chaque canal utilisé
+    for (const ch of availableChannels) {
+      if (channelStats[ch].sent > 0) {
+        lastReminderSent.set(`${data.event_id}:${ch}`, Date.now());
+      }
+    }
+
+    // Calculer les totaux
+    const totalSent = Object.values(channelStats).reduce((sum, s) => sum + s.sent, 0);
+    const totalFailed = Object.values(channelStats).reduce((sum, s) => sum + s.failed, 0);
 
     return {
       ok: true as const,
-      sent: sentCount,
-      failed: failCount,
+      sent: totalSent,
+      failed: totalFailed,
       total: registrations.length,
+      details: channelStats,
+      blockedChannels: blockedChannels.length > 0 ? blockedChannels : undefined,
     };
   });
