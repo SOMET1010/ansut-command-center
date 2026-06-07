@@ -77,7 +77,7 @@ function Dashboard() {
         />
       </SectionGrid>
 
-      <SectionGrid title="Actions Direction" cols={3}>
+      <SectionGrid title="Actions Direction" cols={3} withLogo logoSuffix="Console DG">
         <QuickAction
           to="/events"
           icon={Calendar}
