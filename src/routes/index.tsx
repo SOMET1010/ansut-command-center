@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 const landingQueryOptions = queryOptions({
   queryKey: ["landing-data"],
@@ -127,11 +128,9 @@ function Landing() {
       <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-primary/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-lg font-bold text-secondary-foreground sm:h-10 sm:w-10 sm:text-xl">
-              A
-            </div>
+            <AnsutLogo size="md" className="shrink-0" />
             <div className="min-w-0 leading-tight">
-              <div className="truncate font-display font-bold tracking-tight text-white">ANSUT EVENT</div>
+              <div className="truncate font-display font-bold tracking-tight text-white">EVENT</div>
               <div className="hidden text-[10px] uppercase tracking-[0.2em] text-white/75 md:block">
                 SUTEL 2026 Official
               </div>

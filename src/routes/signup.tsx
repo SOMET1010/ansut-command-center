@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Créer un compte — ANSUT EVENT" }] }),
@@ -64,11 +65,9 @@ function SignupPage() {
         <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-secondary/25 blur-[120px]" />
 
         <Link to="/" className="relative flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary text-xl font-bold text-secondary-foreground shadow-lg">
-            A
-          </div>
+          <AnsutLogo size="lg" />
           <div className="leading-tight">
-            <div className="font-display text-lg font-bold">ANSUT EVENT</div>
+            <div className="font-display text-lg font-bold">EVENT</div>
             <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
               Plateforme officielle du SUTEL
             </div>
@@ -110,10 +109,8 @@ function SignupPage() {
       <div className="flex items-center justify-center bg-background px-6 py-12">
         <div className="w-full max-w-md">
           <Link to="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
-              A
-            </div>
-            <span className="text-lg font-semibold">ANSUT EVENT</span>
+            <AnsutLogo size="md" />
+            <span className="text-lg font-semibold">EVENT</span>
           </Link>
 
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
