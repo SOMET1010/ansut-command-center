@@ -223,6 +223,42 @@ export type Database = {
           },
         ]
       }
+      event_session_speakers: {
+        Row: {
+          created_at: string
+          session_id: string
+          sort_order: number
+          speaker_id: string
+        }
+        Insert: {
+          created_at?: string
+          session_id: string
+          sort_order?: number
+          speaker_id: string
+        }
+        Update: {
+          created_at?: string
+          session_id?: string
+          sort_order?: number
+          speaker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_session_speakers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_session_speakers_speaker_id_fkey"
+            columns: ["speaker_id"]
+            isOneToOne: false
+            referencedRelation: "event_speakers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_sessions: {
         Row: {
           capacity: number | null
@@ -551,6 +587,42 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          participant_id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          participant_id: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          participant_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_bookmarks_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_bookmarks_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
             referencedColumns: ["id"]
           },
         ]
