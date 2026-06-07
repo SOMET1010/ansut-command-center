@@ -1,74 +1,83 @@
-# Plan — Phase 2 : CRUD événements + inscriptions publiques
+## Refonte ANSUT — Charte exécutive
 
-## Problème de démarrage (à résoudre en premier)
-Aucun utilisateur n'a actuellement le rôle `org_admin` → personne ne peut créer d'événement à cause des RLS. Solution :
-- **Seed** : créer l'organisation **ANSUT** (slug `ansut`) en base
-- **Bootstrap admin** : fonction `claim_first_admin()` security-definer — le premier utilisateur connecté qui l'appelle devient `super_admin` automatiquement (puis verrouillée). Bouton visible uniquement si aucun super_admin n'existe encore.
+Adaptation de la skill **ansut-design-system** (écrite pour Tailwind v3 + HSL) au stack actuel (**Tailwind v4 + OKLCH + tokens dans `src/styles.css`**, pas de `tailwind.config.ts`). La charte sémantique reste 100 % respectée, seule la syntaxe des tokens change.
 
-## Base de données (1 migration)
+### 1. Design tokens (`src/styles.css`)
 
-Nouvelle table :
+Remplacement complet de la palette Navy Trust actuelle par la palette ANSUT, traduite en OKLCH :
+
+- **ANSUT Blue** `#2256A3` → `--primary`
+- **ANSUT Blue Dark** `#0E2440` → `--sidebar`, gradient header
+- **ANSUT Orange** `#F08224` → `--secondary` (CTA majeurs, parcimonie)
+- **SUTA Purple** `#6366F1` → `--suta` (exclusivement IA)
+- **Signaux** : `--signal-critical / warning / stable / ok`
+- Gradients : `--gradient-sidebar`, `--gradient-header`, `--gradient-kpi-hero`
+- Utilitaires v4 : `@utility glass`, `@utility sidebar-glass`, `@utility card-elevated`, `@utility card-elevated-hover`, `@utility suta-border-animated`, `@utility content-padding`, `@utility section-gap`, `@utility page-max-width`
+- Fonts : Avenir → fallback Inter (chargé via `<link>` dans `__root.tsx` — Space Grotesk/DM Sans retirés)
+- Mode sombre : variantes `.dark` complètes
+- Touch targets 44×44 sur pointeurs coarse + reduced-motion
+
+### 2. Composants exécutifs (`src/components/ansut/`)
+
+| Composant | Rôle |
+|---|---|
+| `KPICard.tsx` | Titre uppercase, valeur tabulaire `text-3xl font-bold`, trend coloré (signal), `<TrafficLight />` intégrée |
+| `TrafficLight.tsx` | Pastille vert/orange/rouge (signal-ok / warning / critical) avec tooltip |
+| `AlertBanner.tsx` | Bandeau gauche bordé `border-l-4 border-signal-critical bg-ansut-danger-light` |
+| `SutaPanel.tsx` | Panneau IA `suta-border-animated` + badge violet « IA » |
+| `ExecHero.tsx` | Bandeau Zone 1 avec `--gradient-kpi-hero`, 1 KPI dominant + 3-4 satellites |
+| `SectionGrid.tsx` | Helper grille `grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4` |
+
+Variante bouton ajoutée dans `button.tsx` : `ansut-orange` (CTA secondaire orange, 1 par écran max).
+
+### 3. Layout 3 zones — AppShell
+
+Refonte de `src/routes/_authenticated.tsx` :
+
 ```text
-event_registrations
-  id, event_id (FK), user_id (nullable, pour inscriptions anonymes),
-  full_name, email, phone, organization, position,
-  status ('pending' | 'confirmed' | 'cancelled' | 'checked_in'),
-  qr_token (UUID unique, généré côté serveur en Phase 3),
-  created_at, updated_at
-  UNIQUE (event_id, email)
+┌──────────┬─────────────────────────────────────────┐
+│          │  TopBar (clair, breadcrumb, notifs)     │
+│ Sidebar  ├─────────────────────────────────────────┤
+│ (sombre, │  Zone 1 — ExecHero (gradient navy)      │
+│ gradient,│  ┌─ KPI dominant ─┬─ 3-4 satellites ─┐ │
+│ collap-  │  └────────────────┴───────────────────┘ │
+│ sible    ├─────────────────────────────────────────┤
+│ icon)    │  Zone 2 — Analyse (grille cards)        │
+│          ├─────────────────────────────────────────┤
+│          │  Zone 3 — SUTA / Actions DG             │
+└──────────┴─────────────────────────────────────────┘
 ```
 
-RLS :
-- **INSERT** public (`anon` + `authenticated`) — n'importe qui peut s'inscrire à un événement `published`
-- **SELECT** : admins/staff de l'organisation, ou le participant lui-même (par `user_id` si connecté)
-- **UPDATE/DELETE** : admins/staff uniquement
-- Validation trigger : refuse l'insert si l'événement n'est pas `published` ou si capacité atteinte
+- Sidebar passe en `bg-sidebar` + `sidebar-glass` (gradient vertical sombre), logo + rôle DG, sections fixes (Pilotage / Modules / Exécution), mode collapsed icon-only.
+- TopBar : breadcrumb dérivé de la route, bouton notifs (badge orange si alertes), avatar + déconnexion.
+- Contenu : `content-padding page-max-width section-gap`, objectif **zero scroll** en 1440×900.
 
-Fonctions :
-- `claim_first_admin()` → assigne `super_admin` à `auth.uid()` si aucun n'existe
-- `set_updated_at` déjà en place
+### 4. Pages refondues selon layout 3 zones
 
-Seed : insert `organizations (name='ANSUT', slug='ansut', primary_color='#1d3a8a')`
+- **`/dashboard`** : ExecHero avec « Indice de Maîtrise » (KPI dominant) + Événements/Participants/Check-ins/Sondages (satellites) → grille 3 QuickActions → SutaPanel (suggestions IA mockées).
+- **`/events`**, **`/participants`**, **`/polls`**, **`/checkin`** : header compact + grille cards `card-elevated`, suppression des shadows lourdes.
+- **`/login`**, **`/signup`** : passage en `bg-card` + `card-elevated`, CTA principal `bg-primary`, accent orange retiré du panneau gauche (remplacé par `--gradient-header`).
+- **`/`** (landing) : conserve l'identité actuelle mais migre vers les nouveaux tokens (primary bleu ANSUT, accent orange parcimonie).
 
-## Frontend
+### 5. Règles dures appliquées
 
-### Admin (sous `/_authenticated/`)
-- **`/events`** (refonte) : liste avec actions (Voir, Éditer, Publier/Dépublier, Supprimer), bouton "Nouvel événement", filtres statut
-- **`/events/new`** : formulaire création (name, slug auto, description, location, starts_at, ends_at, capacity, cover_url, status)
-- **`/events/$id/edit`** : édition du même formulaire
-- **`/events/$id/registrations`** : liste participants + export CSV + recherche + filtre statut
-- **`/admin/setup`** (visible si aucun super_admin) : bouton "Devenir administrateur" → appelle `claim_first_admin()`
+1. Aucun hex en composant — tout via tokens sémantiques.
+2. Orange réservé aux CTA majeurs (max 1/écran) et badges vigilance.
+3. Violet réservé à l'IA (SutaPanel uniquement).
+4. `card-elevated` partout, **plus de `shadow-lg/xl`**.
+5. Layout 3 zones par défaut sur écrans authentifiés.
+6. Fonts : Inter (fallback Avenir), Space Grotesk + DM Sans retirés.
 
-### Public
-- **`/e/$slug`** : page publique d'événement
-  - Hero (cover, nom, dates, lieu)
-  - Description
-  - Formulaire d'inscription (nom, email, téléphone, organisation, poste)
-  - Message de confirmation après envoi
-  - SEO : title/description/og spécifiques à l'événement (via loader)
+### 6. Hors scope (skill ANSUT mais non livré ici)
 
-### Composants partagés
-- `EventForm` (réutilisé new/edit) avec validation Zod
-- `RegistrationForm` (page publique)
-- `CSVExport` util pour la liste participants
+- `useAppStore` Zustand (filtres globaux Année/Trim/Mois/Direction) — pas de données métier qui le justifient encore.
+- `GlobalFilterBar`, `NotificationCenter`, `StorytellingMode`, `PresentationMode` — à activer quand les écrans pilotage seront brancheés sur de vraies données KPI.
+- Mode sombre toggle UI (les tokens `.dark` sont prêts, le switch viendra avec les préférences utilisateur).
 
-## Notifications (placeholder)
-Pour ne pas bloquer Phase 2 sur les APIs Radar/Cockpit :
-- Message de confirmation in-app affiché après inscription
-- Stub `sendRegistrationNotification(registration)` côté server function — log uniquement. Branchement réel API OTP en **Phase 2.5** dès que tu fournis les endpoints.
+### Détails techniques
 
-## Sidebar
-Ajout : lien "Setup admin" conditionnel (si aucun super_admin)
-
-## Hors-scope de cette phase
-- Génération QR + badges PDF (Phase 3)
-- Envoi réel WhatsApp/Telegram/Email (attente endpoints Radar/Cockpit)
-- Multi-organisation côté UI (UI fixée à ANSUT pour MVP SUTEL 3 ; le schéma reste multi-tenant)
-
-## Livrables
-- 1 migration DB (table `event_registrations` + fonctions + seed ANSUT)
-- 6 nouveaux fichiers route
-- 2 composants formulaires + 1 util CSV
-- Sidebar mise à jour
-
-Réponds **"Go"** pour lancer.
+- Tokens OKLCH calculés depuis les HSL de la skill (ex: `211 65% 39%` → `oklch(0.49 0.13 256)`).
+- `@theme` v4 inline mapping pour exposer `bg-ansut-blue`, `text-signal-critical`, etc.
+- `@source inline("…")` pour safelister les classes signal/ansut dynamiques utilisées via props.
+- `font-family` : `"Inter", "Avenir", system-ui, sans-serif` (Avenir n'étant pas une web font libre, Inter sert de rendu effectif partout).
+- Retrait des imports `@fontsource/space-grotesk` et `@fontsource/dm-sans` dans `__root.tsx`, remplacés par `@fontsource/inter`.

@@ -69,12 +69,17 @@ function CheckinPage() {
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Check-in</h1>
-      <p className="mt-1 text-muted-foreground">Scannez le QR code du badge pour valider l'arrivée.</p>
+    <div className="section-gap">
+      <div>
+        <h1 className="font-display text-2xl font-bold tracking-tight">Check-in</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Scannez le QR code du badge pour valider l'arrivée.
+        </p>
+      </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.1fr]">
-        <div className="rounded-xl border border-border bg-card p-4">
+      <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
+        <div className="card-elevated rounded-lg border border-border bg-card p-4">
+
           <div className="flex items-center justify-between">
             <h2 className="font-semibold inline-flex items-center gap-2"><Camera className="h-4 w-4" /> Scanner</h2>
             {paused && (
@@ -97,22 +102,23 @@ function CheckinPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="card-elevated rounded-lg border border-border bg-card p-5">
           {error ? (
-            <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+            <div className="rounded-md border-l-4 border-signal-critical bg-ansut-danger-light p-3 text-sm text-signal-critical">
               <AlertCircle className="mb-2 h-5 w-5" />
               {error}
             </div>
           ) : result ? (
             <div>
-              <div className={`flex items-start gap-3 rounded-lg p-4 ${
+              <div className={`flex items-start gap-3 rounded-md border-l-4 p-3 ${
                 result.already_checked_in
-                  ? "border border-yellow-500/30 bg-yellow-500/10"
-                  : "border border-green-500/30 bg-green-500/10"
+                  ? "border-signal-warning bg-ansut-orange-light"
+                  : "border-signal-ok bg-accent"
               }`}>
                 <CheckCircle2 className={`mt-0.5 h-6 w-6 ${
-                  result.already_checked_in ? "text-yellow-500" : "text-green-500"
+                  result.already_checked_in ? "text-signal-warning" : "text-signal-ok"
                 }`} />
+
                 <div>
                   <div className="text-sm font-medium">
                     {result.already_checked_in ? "Déjà enregistré" : "Entrée validée"}
@@ -143,9 +149,10 @@ function CheckinPage() {
       </div>
 
       {history.length > 0 && (
-        <div className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Derniers check-ins</h2>
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div>
+          <h2 className="mb-3 font-display text-base font-semibold">Derniers check-ins</h2>
+          <div className="card-elevated overflow-hidden rounded-lg border border-border bg-card">
+
             <ul className="divide-y divide-border">
               {history.map((h) => (
                 <li key={h.registration_id + h.checked_at} className="flex items-center justify-between px-4 py-2 text-sm">

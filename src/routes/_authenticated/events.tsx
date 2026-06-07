@@ -58,18 +58,21 @@ function EventsPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="section-gap">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Événements</h1>
-          <p className="mt-1 text-muted-foreground">Gérez vos événements et leurs inscriptions.</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight">Événements</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Gérez vos événements et leurs inscriptions.
+          </p>
         </div>
         <Button onClick={() => navigate({ to: "/events/new" })}>
           <Plus className="mr-2 h-4 w-4" /> Nouvel événement
         </Button>
       </div>
 
-      <div className="rounded-xl border border-border bg-card">
+      <div className="card-elevated rounded-lg border border-border bg-card">
+
         {loading ? (
           <p className="p-8 text-center text-muted-foreground">Chargement...</p>
         ) : events.length === 0 ? (
