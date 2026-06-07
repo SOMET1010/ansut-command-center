@@ -185,10 +185,14 @@ function AuthLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* TopBar */}
         <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-border bg-card/85 px-4 backdrop-blur-md">
-          <div className="flex items-center gap-2.5 text-xs">
-            <Link to="/dashboard" className="md:hidden" aria-label="Accueil console">
+          <div className="flex min-w-0 items-center gap-2.5 text-xs">
+            <Link to="/dashboard" className="shrink-0" aria-label="Accueil console ANSUT EVENT">
               <AnsutLogo size="sm" />
             </Link>
+            <span className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground/70 sm:inline">
+              ANSUT EVENT
+            </span>
+            <span className="hidden text-muted-foreground/30 sm:inline">·</span>
             <Link
               to="/dashboard"
               className="font-semibold text-muted-foreground transition-colors hover:text-foreground"
@@ -196,7 +200,7 @@ function AuthLayout() {
               Console
             </Link>
             <span className="text-muted-foreground/40">/</span>
-            <span className="font-semibold text-foreground">{currentLabel}</span>
+            <span className="truncate font-semibold text-foreground">{currentLabel}</span>
           </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="relative h-8 w-8">
