@@ -188,7 +188,7 @@ function EventsPage() {
                             <Edit className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => togglePublish(ev)} title={ev.status === "published" ? "Dépublier" : "Publier"}>
+                        <Button variant="ghost" size="sm" onClick={() => togglePublishMut.mutate(ev)} disabled={togglePublishMut.isPending} title={ev.status === "published" ? "Dépublier" : "Publier"}>
                           {ev.status === "published" ? "Dépublier" : "Publier"}
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => remove(ev)} title="Supprimer">
