@@ -304,6 +304,8 @@ export type Database = {
         }[]
       }
       claim_first_admin: { Args: never; Returns: boolean }
+      current_user_org: { Args: never; Returns: string }
+      event_org: { Args: { _event_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
