@@ -15,6 +15,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
