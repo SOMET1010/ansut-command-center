@@ -23,12 +23,14 @@ import { Route as MeRoleRouteImport } from './routes/me.role'
 import { Route as LiveSessionIdRouteImport } from './routes/live.$sessionId'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AttendanceSessionIdRouteImport } from './routes/attendance.$sessionId'
+import { Route as AnnoncesSlugRouteImport } from './routes/annonces.$slug'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
+import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated/announcements'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
 import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
@@ -106,6 +108,11 @@ const AttendanceSessionIdRoute = AttendanceSessionIdRouteImport.update({
   path: '/attendance/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnnoncesSlugRoute = AnnoncesSlugRouteImport.update({
+  id: '/annonces/$slug',
+  path: '/annonces/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgendaSlugRoute = AgendaSlugRouteImport.update({
   id: '/agenda/$slug',
   path: '/agenda/$slug',
@@ -137,6 +144,12 @@ const AuthenticatedCheckinRoute = AuthenticatedCheckinRouteImport.update({
   path: '/checkin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAnnouncementsRoute =
+  AuthenticatedAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedEventsNewRoute = AuthenticatedEventsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -183,12 +196,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
@@ -211,12 +226,14 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
@@ -241,12 +258,14 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/announcements': typeof AuthenticatedAnnouncementsRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
@@ -271,12 +290,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/announcements'
     | '/checkin'
     | '/dashboard'
     | '/events'
     | '/participants'
     | '/polls'
     | '/agenda/$slug'
+    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
     | '/live/$sessionId'
@@ -299,12 +320,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/announcements'
     | '/checkin'
     | '/dashboard'
     | '/events'
     | '/participants'
     | '/polls'
     | '/agenda/$slug'
+    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
     | '/live/$sessionId'
@@ -328,12 +351,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/_authenticated/announcements'
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/events'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/agenda/$slug'
+    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
     | '/live/$sessionId'
@@ -359,6 +384,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   AgendaSlugRoute: typeof AgendaSlugRoute
+  AnnoncesSlugRoute: typeof AnnoncesSlugRoute
   AttendanceSessionIdRoute: typeof AttendanceSessionIdRoute
   ESlugRoute: typeof ESlugRoute
   LiveSessionIdRoute: typeof LiveSessionIdRoute
@@ -470,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AttendanceSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/annonces/$slug': {
+      id: '/annonces/$slug'
+      path: '/annonces/$slug'
+      fullPath: '/annonces/$slug'
+      preLoaderRoute: typeof AnnoncesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agenda/$slug': {
       id: '/agenda/$slug'
       path: '/agenda/$slug'
@@ -510,6 +543,13 @@ declare module '@tanstack/react-router' {
       path: '/checkin'
       fullPath: '/checkin'
       preLoaderRoute: typeof AuthenticatedCheckinRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/announcements': {
+      id: '/_authenticated/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/events/new': {
@@ -583,6 +623,7 @@ const AuthenticatedEventsRouteWithChildren =
   AuthenticatedEventsRoute._addFileChildren(AuthenticatedEventsRouteChildren)
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAnnouncementsRoute: typeof AuthenticatedAnnouncementsRoute
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
@@ -592,6 +633,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAnnouncementsRoute: AuthenticatedAnnouncementsRoute,
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
@@ -613,6 +655,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   AgendaSlugRoute: AgendaSlugRoute,
+  AnnoncesSlugRoute: AnnoncesSlugRoute,
   AttendanceSessionIdRoute: AttendanceSessionIdRoute,
   ESlugRoute: ESlugRoute,
   LiveSessionIdRoute: LiveSessionIdRoute,
@@ -626,3 +669,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
