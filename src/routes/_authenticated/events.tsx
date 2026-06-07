@@ -94,6 +94,13 @@ function EventsPage() {
     mutationFn: async (ev: EventRow) => {
       // Générer un slug unique
       const newSlug = `${ev.slug}-copie-${Date.now().toString(36)}`;
+      const { data: src, error: srcErr } = await supabase
+        .from("events")
+        .select("organization_id")
+        .eq("id", ev.id)
+        .single();
+      if (srcErr) throw srcErr;
+      if (!src?.organization_id) throw new Error("Organisation introuvable");
       const { error } = await supabase.from("events").insert({
         name: `${ev.name} (copie)`,
         slug: newSlug,
@@ -104,7 +111,7 @@ function EventsPage() {
         capacity: ev.capacity,
         cover_url: ev.cover_url,
         status: "draft",
-        organization_id: (await supabase.from("events").select("organization_id").eq("id", ev.id).single()).data?.organization_id,
+        organization_id: src.organization_id,
       });
       if (error) throw error;
     },
