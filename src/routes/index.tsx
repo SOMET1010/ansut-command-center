@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 const landingQueryOptions = queryOptions({
   queryKey: ["landing-data"],
