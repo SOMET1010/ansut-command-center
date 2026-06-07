@@ -28,6 +28,31 @@ function Dashboard() {
     staleTime: 30_000,
   });
 
+  const { data: registrationsCount } = useQuery({
+    queryKey: ["dashboard", "registrations-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("event_registrations")
+        .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+    staleTime: 30_000,
+  });
+
+  const { data: checkinsCount } = useQuery({
+    queryKey: ["dashboard", "checkins-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("event_registrations")
+        .select("*", { count: "exact", head: true })
+        .not("checked_in_at", "is", null);
+      if (error) throw error;
+      return count ?? 0;
+    },
+    staleTime: 30_000,
+  });
+
   return (
     <div className="section-gap">
       {/* ZONE 1 — Hero + KPI satellites */}
@@ -41,9 +66,9 @@ function Dashboard() {
         primaryLevel="ok"
         satellites={[
           { label: "Événements", value: eventsCount ?? "—", hint: "Au catalogue" },
-          { label: "Participants", value: "—", hint: "Inscrits validés" },
-          { label: "Check-ins", value: "—", hint: "Badges scannés" },
-          { label: "Sondages", value: "—", hint: "Actifs" },
+          { label: "Participants", value: registrationsCount ?? "—", hint: "Inscrits validés" },
+          { label: "Check-ins", value: checkinsCount ?? "—", hint: "Badges scannés" },
+          { label: "Sondages", value: "—", hint: "Phase 2" },
         ]}
       />
 
@@ -62,20 +87,20 @@ function Dashboard() {
         />
         <KPICard
           label="Participants"
-          value="—"
+          value={registrationsCount ?? "—"}
           hint="Inscriptions validées"
           icon={Users}
         />
         <KPICard
           label="Check-ins"
-          value="—"
+          value={checkinsCount ?? "—"}
           hint="Présence J réel"
           icon={QrCode}
         />
         <KPICard
           label="Sondages"
           value="—"
-          hint="Engagement live"
+          hint="Phase 2"
           icon={Vote}
         />
       </SectionGrid>
@@ -85,19 +110,19 @@ function Dashboard() {
           to="/events"
           icon={Calendar}
           title="Gérer les événements"
-          desc="Catalogue, conférences et arbitrages programmatiques."
-        />
-        <QuickAction
-          to="/participants"
-          icon={Users}
-          title="Suivre les participants"
-          desc="Validation des inscriptions et exports DG."
+          desc="Catalogue, inscriptions et arbitrages programmatiques."
         />
         <QuickAction
           to="/checkin"
           icon={QrCode}
           title="Check-in & badges"
           desc="Scan QR temps réel et contrôle d'accès."
+        />
+        <QuickAction
+          to="/admin/setup"
+          icon={Users}
+          title="Administration"
+          desc="Configuration des rôles et des accès."
         />
       </SectionGrid>
 
@@ -128,7 +153,7 @@ function QuickAction({
   title,
   desc,
 }: {
-  to: "/events" | "/participants" | "/checkin";
+  to: "/events" | "/checkin" | "/admin/setup";
   icon: typeof Calendar;
   title: string;
   desc: string;
