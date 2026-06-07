@@ -223,6 +223,148 @@ export type Database = {
           },
         ]
       }
+      event_session_speakers: {
+        Row: {
+          created_at: string
+          role: string | null
+          session_id: string
+          sort_order: number
+          speaker_id: string
+        }
+        Insert: {
+          created_at?: string
+          role?: string | null
+          session_id: string
+          sort_order?: number
+          speaker_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: string | null
+          session_id?: string
+          sort_order?: number
+          speaker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_session_speakers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_session_speakers_speaker_id_fkey"
+            columns: ["speaker_id"]
+            isOneToOne: false
+            referencedRelation: "event_speakers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_sessions: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          description: string | null
+          ends_at: string
+          event_id: string
+          id: string
+          location: string | null
+          session_type: string
+          sort_order: number
+          starts_at: string
+          title: string
+          track: string | null
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          ends_at: string
+          event_id: string
+          id?: string
+          location?: string | null
+          session_type?: string
+          sort_order?: number
+          starts_at: string
+          title: string
+          track?: string | null
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string
+          event_id?: string
+          id?: string
+          location?: string | null
+          session_type?: string
+          sort_order?: number
+          starts_at?: string
+          title?: string
+          track?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_sessions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_speakers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          event_id: string
+          full_name: string
+          id: string
+          linkedin_url: string | null
+          organization: string | null
+          photo_url: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          event_id: string
+          full_name: string
+          id?: string
+          linkedin_url?: string | null
+          organization?: string | null
+          photo_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          event_id?: string
+          full_name?: string
+          id?: string
+          linkedin_url?: string | null
+          organization?: string | null
+          photo_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_speakers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           capacity: number | null
@@ -452,6 +594,42 @@ export type Database = {
           },
         ]
       }
+      session_bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          participant_id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          participant_id: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          participant_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_bookmarks_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_bookmarks_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       super_admin_bootstrap_emails: {
         Row: {
           created_at: string
@@ -500,289 +678,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      event_conversations: {
-        Row: {
-          id: string
-          event_id: string
-          participant_a: string
-          participant_b: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          event_id: string
-          participant_a: string
-          participant_b: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          event_id?: string
-          participant_a?: string
-          participant_b?: string
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_conversations_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_conversations_participant_a_fkey"; columns: ["participant_a"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_conversations_participant_b_fkey"; columns: ["participant_b"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-        ]
-      }
-      event_messages: {
-        Row: {
-          id: string
-          conversation_id: string
-          sender_id: string
-          content: string
-          read_at: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          conversation_id: string
-          sender_id: string
-          content: string
-          read_at?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          conversation_id?: string
-          sender_id?: string
-          content?: string
-          read_at?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_messages_conversation_id_fkey"; columns: ["conversation_id"]; referencedRelation: "event_conversations"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_messages_sender_id_fkey"; columns: ["sender_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-        ]
-      }
-      event_speakers: {
-        Row: {
-          id: string
-          event_id: string
-          full_name: string
-          title: string | null
-          organization: string | null
-          bio: string | null
-          photo_url: string | null
-          linkedin_url: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          event_id: string
-          full_name: string
-          title?: string | null
-          organization?: string | null
-          bio?: string | null
-          photo_url?: string | null
-          linkedin_url?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          event_id?: string
-          full_name?: string
-          title?: string | null
-          organization?: string | null
-          bio?: string | null
-          photo_url?: string | null
-          linkedin_url?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_speakers_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
-        ]
-      }
-      event_sessions: {
-        Row: {
-          id: string
-          event_id: string
-          title: string
-          description: string | null
-          session_type: string
-          track: string | null
-          location: string | null
-          starts_at: string
-          ends_at: string
-          capacity: number | null
-          sort_order: number
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          event_id: string
-          title: string
-          description?: string | null
-          session_type?: string
-          track?: string | null
-          location?: string | null
-          starts_at: string
-          ends_at: string
-          capacity?: number | null
-          sort_order?: number
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          event_id?: string
-          title?: string
-          description?: string | null
-          session_type?: string
-          track?: string | null
-          location?: string | null
-          starts_at?: string
-          ends_at?: string
-          capacity?: number | null
-          sort_order?: number
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_sessions_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
-        ]
-      }
-      event_session_speakers: {
-        Row: {
-          id: string
-          session_id: string
-          speaker_id: string
-          role: string
-        }
-        Insert: {
-          id?: string
-          session_id: string
-          speaker_id: string
-          role?: string
-        }
-        Update: {
-          id?: string
-          session_id?: string
-          speaker_id?: string
-          role?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_session_speakers_session_id_fkey"; columns: ["session_id"]; referencedRelation: "event_sessions"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_session_speakers_speaker_id_fkey"; columns: ["speaker_id"]; referencedRelation: "event_speakers"; referencedColumns: ["id"] },
-        ]
-      }
-      session_bookmarks: {
-        Row: {
-          id: string
-          session_id: string
-          participant_id: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          session_id: string
-          participant_id: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          session_id?: string
-          participant_id?: string
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "session_bookmarks_session_id_fkey"; columns: ["session_id"]; referencedRelation: "event_sessions"; referencedColumns: ["id"] },
-          { foreignKeyName: "session_bookmarks_participant_id_fkey"; columns: ["participant_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-        ]
-      }
-      session_attendance: {
-        Row: {
-          id: string
-          session_id: string
-          participant_id: string
-          checked_at: string
-        }
-        Insert: {
-          id?: string
-          session_id: string
-          participant_id: string
-          checked_at?: string
-        }
-        Update: {
-          id?: string
-          session_id?: string
-          participant_id?: string
-          checked_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "session_attendance_session_id_fkey"; columns: ["session_id"]; referencedRelation: "event_sessions"; referencedColumns: ["id"] },
-          { foreignKeyName: "session_attendance_participant_id_fkey"; columns: ["participant_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-        ]
-      }
-      live_polls: {
-        Row: {
-          id: string
-          session_id: string
-          question: string
-          poll_type: string
-          options: Json
-          is_active: boolean
-          show_results: boolean
-          sort_order: number
-          created_at: string
-          closed_at: string | null
-        }
-        Insert: {
-          id?: string
-          session_id: string
-          question: string
-          poll_type?: string
-          options?: Json
-          is_active?: boolean
-          show_results?: boolean
-          sort_order?: number
-          created_at?: string
-          closed_at?: string | null
-        }
-        Update: {
-          id?: string
-          session_id?: string
-          question?: string
-          poll_type?: string
-          options?: Json
-          is_active?: boolean
-          show_results?: boolean
-          sort_order?: number
-          created_at?: string
-          closed_at?: string | null
-        }
-        Relationships: [
-          { foreignKeyName: "live_polls_session_id_fkey"; columns: ["session_id"]; referencedRelation: "event_sessions"; referencedColumns: ["id"] },
-        ]
-      }
-      live_poll_votes: {
-        Row: {
-          id: string
-          poll_id: string
-          participant_id: string
-          answer: Json
-          voted_at: string
-        }
-        Insert: {
-          id?: string
-          poll_id: string
-          participant_id: string
-          answer: Json
-          voted_at?: string
-        }
-        Update: {
-          id?: string
-          poll_id?: string
-          participant_id?: string
-          answer?: Json
-          voted_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "live_poll_votes_poll_id_fkey"; columns: ["poll_id"]; referencedRelation: "live_polls"; referencedColumns: ["id"] },
-          { foreignKeyName: "live_poll_votes_participant_id_fkey"; columns: ["participant_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
         ]
       }
     }
@@ -835,14 +730,6 @@ export type Database = {
         Returns: string
       }
       super_admin_exists: { Args: never; Returns: boolean }
-      get_or_create_conversation: {
-        Args: {
-          p_event_id: string
-          p_participant_a: string
-          p_participant_b: string
-        }
-        Returns: string
-      }
     }
     Enums: {
       app_role:
