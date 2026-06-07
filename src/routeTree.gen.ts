@@ -15,6 +15,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
+import { Route as MessagesSlugRouteImport } from './routes/messages.$slug'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
@@ -55,6 +57,16 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NetworkingSlugRoute = NetworkingSlugRouteImport.update({
+  id: '/networking/$slug',
+  path: '/networking/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesSlugRoute = MessagesSlugRouteImport.update({
+  id: '/messages/$slug',
+  path: '/messages/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ESlugRoute = ESlugRouteImport.update({
@@ -133,6 +145,8 @@ export interface FileRoutesByFullPath {
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/e/$slug': typeof ESlugRoute
+  '/messages/$slug': typeof MessagesSlugRoute
+  '/networking/$slug': typeof NetworkingSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -152,6 +166,8 @@ export interface FileRoutesByTo {
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/e/$slug': typeof ESlugRoute
+  '/messages/$slug': typeof MessagesSlugRoute
+  '/networking/$slug': typeof NetworkingSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -173,6 +189,8 @@ export interface FileRoutesById {
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/e/$slug': typeof ESlugRoute
+  '/messages/$slug': typeof MessagesSlugRoute
+  '/networking/$slug': typeof NetworkingSlugRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -194,6 +212,8 @@ export interface FileRouteTypes {
     | '/participants'
     | '/polls'
     | '/e/$slug'
+    | '/messages/$slug'
+    | '/networking/$slug'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -213,6 +233,8 @@ export interface FileRouteTypes {
     | '/participants'
     | '/polls'
     | '/e/$slug'
+    | '/messages/$slug'
+    | '/networking/$slug'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -233,6 +255,8 @@ export interface FileRouteTypes {
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/e/$slug'
+    | '/messages/$slug'
+    | '/networking/$slug'
     | '/_authenticated/admin/setup'
     | '/_authenticated/events/new'
     | '/_authenticated/events/$id/edit'
@@ -249,6 +273,8 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   ESlugRoute: typeof ESlugRoute
+  MessagesSlugRoute: typeof MessagesSlugRoute
+  NetworkingSlugRoute: typeof NetworkingSlugRoute
   ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
   ApiPublicAuthTokenRoute: typeof ApiPublicAuthTokenRoute
 }
@@ -295,6 +321,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/networking/$slug': {
+      id: '/networking/$slug'
+      path: '/networking/$slug'
+      fullPath: '/networking/$slug'
+      preLoaderRoute: typeof NetworkingSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages/$slug': {
+      id: '/messages/$slug'
+      path: '/messages/$slug'
+      fullPath: '/messages/$slug'
+      preLoaderRoute: typeof MessagesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/e/$slug': {
@@ -430,6 +470,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   ESlugRoute: ESlugRoute,
+  MessagesSlugRoute: MessagesSlugRoute,
+  NetworkingSlugRoute: NetworkingSlugRoute,
   ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,
   ApiPublicAuthTokenRoute: ApiPublicAuthTokenRoute,
 }
