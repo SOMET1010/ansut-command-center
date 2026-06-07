@@ -134,10 +134,9 @@ function Landing() {
           <div className="hidden items-center gap-8 lg:flex">
             <Link to="/" className="text-[13px] font-medium text-white">Accueil</Link>
             <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Programme</Link>
-            <Link to="/participants" className="text-[13px] font-medium text-white/65 transition hover:text-white">Participants</Link>
             <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Exposition</Link>
             <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Partenaires</Link>
-            <Link to="/dashboard" className="text-[13px] font-medium text-white/65 transition hover:text-white">Statistiques</Link>
+            <Link to="/signup" className="text-[13px] font-medium text-white/65 transition hover:text-white">S'inscrire</Link>
           </div>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
