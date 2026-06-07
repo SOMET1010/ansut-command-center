@@ -125,14 +125,14 @@ function Landing() {
     <div className="min-h-dvh bg-background">
       {/* STICKY NAV */}
       <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-primary/95 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-xl font-bold text-secondary-foreground">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6">
+          <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-lg font-bold text-secondary-foreground sm:h-10 sm:w-10 sm:text-xl">
               A
             </div>
-            <div className="leading-tight">
-              <div className="font-display font-bold tracking-tight text-white">ANSUT EVENT</div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
+            <div className="min-w-0 leading-tight">
+              <div className="truncate font-display font-bold tracking-tight text-white">ANSUT EVENT</div>
+              <div className="hidden text-[10px] uppercase tracking-[0.2em] text-white/75 md:block">
                 SUTEL 2026 Official
               </div>
             </div>
@@ -147,12 +147,15 @@ function Landing() {
             <Link to="/dashboard" className="text-sm font-medium text-white/70 transition hover:text-white">Statistiques</Link>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" className="text-white hover:bg-white/10 hover:text-white">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white sm:size-default">
               <Link to="/login">Connexion</Link>
             </Button>
-            <Button asChild variant="ansut-orange" className="rounded-full shadow-sm">
-              <Link to="/signup">Créer un compte</Link>
+            <Button asChild variant="ansut-orange" size="sm" className="rounded-full shadow-sm sm:size-default">
+              <Link to="/signup">
+                <span className="sm:hidden">S'inscrire</span>
+                <span className="hidden sm:inline">Créer un compte</span>
+              </Link>
             </Button>
           </div>
         </div>
