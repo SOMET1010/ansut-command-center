@@ -8,6 +8,7 @@ import { KPICard } from "@/components/ansut/KPICard";
 import { SectionGrid } from "@/components/ansut/SectionGrid";
 import { SutaPanel } from "@/components/ansut/SutaPanel";
 import { AlertBanner } from "@/components/ansut/AlertBanner";
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
