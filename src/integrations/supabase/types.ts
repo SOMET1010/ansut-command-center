@@ -52,17 +52,115 @@ export type Database = {
           },
         ]
       }
+      event_conversations: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          participant_a: string
+          participant_b: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          participant_a: string
+          participant_b: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          participant_a?: string
+          participant_b?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_conversations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_conversations_participant_a_fkey"
+            columns: ["participant_a"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_conversations_participant_b_fkey"
+            columns: ["participant_b"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "event_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_registrations: {
         Row: {
+          bio: string | null
           checked_in_at: string | null
           checked_in_by: string | null
+          country: string | null
           created_at: string
           email: string
           event_id: string
           full_name: string
           id: string
+          interests: string[] | null
+          is_visible_in_directory: boolean
+          linkedin_url: string | null
           organization: string | null
+          participant_category: string
           phone: string | null
+          photo_url: string | null
           position: string | null
           qr_token: string
           status: string
@@ -70,15 +168,22 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          bio?: string | null
           checked_in_at?: string | null
           checked_in_by?: string | null
+          country?: string | null
           created_at?: string
           email: string
           event_id: string
           full_name: string
           id?: string
+          interests?: string[] | null
+          is_visible_in_directory?: boolean
+          linkedin_url?: string | null
           organization?: string | null
+          participant_category?: string
           phone?: string | null
+          photo_url?: string | null
           position?: string | null
           qr_token?: string
           status?: string
@@ -86,15 +191,22 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          bio?: string | null
           checked_in_at?: string | null
           checked_in_by?: string | null
+          country?: string | null
           created_at?: string
           email?: string
           event_id?: string
           full_name?: string
           id?: string
+          interests?: string[] | null
+          is_visible_in_directory?: boolean
+          linkedin_url?: string | null
           organization?: string | null
+          participant_category?: string
           phone?: string | null
+          photo_url?: string | null
           position?: string | null
           qr_token?: string
           status?: string
@@ -413,6 +525,14 @@ export type Database = {
       claim_first_admin: { Args: never; Returns: boolean }
       current_user_org: { Args: never; Returns: string }
       event_org: { Args: { _event_id: string }; Returns: string }
+      get_or_create_conversation: {
+        Args: {
+          p_event_id: string
+          p_participant_a: string
+          p_participant_b: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
