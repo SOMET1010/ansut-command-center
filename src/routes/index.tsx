@@ -132,7 +132,7 @@ function Landing() {
             </div>
             <div className="leading-tight">
               <div className="font-display font-bold tracking-tight text-white">ANSUT EVENT</div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
                 SUTEL 2026 Official
               </div>
             </div>
@@ -482,7 +482,7 @@ function StatCard({
         <Icon className="h-5 w-5" />
       </div>
       <div className="text-2xl font-bold leading-none text-white">{value}</div>
-      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/70">
+      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/85">
         {label}
       </div>
     </div>
