@@ -50,9 +50,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const activeMatch = matches[matches.length - 1];
   const routeId = activeMatch?.routeId ?? "(unknown)";
   const pathname = activeMatch?.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
-  const isDebug =
-    import.meta.env.DEV ||
-    (typeof window !== "undefined" && window.location.search.includes("debug=1"));
+  // Debug panel: DEV only. No production escape hatch (anciennement ?debug=1)
+  // pour éviter d'exposer stack traces et IDs de routes internes.
+  const isDebug = import.meta.env.DEV;
 
   useEffect(() => {
     reportLovableError(error, {
@@ -115,7 +115,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               </pre>
             )}
             <p className="mt-3 text-[11px] text-muted-foreground">
-              Add <code className="font-mono">?debug=1</code> to any URL to show this panel in production.
+              Debug panel visible en développement uniquement.
             </p>
           </details>
         )}

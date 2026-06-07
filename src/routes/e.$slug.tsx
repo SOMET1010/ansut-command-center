@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AnsutLogo } from "@/components/ansut/Logo";
-import { sendHubMessage, buildRegistrationTemplateParams } from "@/lib/notifications.functions";
+import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 
 export const Route = createFileRoute("/e/$slug")({
@@ -130,26 +130,12 @@ function PublicEventPage() {
     }
     setQrToken(token as string);
 
-    // Confirmation WhatsApp (best-effort, ne bloque pas l'UI)
-    if (parsed.data.phone) {
-      const params = buildRegistrationTemplateParams({
-        fullName: parsed.data.full_name,
-        eventName: event.name,
-        startsAt: event.starts_at,
-        location: event.location,
-      });
-      const fallbackText = `Bonjour ${params[0]}, votre inscription à "${params[1]}" est confirmée.\nDate : ${params[2]}\nLieu : ${params[3]}\n\nMerci — ANSUT EVENT.`;
-      sendHubMessage({
-        data: {
-          to: parsed.data.phone.replace(/\s+/g, ""),
-          channel: "WhatsApp",
-          content: fallbackText,
-          template: {
-            name: "ansut_event_confirmation",
-            languageCode: "fr",
-            parameters: params,
-          },
-        },
+    // Confirmation WhatsApp (best-effort, ne bloque pas l'UI).
+    // Le serveur regénère destinataire + contenu depuis le qr_token — l'appelant
+    // ne peut donc pas cibler un numéro arbitraire ni un message arbitraire.
+    if (parsed.data.phone && token) {
+      sendRegistrationConfirmation({
+        data: { qr_token: token as string, channel: "WhatsApp" },
       }).catch((err) => console.warn("Hub notify failed", err));
     }
 
