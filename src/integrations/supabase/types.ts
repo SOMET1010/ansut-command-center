@@ -429,22 +429,22 @@ export type Database = {
           answer: Json
           created_at: string
           id: string
+          participant_id: string | null
           poll_id: string
-          voter_id: string | null
         }
         Insert: {
           answer: Json
           created_at?: string
           id?: string
+          participant_id?: string | null
           poll_id: string
-          voter_id?: string | null
         }
         Update: {
           answer?: Json
           created_at?: string
           id?: string
+          participant_id?: string | null
           poll_id?: string
-          voter_id?: string | null
         }
         Relationships: [
           {
