@@ -54,15 +54,22 @@ export type Database = {
       }
       event_registrations: {
         Row: {
+          bio: string | null
           checked_in_at: string | null
           checked_in_by: string | null
+          country: string | null
           created_at: string
           email: string
           event_id: string
           full_name: string
           id: string
+          interests: string[] | null
+          is_visible_in_directory: boolean
+          linkedin_url: string | null
           organization: string | null
+          participant_category: string
           phone: string | null
+          photo_url: string | null
           position: string | null
           qr_token: string
           status: string
@@ -70,15 +77,22 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          bio?: string | null
           checked_in_at?: string | null
           checked_in_by?: string | null
+          country?: string | null
           created_at?: string
           email: string
           event_id: string
           full_name: string
           id?: string
+          interests?: string[] | null
+          is_visible_in_directory?: boolean
+          linkedin_url?: string | null
           organization?: string | null
+          participant_category?: string
           phone?: string | null
+          photo_url?: string | null
           position?: string | null
           qr_token?: string
           status?: string
@@ -86,15 +100,22 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          bio?: string | null
           checked_in_at?: string | null
           checked_in_by?: string | null
+          country?: string | null
           created_at?: string
           email?: string
           event_id?: string
           full_name?: string
           id?: string
+          interests?: string[] | null
+          is_visible_in_directory?: boolean
+          linkedin_url?: string | null
           organization?: string | null
+          participant_category?: string
           phone?: string | null
+          photo_url?: string | null
           position?: string | null
           qr_token?: string
           status?: string

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { z } from "zod";
-import { Calendar, MapPin, CheckCircle2, IdCard, AlertCircle } from "lucide-react";
+import { Calendar, MapPin, CheckCircle2, IdCard, AlertCircle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,7 @@ function PublicEventPage() {
   const [isFull, setIsFull] = useState(false);
   const [form, setForm] = useState({
     full_name: "", email: "", phone: "", organization: "", position: "",
+    country: "", participant_category: "other", bio: "", linkedin_url: "", is_visible_in_directory: true,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -136,6 +137,24 @@ function PublicEventPage() {
       p_organization: parsed.data.organization ?? "",
       p_position: parsed.data.position ?? "",
     });
+
+    // Mise à jour des champs profil networking (best-effort, après inscription)
+    if (!error && token) {
+      const { data: reg } = await supabase
+        .from("event_registrations")
+        .select("id")
+        .eq("qr_token", token as string)
+        .single();
+      if (reg) {
+        await supabase.from("event_registrations").update({
+          country: form.country || null,
+          participant_category: form.participant_category,
+          bio: form.bio || null,
+          linkedin_url: form.linkedin_url || null,
+          is_visible_in_directory: form.is_visible_in_directory,
+        }).eq("id", reg.id);
+      }
+    }
     setSubmitting(false);
     if (error) {
       if (error.message.includes("duplicate") || error.code === "23505") {
@@ -245,24 +264,33 @@ function PublicEventPage() {
                 Une copie vous a également été envoyée par email.
               </p>
               {qrToken && (
-                <Button
-                  size="lg"
-                  className="mt-8 h-12 px-8 text-base"
-                  disabled={downloadingBadge}
-                  onClick={async () => {
-                    setDownloadingBadge(true);
-                    try {
-                      await downloadBadge(qrToken);
-                    } catch (err) {
-                      toast.error(err instanceof Error ? err.message : "Erreur badge");
-                    } finally {
-                      setDownloadingBadge(false);
-                    }
-                  }}
-                >
-                  <IdCard className="mr-2 h-5 w-5" />
-                  {downloadingBadge ? "Génération du badge..." : "Télécharger mon badge"}
-                </Button>
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  <Button
+                    size="lg"
+                    className="h-12 px-8 text-base"
+                    disabled={downloadingBadge}
+                    onClick={async () => {
+                      setDownloadingBadge(true);
+                      try {
+                        await downloadBadge(qrToken);
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Erreur badge");
+                      } finally {
+                        setDownloadingBadge(false);
+                      }
+                    }}
+                  >
+                    <IdCard className="mr-2 h-5 w-5" />
+                    {downloadingBadge ? "Génération du badge..." : "Télécharger mon badge"}
+                  </Button>
+                  <Link
+                    to={`/networking/${slug}`}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                  >
+                    <Users className="h-4 w-4" />
+                    Découvrir les autres participants
+                  </Link>
+                </div>
               )}
             </div>
           ) : (
@@ -333,6 +361,76 @@ function PublicEventPage() {
                   value={form.position}
                   onChange={(v) => updateField("position", v)}
                 />
+                <FormField
+                  id="country"
+                  label="Pays"
+                  helper="Optionnel."
+                  error={errors.country}
+                  autoComplete="country-name"
+                  value={form.country}
+                  onChange={(v) => updateField("country", v)}
+                  placeholder="Côte d'Ivoire"
+                />
+
+                {/* Section Networking (repliable) */}
+                <details className="sm:col-span-2 rounded-lg border border-slate-200 p-4 mt-2">
+                  <summary className="cursor-pointer text-sm font-semibold text-primary select-none">
+                    Compléter mon profil networking (optionnel)
+                  </summary>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <Label htmlFor="participant_category" className="text-sm font-medium">Catégorie</Label>
+                      <select
+                        id="participant_category"
+                        value={form.participant_category}
+                        onChange={(e) => updateField("participant_category", e.target.value)}
+                        className="mt-1 w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
+                      >
+                        <option value="fsu">Fonds de Service Universel</option>
+                        <option value="regulator">Régulateur</option>
+                        <option value="operator">Opérateur télécom</option>
+                        <option value="partner">Partenaire financier</option>
+                        <option value="startup">Startup / Innovation</option>
+                        <option value="international_org">Organisation internationale</option>
+                        <option value="government">Gouvernement</option>
+                        <option value="other">Autre</option>
+                      </select>
+                    </div>
+                    <FormField
+                      id="linkedin_url"
+                      label="Profil LinkedIn"
+                      helper="URL complète."
+                      value={form.linkedin_url}
+                      onChange={(v) => updateField("linkedin_url", v)}
+                      placeholder="https://linkedin.com/in/votre-profil"
+                    />
+                    <div className="sm:col-span-2">
+                      <Label htmlFor="bio" className="text-sm font-medium">Courte présentation</Label>
+                      <textarea
+                        id="bio"
+                        value={form.bio}
+                        onChange={(e) => updateField("bio", e.target.value)}
+                        maxLength={280}
+                        rows={2}
+                        placeholder="Quelques mots sur vous et vos attentes..."
+                        className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary resize-none"
+                      />
+                      <p className="mt-1 text-xs text-muted-foreground">280 caractères max.</p>
+                    </div>
+                    <div className="sm:col-span-2 flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="is_visible_in_directory"
+                        checked={form.is_visible_in_directory}
+                        onChange={(e) => setForm((f) => ({ ...f, is_visible_in_directory: e.target.checked }))}
+                        className="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+                      />
+                      <Label htmlFor="is_visible_in_directory" className="text-sm cursor-pointer">
+                        Apparaître dans l’annuaire des participants
+                      </Label>
+                    </div>
+                  </div>
+                </details>
 
                 <div className="mt-2 sm:col-span-2">
                   <Button
