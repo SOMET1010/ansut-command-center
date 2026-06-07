@@ -118,10 +118,7 @@ export function NewsletterForm({ source = "landing" }: { source?: string }) {
       onSubmit={handleSubmit}
       className="flex flex-col justify-center rounded-2xl bg-card p-6 shadow-sm"
     >
-      <h3 className="text-lg font-bold">Restez informé</h3>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Recevez les dernières actualités, mises à jour et annonces du SUTEL.
-      </p>
+      {/* Titre géré par la section parente dans index.tsx */}
 
       {state === "done" && result ? (
         <div className="mt-4 space-y-3">
