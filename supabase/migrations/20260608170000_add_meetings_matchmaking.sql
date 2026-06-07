@@ -85,7 +85,7 @@ BEGIN
     r.full_name,
     r.email,
     r.organization,
-    r.job_title,
+    COALESCE(r.position, '')::TEXT AS job_title,
     r.country,
     r.bio,
     r.photo_url,

@@ -125,17 +125,35 @@ function NetworkingDirectory() {
       {/* En-tête */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Users className="h-4 w-4 text-primary" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold text-slate-800">
+                  Annuaire des participants
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {event.name}
+                </p>
+              </div>
             </div>
-            <h1 className="text-lg font-semibold text-slate-800">
-              Annuaire des participants
-            </h1>
+            <div className="flex items-center gap-3">
+              <Link
+                to={`/annonces/${slug}`}
+                className="text-xs font-medium text-muted-foreground hover:text-primary"
+              >
+                Annonces
+              </Link>
+              <Link
+                to={`/agenda/${slug}`}
+                className="text-xs font-medium text-muted-foreground hover:text-primary"
+              >
+                Programme
+              </Link>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground ml-11">
-            {event.name}
-          </p>
         </div>
       </header>
 

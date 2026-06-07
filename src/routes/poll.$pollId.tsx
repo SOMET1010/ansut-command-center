@@ -87,9 +87,9 @@ function PollVote() {
     setLoading(true);
 
     let answer: any;
-    if (poll.poll_type === "single_choice") {
+    if (poll.poll_type === "single") {
       answer = selectedOption;
-    } else if (poll.poll_type === "multiple_choice") {
+    } else if (poll.poll_type === "multi") {
       answer = selectedOptions;
     } else if (poll.poll_type === "rating") {
       answer = rating;
@@ -195,7 +195,7 @@ function PollVote() {
             <h2 className="mb-6 text-center text-lg font-bold">{poll.question}</h2>
 
             {/* Single choice */}
-            {poll.poll_type === "single_choice" && (
+            {poll.poll_type === "single" && (
               <div className="space-y-3">
                 {poll.options.map((option: string, idx: number) => (
                   <button
@@ -217,7 +217,7 @@ function PollVote() {
             )}
 
             {/* Multiple choice */}
-            {poll.poll_type === "multiple_choice" && (
+            {poll.poll_type === "multi" && (
               <div className="space-y-3">
                 {poll.options.map((option: string, idx: number) => (
                   <button
@@ -271,8 +271,8 @@ function PollVote() {
               onClick={handleVote}
               disabled={
                 loading ||
-                (poll.poll_type === "single_choice" && !selectedOption) ||
-                (poll.poll_type === "multiple_choice" && selectedOptions.length === 0) ||
+                (poll.poll_type === "single" && !selectedOption) ||
+                (poll.poll_type === "multi" && selectedOptions.length === 0) ||
                 (poll.poll_type === "rating" && rating === 0)
               }
               className="mt-6 w-full rounded-xl bg-purple-600 px-4 py-3 font-semibold text-white transition hover:bg-purple-700 disabled:opacity-50"

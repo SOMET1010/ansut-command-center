@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -249,24 +249,24 @@ function AnnoncesPage() {
           <p>Mise à jour automatique toutes les 10 secondes</p>
           {event && (
             <div className="mt-2 flex flex-wrap justify-center gap-4">
-              <a
-                href={`/agenda/${slug}`}
+              <Link
+                to={`/agenda/${slug}`}
                 className="text-primary hover:underline"
               >
                 Programme
-              </a>
-              <a
-                href={`/networking/${slug}`}
+              </Link>
+              <Link
+                to={`/networking/${slug}`}
                 className="text-primary hover:underline"
               >
                 Annuaire
-              </a>
-              <a
-                href={`/e/${slug}`}
+              </Link>
+              <Link
+                to={`/e/${slug}`}
                 className="text-primary hover:underline"
               >
                 Inscription
-              </a>
+              </Link>
             </div>
           )}
         </footer>

@@ -53,7 +53,7 @@ function PollsPage() {
 
   // Form state
   const [question, setQuestion] = useState("");
-  const [pollType, setPollType] = useState("single_choice");
+  const [pollType, setPollType] = useState("single");
   const [options, setOptions] = useState(["", ""]);
 
   // Charger les sessions
@@ -313,8 +313,8 @@ function PollsPage() {
                   onChange={(e) => setPollType(e.target.value)}
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
                 >
-                  <option value="single_choice">Choix unique</option>
-                  <option value="multiple_choice">Choix multiple</option>
+                  <option value="single">Choix unique</option>
+                  <option value="multi">Choix multiple</option>
                   <option value="rating">Notation (1 à 5 étoiles)</option>
                 </select>
               </div>
@@ -392,8 +392,8 @@ function PollsPage() {
                         </span>
                       )}
                       <span className="rounded bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
-                        {poll.poll_type === "single_choice" ? "Choix unique" :
-                         poll.poll_type === "multiple_choice" ? "Choix multiple" : "Notation"}
+                        {poll.poll_type === "single" ? "Choix unique" :
+                         poll.poll_type === "multi" ? "Choix multiple" : "Notation"}
                       </span>
                     </div>
                     <h3 className="mt-2 font-semibold">{poll.question}</h3>

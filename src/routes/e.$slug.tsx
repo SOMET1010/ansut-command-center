@@ -210,9 +210,17 @@ function PublicEventPage() {
               </div>
             </div>
           </Link>
-          <Link to="/login" className="text-xs font-medium text-muted-foreground hover:text-primary">
-            Espace organisateur
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to={`/annonces/${slug}`} className="text-xs font-medium text-muted-foreground hover:text-primary">
+              Annonces
+            </Link>
+            <Link to={`/agenda/${slug}`} className="text-xs font-medium text-muted-foreground hover:text-primary">
+              Programme
+            </Link>
+            <Link to="/login" className="text-xs font-medium text-muted-foreground hover:text-primary">
+              Espace organisateur
+            </Link>
+          </div>
         </div>
       </header>
 

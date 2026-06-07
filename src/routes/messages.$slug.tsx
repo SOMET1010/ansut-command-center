@@ -569,6 +569,12 @@ function PageShell({ slug, children }: { slug: string; children: React.ReactNode
           </Link>
           <div className="flex items-center gap-3">
             <Link
+              to={`/annonces/${slug}`}
+              className="text-xs font-medium text-muted-foreground hover:text-primary"
+            >
+              Annonces
+            </Link>
+            <Link
               to={`/networking/${slug}`}
               className="text-xs font-medium text-muted-foreground hover:text-primary"
             >
