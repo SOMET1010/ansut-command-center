@@ -1,6 +1,7 @@
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TrafficLight, type SignalLevel } from "./TrafficLight";
+import { AnsutLogo } from "./Logo";
 
 export function ExecHero({
   eyebrow,
