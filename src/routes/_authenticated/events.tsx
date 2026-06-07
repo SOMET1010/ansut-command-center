@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Eye, Users, Calendar, Globe, FileText, Archive } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Users, Calendar, Globe, FileText, Archive, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,12 @@ type EventRow = {
   id: string;
   name: string;
   slug: string;
+  description: string | null;
+  location: string | null;
   starts_at: string;
   ends_at: string;
-  location: string | null;
+  capacity: number | null;
+  cover_url: string | null;
   status: string;
 };
 
@@ -52,7 +55,7 @@ function EventsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("events")
-        .select("id,name,slug,starts_at,ends_at,location,status")
+        .select("id,name,slug,description,starts_at,ends_at,location,capacity,cover_url,status")
         .order("starts_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as EventRow[];
@@ -83,6 +86,32 @@ function EventsPage() {
       toast.success("Événement supprimé");
       queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
       queryClient.invalidateQueries({ queryKey: ["dashboard", "events-count"] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  const duplicateMut = useMutation({
+    mutationFn: async (ev: EventRow) => {
+      // Générer un slug unique
+      const newSlug = `${ev.slug}-copie-${Date.now().toString(36)}`;
+      const { error } = await supabase.from("events").insert({
+        name: `${ev.name} (copie)`,
+        slug: newSlug,
+        description: ev.description,
+        location: ev.location,
+        starts_at: ev.starts_at,
+        ends_at: ev.ends_at,
+        capacity: ev.capacity,
+        cover_url: ev.cover_url,
+        status: "draft",
+        organization_id: (await supabase.from("events").select("organization_id").eq("id", ev.id).single()).data?.organization_id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Événement dupliqué (brouillon)");
+      queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -190,6 +219,9 @@ function EventsPage() {
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => togglePublishMut.mutate(ev)} disabled={togglePublishMut.isPending} title={ev.status === "published" ? "Dépublier" : "Publier"}>
                           {ev.status === "published" ? "Dépublier" : "Publier"}
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => duplicateMut.mutate(ev)} disabled={duplicateMut.isPending} title="Dupliquer">
+                          <Copy className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => remove(ev)} title="Supprimer">
                           <Trash2 className="h-4 w-4 text-destructive" />

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { toCSVChunked, downloadCSV } from "@/lib/csv";
+import { sendEventReminder } from "@/lib/reminders.functions";
 import { downloadBadge } from "@/lib/badges";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
@@ -52,6 +53,7 @@ function RegistrationsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [exporting, setExporting] = useState(false);
+  const [sendingReminder, setSendingReminder] = useState(false);
 
   // Debounce de la recherche pour éviter trop de requêtes serveur
   useEffect(() => {
@@ -278,6 +280,29 @@ function RegistrationsPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="rounded-xl"
+            disabled={sendingReminder || stats.total === 0}
+            onClick={async () => {
+              if (!confirm(`Envoyer un email de rappel à tous les inscrits (${stats.total} personnes) ?`)) return;
+              setSendingReminder(true);
+              try {
+                const result = await sendEventReminder({ data: { event_id: id } });
+                if (result.ok) {
+                  toast.success(`Rappel envoyé à ${result.sent} participant${result.sent > 1 ? "s" : ""}${result.failed ? ` (${result.failed} échec${result.failed > 1 ? "s" : ""})` : ""}`);
+                } else {
+                  toast.error(result.error || "Erreur lors de l'envoi");
+                }
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi du rappel");
+              } finally {
+                setSendingReminder(false);
+              }
+            }}
+          >
+            <Mail className="mr-2 h-4 w-4" /> {sendingReminder ? "Envoi..." : "Rappel"}
+          </Button>
           <Button variant="outline" className="rounded-xl" onClick={exportCheckins} disabled={exporting || stats.checkedIn === 0}>
             <Download className="mr-2 h-4 w-4" /> Check-ins
           </Button>

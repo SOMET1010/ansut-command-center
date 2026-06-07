@@ -30,6 +30,7 @@ type PublicEvent = {
   starts_at: string;
   ends_at: string;
   cover_url: string | null;
+  capacity: number | null;
   status: string;
 };
 
@@ -69,22 +70,39 @@ function PublicEventPage() {
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [downloadingBadge, setDownloadingBadge] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [registrationCount, setRegistrationCount] = useState<number>(0);
+  const [isFull, setIsFull] = useState(false);
   const [form, setForm] = useState({
     full_name: "", email: "", phone: "", organization: "", position: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    supabase
-      .from("events")
-      .select("*")
-      .eq("slug", slug)
-      .eq("status", "published")
-      .maybeSingle()
-      .then(({ data }) => {
-        setEvent(data as PublicEvent | null);
-        setLoading(false);
-      });
+    async function loadEvent() {
+      const { data } = await supabase
+        .from("events")
+        .select("*")
+        .eq("slug", slug)
+        .eq("status", "published")
+        .maybeSingle();
+
+      const ev = data as PublicEvent | null;
+      setEvent(ev);
+
+      // Vérifier la capacité si l'événement existe et a une capacité définie
+      if (ev?.capacity) {
+        const { count } = await supabase
+          .from("event_registrations")
+          .select("id", { count: "exact", head: true })
+          .eq("event_id", ev.id);
+        const regCount = count ?? 0;
+        setRegistrationCount(regCount);
+        setIsFull(regCount >= ev.capacity);
+      }
+
+      setLoading(false);
+    }
+    loadEvent();
   }, [slug]);
 
   function updateField<K extends keyof typeof form>(key: K, value: string) {
@@ -194,7 +212,21 @@ function PublicEventPage() {
 
         {/* CARTE FORMULAIRE */}
         <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10">
-          {done ? (
+          {isFull && !done ? (
+            <div className="py-10 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-signal-warning/10">
+                <AlertCircle className="h-8 w-8 text-signal-warning" />
+              </div>
+              <h2 className="mt-5 text-2xl font-bold text-foreground">Inscriptions clôturées</h2>
+              <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
+                La capacité maximale de cet événement a été atteinte ({registrationCount}/{event?.capacity} places).
+                Les inscriptions sont automatiquement clôturées.
+              </p>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Pour toute demande, contactez l’équipe organisatrice de l’ANSUT.
+              </p>
+            </div>
+          ) : done ? (
             <div className="py-8 text-center">
               <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
               <h2 className="mt-4 text-2xl font-semibold">Inscription confirmée</h2>
