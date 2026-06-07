@@ -50,7 +50,7 @@ function Dashboard() {
         accréditations VIP avant J-7.
       </AlertBanner>
 
-      <SectionGrid title="Indicateurs opérationnels" cols={4}>
+      <SectionGrid title="Indicateurs opérationnels" cols={4} withLogo logoSuffix="SUTEL 2026 · ANSUT">
         <KPICard
           label="Événements"
           value={eventsCount ?? "—"}
