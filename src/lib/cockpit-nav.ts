@@ -33,7 +33,7 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
     items: [
       { to: "/events", label: "Événements" },
       { to: "/participants", label: "Participants", hidden: true },
-      { to: "/polls", label: "Live Polling", hidden: true },
+      { to: "/polls", label: "Live Polling" },
     ],
   },
   {
