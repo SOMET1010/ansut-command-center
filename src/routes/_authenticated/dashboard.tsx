@@ -55,28 +55,24 @@ function Dashboard() {
           value={eventsCount ?? "—"}
           hint="Catalogue"
           icon={Calendar}
-          level="stable"
         />
         <KPICard
           label="Participants"
           value="—"
           hint="Inscriptions validées"
           icon={Users}
-          level="ok"
         />
         <KPICard
           label="Check-ins"
           value="—"
           hint="Présence J réel"
           icon={QrCode}
-          level="stable"
         />
         <KPICard
           label="Sondages"
           value="—"
           hint="Engagement live"
           icon={Vote}
-          level="stable"
         />
       </SectionGrid>
 
