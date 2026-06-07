@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Edit } from "lucide-react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { EventForm, eventToValues, type EventFormValues } from "@/components/event-form";
+import { EventForm, eventToValues } from "@/components/event-form";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/events/$id/edit")({
@@ -13,18 +12,23 @@ export const Route = createFileRoute("/_authenticated/events/$id/edit")({
 
 function EditEvent() {
   const { id } = Route.useParams();
-  const [values, setValues] = useState<EventFormValues | null>(null);
-  const [orgId, setOrgId] = useState<string | null>(null);
 
-  useEffect(() => {
-    supabase.from("events").select("*").eq("id", id).single().then(({ data, error }) => {
-      if (error) toast.error(error.message);
-      else if (data) {
-        setValues(eventToValues(data));
-        setOrgId(data.organization_id);
-      }
-    });
-  }, [id]);
+  const { data } = useQuery({
+    queryKey: ["events", "detail", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const values = data ? eventToValues(data) : null;
+  const orgId = data?.organization_id ?? null;
+
 
   return (
     <div className="section-gap">
