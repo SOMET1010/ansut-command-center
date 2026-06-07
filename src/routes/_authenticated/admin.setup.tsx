@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -34,35 +34,65 @@ function AdminSetup() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl p-8">
-      <div className="rounded-xl border border-border bg-card p-8">
-        <ShieldCheck className="h-10 w-10 text-primary" />
-        <h1 className="mt-4 text-2xl font-bold">Configuration initiale</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Connecté en tant que <strong>{user?.email}</strong>.
+    <div className="section-gap">
+      <div>
+        <h1 className="font-display text-2xl font-bold tracking-tight">Configuration initiale</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Paramétrage du premier administrateur de la plateforme.
         </p>
+      </div>
 
-        {roles.includes("super_admin") ? (
-          <p className="mt-6 rounded-md bg-primary/10 p-4 text-sm text-primary">
-            Vous êtes déjà super administrateur.
+      <div className="mx-auto max-w-xl">
+        <div className="card-elevated rounded-2xl border border-border bg-card p-8">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+            <ShieldCheck className="h-7 w-7 text-primary" />
+          </div>
+
+          <h2 className="mt-5 text-lg font-bold text-foreground">Rôle super administrateur</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Connecté en tant que <span className="font-semibold text-foreground">{user?.email}</span>
           </p>
-        ) : adminExists === null ? (
-          <p className="mt-6 text-muted-foreground">Vérification...</p>
-        ) : adminExists ? (
-          <p className="mt-6 rounded-md bg-muted p-4 text-sm text-muted-foreground">
-            Un super administrateur est déjà configuré. Contactez-le pour obtenir des droits.
-          </p>
-        ) : (
-          <>
-            <p className="mt-4 text-sm">
-              Aucun super administrateur n'existe encore. Cliquez ci-dessous pour vous attribuer
-              ce rôle. Cette action est unique.
-            </p>
-            <Button className="mt-6" onClick={claim} disabled={claiming}>
-              {claiming ? "Configuration..." : "Devenir super administrateur"}
-            </Button>
-          </>
-        )}
+
+          <div className="mt-6">
+            {roles.includes("super_admin") ? (
+              <div className="flex items-start gap-3 rounded-xl bg-signal-ok/10 p-4">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-signal-ok" />
+                <div>
+                  <p className="text-sm font-semibold text-signal-ok">Déjà configuré</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Vous disposez déjà du rôle super administrateur.
+                  </p>
+                </div>
+              </div>
+            ) : adminExists === null ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                <span className="ml-3 text-sm text-muted-foreground">Vérification...</span>
+              </div>
+            ) : adminExists ? (
+              <div className="flex items-start gap-3 rounded-xl bg-signal-warning/10 p-4">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-signal-warning" />
+                <div>
+                  <p className="text-sm font-semibold text-signal-warning">Accès restreint</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Un super administrateur est déjà configuré. Contactez-le pour obtenir des droits.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Aucun super administrateur n'existe encore. Cliquez ci-dessous pour vous attribuer
+                  ce rôle. Cette action est <span className="font-semibold text-foreground">unique et irréversible</span>.
+                </p>
+                <Button className="w-full rounded-xl" onClick={claim} disabled={claiming}>
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  {claiming ? "Configuration en cours..." : "Devenir super administrateur"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

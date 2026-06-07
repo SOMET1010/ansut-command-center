@@ -143,55 +143,87 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="name">Nom *</Label>
-          <Input id="name" value={v.name} onChange={(e) => update("name", e.target.value)} required />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Informations principales */}
+      <fieldset className="space-y-4">
+        <legend className="text-sm font-semibold text-primary">Informations générales</legend>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="name" className="text-sm font-semibold">
+              Nom de l'événement <span className="text-destructive">*</span>
+            </Label>
+            <Input id="name" value={v.name} onChange={(e) => update("name", e.target.value)} required placeholder="Ex : SUTEL 2026 — Conférence plénière" />
+            <p className="text-xs text-muted-foreground">Le nom tel qu'il apparaîtra publiquement.</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="slug" className="text-sm font-semibold">Slug (URL publique)</Label>
+            <Input id="slug" value={v.slug} onChange={(e) => update("slug", slugify(e.target.value))} placeholder="auto-généré" />
+            <p className="text-xs text-muted-foreground">Identifiant dans l'URL : /e/{v.slug || "..."}</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="status" className="text-sm font-semibold">Statut</Label>
+            <Select value={v.status} onValueChange={(val) => update("status", val)}>
+              <SelectTrigger id="status"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Brouillon</SelectItem>
+                <SelectItem value="published">Publié</SelectItem>
+                <SelectItem value="archived">Archivé</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
+      </fieldset>
+
+      {/* Dates et lieu */}
+      <fieldset className="space-y-4 border-t border-border pt-5">
+        <legend className="text-sm font-semibold text-primary">Dates et lieu</legend>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="starts_at" className="text-sm font-semibold">
+              Début <span className="text-destructive">*</span>
+            </Label>
+            <Input id="starts_at" type="datetime-local" value={v.starts_at} onChange={(e) => update("starts_at", e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="ends_at" className="text-sm font-semibold">
+              Fin <span className="text-destructive">*</span>
+            </Label>
+            <Input id="ends_at" type="datetime-local" value={v.ends_at} onChange={(e) => update("ends_at", e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="location" className="text-sm font-semibold">Lieu</Label>
+            <Input id="location" value={v.location} onChange={(e) => update("location", e.target.value)} placeholder="Ex : Sofitel Abidjan Hôtel Ivoire" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="capacity" className="text-sm font-semibold">Capacité maximale</Label>
+            <Input id="capacity" type="number" min="0" value={v.capacity} onChange={(e) => update("capacity", e.target.value)} placeholder="Illimitée si vide" />
+          </div>
+        </div>
+      </fieldset>
+
+      {/* Contenu */}
+      <fieldset className="space-y-4 border-t border-border pt-5">
+        <legend className="text-sm font-semibold text-primary">Contenu</legend>
         <div className="space-y-2">
-          <Label htmlFor="slug">Slug (URL publique)</Label>
-          <Input id="slug" value={v.slug} onChange={(e) => update("slug", slugify(e.target.value))} placeholder="auto" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="status">Statut</Label>
-          <Select value={v.status} onValueChange={(val) => update("status", val)}>
-            <SelectTrigger id="status"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Brouillon</SelectItem>
-              <SelectItem value="published">Publié</SelectItem>
-              <SelectItem value="archived">Archivé</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="starts_at">Début *</Label>
-          <Input id="starts_at" type="datetime-local" value={v.starts_at} onChange={(e) => update("starts_at", e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="ends_at">Fin *</Label>
-          <Input id="ends_at" type="datetime-local" value={v.ends_at} onChange={(e) => update("ends_at", e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="location">Lieu</Label>
-          <Input id="location" value={v.location} onChange={(e) => update("location", e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="capacity">Capacité</Label>
-          <Input id="capacity" type="number" min="0" value={v.capacity} onChange={(e) => update("capacity", e.target.value)} />
-        </div>
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="cover_url">Image de couverture (URL)</Label>
+          <Label htmlFor="cover_url" className="text-sm font-semibold">Image de couverture (URL)</Label>
           <Input id="cover_url" value={v.cover_url} onChange={(e) => update("cover_url", e.target.value)} placeholder="https://..." />
+          <p className="text-xs text-muted-foreground">Format recommandé : 1200x400px, ratio 3:1.</p>
         </div>
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea id="description" rows={6} value={v.description} onChange={(e) => update("description", e.target.value)} />
+        <div className="space-y-2">
+          <Label htmlFor="description" className="text-sm font-semibold">Description</Label>
+          <Textarea id="description" rows={6} value={v.description} onChange={(e) => update("description", e.target.value)} placeholder="Décrivez l'événement, le programme, les intervenants..." />
+          <p className="text-xs text-muted-foreground">Visible sur la page publique d'inscription.</p>
         </div>
-      </div>
-      <div className="flex gap-2">
-        <Button type="submit" disabled={saving}>{saving ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer l'événement"}</Button>
-        <Button type="button" variant="outline" onClick={() => navigate({ to: "/events" })}>Annuler</Button>
+      </fieldset>
+
+      {/* Actions */}
+      <div className="flex gap-3 border-t border-border pt-5">
+        <Button type="submit" disabled={saving} className="rounded-xl">
+          {saving ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer l'événement"}
+        </Button>
+        <Button type="button" variant="outline" className="rounded-xl" onClick={() => navigate({ to: "/events" })}>
+          Annuler
+        </Button>
       </div>
     </form>
   );

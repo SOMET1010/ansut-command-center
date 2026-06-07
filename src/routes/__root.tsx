@@ -25,17 +25,17 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h1 className="text-7xl font-bold text-primary">404</h1>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">Page introuvable</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          La page que vous recherchez n'existe pas ou a été déplacée.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90"
           >
-            Go home
+            Retour à l'accueil
           </Link>
         </div>
       </div>
@@ -50,9 +50,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const activeMatch = matches[matches.length - 1];
   const routeId = activeMatch?.routeId ?? "(unknown)";
   const pathname = activeMatch?.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
-  // Debug panel: DEV only. No production escape hatch (anciennement ?debug=1)
-  // pour éviter d'exposer stack traces et IDs de routes internes.
-  const isDebug = import.meta.env.DEV;
+  const isDebug =
+    import.meta.env.DEV ||
+    (typeof window !== "undefined" && window.location.search.includes("debug=1"));
 
   useEffect(() => {
     reportLovableError(error, {
@@ -66,10 +66,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-2xl text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+          Cette page n'a pas pu être chargée
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Une erreur est survenue. Vous pouvez réessayer ou revenir à l'accueil.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -77,15 +77,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90"
           >
-            Try again
+            Réessayer
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-lg border border-input bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-all hover:bg-accent"
           >
-            Go home
+            Retour à l'accueil
           </a>
         </div>
 
@@ -95,16 +95,16 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             className="mt-8 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-left"
           >
             <summary className="cursor-pointer text-sm font-semibold text-destructive">
-              Debug details ({error.name || "Error"})
+              Détails de débogage ({error.name || "Error"})
             </summary>
             <dl className="mt-3 grid grid-cols-[110px_1fr] gap-x-3 gap-y-1 text-xs">
               <dt className="font-medium text-muted-foreground">Route ID</dt>
               <dd className="font-mono break-all">{routeId}</dd>
-              <dt className="font-medium text-muted-foreground">Pathname</dt>
+              <dt className="font-medium text-muted-foreground">Chemin</dt>
               <dd className="font-mono break-all">{pathname}</dd>
-              <dt className="font-medium text-muted-foreground">Match chain</dt>
+              <dt className="font-medium text-muted-foreground">Chaîne</dt>
               <dd className="font-mono break-all">
-                {matches.map((m) => m.routeId).join(" → ") || "(none)"}
+                {matches.map((m) => m.routeId).join(" → ") || "(aucune)"}
               </dd>
               <dt className="font-medium text-muted-foreground">Message</dt>
               <dd className="font-mono break-all text-destructive">{error.message}</dd>
@@ -115,7 +115,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               </pre>
             )}
             <p className="mt-3 text-[11px] text-muted-foreground">
-              Debug panel visible en développement uniquement.
+              Ajoutez <code className="font-mono">?debug=1</code> à l'URL pour afficher ce panneau en production.
             </p>
           </details>
         )}
@@ -129,18 +129,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "ANSUT Command Center is a web application for managing events, check-ins, and user subscriptions." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "ANSUT Command Center is a web application for managing events, check-ins, and user subscriptions." },
+      { title: "ANSUT EVENT — Plateforme événementielle officielle" },
+      { name: "description", content: "Plateforme de gestion événementielle de l'Agence Nationale du Service Universel des Télécommunications (ANSUT)." },
+      { name: "author", content: "ANSUT — DTDI" },
+      { property: "og:title", content: "ANSUT EVENT — Plateforme événementielle officielle" },
+      { property: "og:description", content: "Gérez vos événements, inscriptions et check-ins avec la plateforme ANSUT EVENT." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "ANSUT Command Center is a web application for managing events, check-ins, and user subscriptions." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5b1cdede-1142-4660-889c-cda8bb333254/id-preview-da12807a--66dc7aca-dae4-45b7-807c-65e4f402042b.lovable.app-1780855744955.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5b1cdede-1142-4660-889c-cda8bb333254/id-preview-da12807a--66dc7aca-dae4-45b7-807c-65e4f402042b.lovable.app-1780855744955.png" },
+      { name: "twitter:site", content: "@ansut_ci" },
     ],
     links: [
       {
@@ -157,7 +153,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <head>
         <HeadContent />
       </head>

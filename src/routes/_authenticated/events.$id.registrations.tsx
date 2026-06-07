@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,12 @@ type Reg = {
   checked_in_by: string | null;
 };
 
-
+const STATUS_BADGE: Record<string, { label: string; className: string }> = {
+  confirmed: { label: "Confirmé", className: "bg-signal-ok/10 text-signal-ok border border-signal-ok/20" },
+  pending: { label: "En attente", className: "bg-signal-warning/10 text-signal-warning border border-signal-warning/20" },
+  checked_in: { label: "Présent", className: "bg-primary/10 text-primary border border-primary/20" },
+  cancelled: { label: "Annulé", className: "bg-signal-critical/10 text-signal-critical border border-signal-critical/20" },
+};
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
 
@@ -72,12 +77,16 @@ function RegistrationsPage() {
     return matchesStatus && matchesSearch;
   }), [regs, search, statusFilter]);
 
-  // Réinitialise la page quand les filtres changent
   useEffect(() => { setPage(1); }, [search, statusFilter, pageSize]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
   const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // Stats
+  const confirmed = regs.filter((r) => r.status === "confirmed").length;
+  const checkedIn = regs.filter((r) => r.checked_in_at).length;
+  const pending = regs.filter((r) => r.status === "pending").length;
 
   async function runBackgroundCSV(
     label: string,
@@ -130,7 +139,6 @@ function RegistrationsPage() {
       toast.info("Aucun check-in à exporter.");
       return;
     }
-    // Récupère les noms des scanneurs (profils)
     const scannerIds = Array.from(
       new Set(checked.map((r) => r.checked_in_by).filter(Boolean) as string[]),
     );
@@ -170,32 +178,46 @@ function RegistrationsPage() {
     );
   }
 
-
   return (
-    <div className="p-8">
-      <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to="/events"><ArrowLeft className="mr-2 h-4 w-4" /> Retour</Link>
+    <div className="section-gap">
+      <Button variant="ghost" size="sm" asChild className="w-fit">
+        <Link to="/events">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Retour aux événements
+        </Link>
       </Button>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Participants</h1>
-          <p className="mt-1 text-muted-foreground">{eventName} — {filtered.length} inscrit{filtered.length > 1 ? "s" : ""}</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight">Participants</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {eventName} — {filtered.length} inscrit{filtered.length > 1 ? "s" : ""}
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={exportCheckins} disabled={exporting || regs.every((r) => !r.checked_in_at)}>
-            <Download className="mr-2 h-4 w-4" /> Export check-ins
+          <Button variant="outline" className="rounded-xl" onClick={exportCheckins} disabled={exporting || regs.every((r) => !r.checked_in_at)}>
+            <Download className="mr-2 h-4 w-4" /> Check-ins
           </Button>
-          <Button onClick={exportCSV} disabled={exporting || filtered.length === 0}>
+          <Button className="rounded-xl" onClick={exportCSV} disabled={exporting || filtered.length === 0}>
             <Download className="mr-2 h-4 w-4" /> Exporter CSV
           </Button>
         </div>
-
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        <div className="relative flex-1 min-w-[200px]">
+      {/* Statistiques rapides */}
+      {!loading && regs.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StatCard icon={Users} label="Total" value={regs.length} />
+          <StatCard icon={CheckCircle2} label="Confirmés" value={confirmed} />
+          <StatCard icon={IdCard} label="Présents" value={checkedIn} />
+          <StatCard icon={Clock} label="En attente" value={pending} />
+        </div>
+      )}
+
+      {/* Filtres */}
+      <div className="flex flex-wrap gap-3">
+        <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher..." className="pl-9" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher par nom, email, organisation..." className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
@@ -209,67 +231,83 @@ function RegistrationsPage() {
         </Select>
       </div>
 
-      <div className="rounded-xl border border-border bg-card">
+      {/* Tableau */}
+      <div className="card-elevated overflow-hidden rounded-xl border border-border bg-card">
         {loading ? (
-          <p className="p-8 text-center text-muted-foreground">Chargement...</p>
+          <div className="flex items-center justify-center py-16">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <p className="text-sm text-muted-foreground">Chargement...</p>
+            </div>
+          </div>
         ) : filtered.length === 0 ? (
-          <p className="p-12 text-center text-muted-foreground">Aucune inscription pour le moment.</p>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Users className="h-10 w-10 text-muted-foreground/50" />
+            <p className="mt-3 text-sm text-muted-foreground">Aucune inscription pour le moment.</p>
+          </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Nom</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Organisation</TableHead>
+                <TableHead className="hidden md:table-cell">Téléphone</TableHead>
+                <TableHead className="hidden lg:table-cell">Organisation</TableHead>
                 <TableHead>Statut</TableHead>
-                <TableHead>Inscrit le</TableHead>
+                <TableHead className="hidden sm:table-cell">Inscrit le</TableHead>
                 <TableHead className="text-right">Badge</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paged.map((r) => (
-                <TableRow key={r.id}>
-                  <TableCell className="font-medium">{r.full_name}</TableCell>
-                  <TableCell>{r.email}</TableCell>
-                  <TableCell>{r.phone ?? "—"}</TableCell>
-                  <TableCell>{r.organization ?? "—"}</TableCell>
-                  <TableCell>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{r.status}</span>
-                  </TableCell>
-                  <TableCell>{new Date(r.created_at).toLocaleDateString("fr-FR")}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={async () => {
-                        try {
-                          await downloadBadge(r.qr_token);
-                        } catch (err) {
-                          toast.error(err instanceof Error ? err.message : "Erreur badge");
-                        }
-                      }}
-                    >
-                      <IdCard className="mr-2 h-4 w-4" /> PDF
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {paged.map((r) => {
+                const badge = STATUS_BADGE[r.status] ?? { label: r.status, className: "bg-muted text-muted-foreground" };
+                return (
+                  <TableRow key={r.id} className="group">
+                    <TableCell className="font-medium">{r.full_name}</TableCell>
+                    <TableCell className="text-muted-foreground">{r.email}</TableCell>
+                    <TableCell className="hidden md:table-cell">{r.phone ?? "—"}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{r.organization ?? "—"}</TableCell>
+                    <TableCell>
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}>
+                        {badge.label}
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden tabular-nums sm:table-cell">
+                      {new Date(r.created_at).toLocaleDateString("fr-FR")}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="rounded-lg opacity-70 transition-opacity group-hover:opacity-100"
+                        onClick={async () => {
+                          try {
+                            await downloadBadge(r.qr_token);
+                          } catch (err) {
+                            toast.error(err instanceof Error ? err.message : "Erreur badge");
+                          }
+                        }}
+                      >
+                        <IdCard className="mr-1.5 h-3.5 w-3.5" /> PDF
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
-
         )}
       </div>
 
+      {/* Pagination */}
       {!loading && filtered.length > 0 && (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <span>
-              Affichage {(currentPage - 1) * pageSize + 1}–
-              {Math.min(currentPage * pageSize, filtered.length)} sur {filtered.length}
+            <span className="tabular-nums">
+              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} sur {filtered.length}
             </span>
             <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
-              <SelectTrigger className="h-8 w-[110px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-8 w-[100px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((n) => (
                   <SelectItem key={n} value={String(n)}>{n} / page</SelectItem>
@@ -281,17 +319,19 @@ function RegistrationsPage() {
             <Button
               variant="outline"
               size="sm"
+              className="rounded-lg"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="tabular-nums">
+            <span className="tabular-nums text-muted-foreground">
               Page {currentPage} / {totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
+              className="rounded-lg"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages}
             >
@@ -304,3 +344,16 @@ function RegistrationsPage() {
   );
 }
 
+function StatCard({ icon: Icon, label, value }: { icon: typeof Users; label: string; value: number }) {
+  return (
+    <div className="card-elevated flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+        <Icon className="h-4 w-4 text-primary" />
+      </div>
+      <div>
+        <div className="text-lg font-bold tabular-nums leading-tight text-foreground">{value}</div>
+        <div className="text-[11px] text-muted-foreground">{label}</div>
+      </div>
+    </div>
+  );
+}
