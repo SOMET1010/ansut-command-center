@@ -207,7 +207,7 @@ function PublicEventPage() {
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Calendar className="h-4 w-4 text-primary" />
-            {new Date(event.starts_at).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })}
+            {new Date(event.starts_at).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Abidjan" })}
           </span>
           {event.location && (
             <span className="inline-flex items-center gap-1.5">
