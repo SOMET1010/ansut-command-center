@@ -60,7 +60,7 @@ const registrationSchema = z.object({
   position: z.string().trim().max(150, { message: "Intitulé trop long (150 max)." }).optional().or(z.literal("")),
 });
 
-type FormErrors = Partial<Record<keyof z.infer<typeof registrationSchema>, string>>;
+type FormErrors = Partial<Record<string, string>>;
 
 function PublicEventPage() {
   const { slug } = Route.useParams();

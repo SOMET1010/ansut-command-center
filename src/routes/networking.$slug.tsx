@@ -194,7 +194,7 @@ function NetworkingDirectory() {
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
-              <ParticipantCard key={p.id} participant={p} />
+              <ParticipantCard key={p.id} participant={p} slug={slug} />
             ))}
           </div>
         )}
@@ -211,7 +211,7 @@ function NetworkingDirectory() {
 }
 
 /* ─── Composant carte participant ─── */
-function ParticipantCard({ participant: p }: { participant: Participant }) {
+function ParticipantCard({ participant: p, slug }: { participant: Participant; slug: string }) {
   const initials = p.full_name
     .split(" ")
     .map((n) => n[0])
