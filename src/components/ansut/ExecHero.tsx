@@ -84,7 +84,7 @@ export function ExecHero({
                   {s.value}
                 </div>
                 {s.hint ? (
-                  <div className="mt-0.5 text-[11px] text-white/55">{s.hint}</div>
+                  <div className="mt-0.5 text-[11px] text-white/70">{s.hint}</div>
                 ) : null}
               </div>
             ))}
