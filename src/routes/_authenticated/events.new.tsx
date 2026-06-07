@@ -5,10 +5,15 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EventForm, emptyEventValues } from "@/components/event-form";
 import { Button } from "@/components/ui/button";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/events/new")({
   head: () => ({ meta: [{ title: "Nouvel événement — ANSUT EVENT" }] }),
-  component: NewEvent,
+  component: () => (
+    <RequireSuperAdmin>
+      <NewEvent />
+    </RequireSuperAdmin>
+  ),
 });
 
 function NewEvent() {
