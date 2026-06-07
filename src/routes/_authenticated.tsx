@@ -38,6 +38,7 @@ const ICONS: Record<CockpitNavTo, IconCmp> = {
   "/participants": Users,
   "/polls": Vote,
   "/checkin": QrCode,
+  "/notify-test": Bell,
   "/admin/setup": ShieldCheck,
 };
 
