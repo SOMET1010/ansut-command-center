@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as ForbiddenRouteImport } from './routes/forbidden'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PollPollIdRouteImport } from './routes/poll.$pollId'
@@ -22,12 +23,14 @@ import { Route as MeRoleRouteImport } from './routes/me.role'
 import { Route as LiveSessionIdRouteImport } from './routes/live.$sessionId'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AttendanceSessionIdRouteImport } from './routes/attendance.$sessionId'
+import { Route as AnnoncesSlugRouteImport } from './routes/annonces.$slug'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
+import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated/announcements'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
 import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
@@ -54,6 +57,11 @@ const LoginRoute = LoginRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForbiddenRoute = ForbiddenRouteImport.update({
+  id: '/forbidden',
+  path: '/forbidden',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -100,6 +108,11 @@ const AttendanceSessionIdRoute = AttendanceSessionIdRouteImport.update({
   path: '/attendance/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnnoncesSlugRoute = AnnoncesSlugRouteImport.update({
+  id: '/annonces/$slug',
+  path: '/annonces/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgendaSlugRoute = AgendaSlugRouteImport.update({
   id: '/agenda/$slug',
   path: '/agenda/$slug',
@@ -131,6 +144,12 @@ const AuthenticatedCheckinRoute = AuthenticatedCheckinRouteImport.update({
   path: '/checkin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAnnouncementsRoute =
+  AuthenticatedAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedEventsNewRoute = AuthenticatedEventsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -172,16 +191,19 @@ const AuthenticatedEventsIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/forbidden': typeof ForbiddenRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
@@ -199,16 +221,19 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forbidden': typeof ForbiddenRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
@@ -228,16 +253,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/forbidden': typeof ForbiddenRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/announcements': typeof AuthenticatedAnnouncementsRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
@@ -257,16 +285,19 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forbidden'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/announcements'
     | '/checkin'
     | '/dashboard'
     | '/events'
     | '/participants'
     | '/polls'
     | '/agenda/$slug'
+    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
     | '/live/$sessionId'
@@ -284,16 +315,19 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/forbidden'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/announcements'
     | '/checkin'
     | '/dashboard'
     | '/events'
     | '/participants'
     | '/polls'
     | '/agenda/$slug'
+    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
     | '/live/$sessionId'
@@ -312,16 +346,19 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/forbidden'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/_authenticated/announcements'
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/events'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/agenda/$slug'
+    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
     | '/live/$sessionId'
@@ -341,11 +378,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ForbiddenRoute: typeof ForbiddenRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   AgendaSlugRoute: typeof AgendaSlugRoute
+  AnnoncesSlugRoute: typeof AnnoncesSlugRoute
   AttendanceSessionIdRoute: typeof AttendanceSessionIdRoute
   ESlugRoute: typeof ESlugRoute
   LiveSessionIdRoute: typeof LiveSessionIdRoute
@@ -385,6 +424,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forbidden': {
+      id: '/forbidden'
+      path: '/forbidden'
+      fullPath: '/forbidden'
+      preLoaderRoute: typeof ForbiddenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -450,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AttendanceSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/annonces/$slug': {
+      id: '/annonces/$slug'
+      path: '/annonces/$slug'
+      fullPath: '/annonces/$slug'
+      preLoaderRoute: typeof AnnoncesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agenda/$slug': {
       id: '/agenda/$slug'
       path: '/agenda/$slug'
@@ -490,6 +543,13 @@ declare module '@tanstack/react-router' {
       path: '/checkin'
       fullPath: '/checkin'
       preLoaderRoute: typeof AuthenticatedCheckinRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/announcements': {
+      id: '/_authenticated/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/events/new': {
@@ -563,6 +623,7 @@ const AuthenticatedEventsRouteWithChildren =
   AuthenticatedEventsRoute._addFileChildren(AuthenticatedEventsRouteChildren)
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAnnouncementsRoute: typeof AuthenticatedAnnouncementsRoute
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
@@ -572,6 +633,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAnnouncementsRoute: AuthenticatedAnnouncementsRoute,
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
@@ -587,11 +649,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ForbiddenRoute: ForbiddenRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   AgendaSlugRoute: AgendaSlugRoute,
+  AnnoncesSlugRoute: AnnoncesSlugRoute,
   AttendanceSessionIdRoute: AttendanceSessionIdRoute,
   ESlugRoute: ESlugRoute,
   LiveSessionIdRoute: LiveSessionIdRoute,
