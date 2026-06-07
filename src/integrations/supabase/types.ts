@@ -848,6 +848,93 @@ export type Database = {
           },
         ]
       }
+      event_meetings: {
+        Row: {
+          id: string
+          event_id: string
+          requester_id: string
+          recipient_id: string
+          status: string
+          proposed_time: string | null
+          proposed_location: string | null
+          message: string | null
+          response_message: string | null
+          created_at: string
+          responded_at: string | null
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          requester_id: string
+          recipient_id: string
+          status?: string
+          proposed_time?: string | null
+          proposed_location?: string | null
+          message?: string | null
+          response_message?: string | null
+          created_at?: string
+          responded_at?: string | null
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          requester_id?: string
+          recipient_id?: string
+          status?: string
+          proposed_time?: string | null
+          proposed_location?: string | null
+          message?: string | null
+          response_message?: string | null
+          created_at?: string
+          responded_at?: string | null
+        }
+        Relationships: [
+          { foreignKeyName: "event_meetings_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_meetings_requester_id_fkey"; columns: ["requester_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_meetings_recipient_id_fkey"; columns: ["recipient_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+        ]
+      }
+      event_announcements: {
+        Row: {
+          id: string
+          event_id: string
+          title: string
+          content: string
+          announcement_type: string
+          is_pinned: boolean
+          published_at: string
+          expires_at: string | null
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          title: string
+          content: string
+          announcement_type?: string
+          is_pinned?: boolean
+          published_at?: string
+          expires_at?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          title?: string
+          content?: string
+          announcement_type?: string
+          is_pinned?: boolean
+          published_at?: string
+          expires_at?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_announcements_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
