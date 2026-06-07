@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Zap, BarChart3 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error("Identifiants incorrects. Veuillez réessayer.");
       return;
     }
     toast.success("Connexion réussie");
@@ -33,100 +33,95 @@ function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
+    <div className="flex min-h-dvh">
       {/* LEFT — Branded navy panel */}
       <div
-        className="relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex"
+        className="relative hidden w-[55%] flex-col justify-between overflow-hidden p-12 text-white lg:flex"
         style={{ background: "var(--gradient-hero)" }}
       >
         <div
-          className="absolute inset-0 opacity-[0.06]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage:
               "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
+            backgroundSize: "50px 50px",
           }}
         />
-        <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-secondary/25 blur-[120px]" />
+        <div className="absolute -right-32 top-1/4 h-[500px] w-[500px] rounded-full bg-secondary/15 blur-[120px]" />
 
-        <Link to="/" className="relative flex items-center gap-3">
+        <Link to="/" className="relative z-10 flex items-center gap-3">
           <AnsutLogo size="lg" />
           <div className="leading-tight">
-            <div className="font-display text-lg font-bold">EVENT</div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
-              Plateforme officielle du SUTEL
+            <div className="font-display text-lg font-bold">ANSUT EVENT</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">
+              Console de gestion
             </div>
           </div>
         </Link>
 
-        <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1">
-            <span className="flex h-2 w-2 animate-pulse rounded-full bg-secondary" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-secondary">
-              SUTEL 2026
-            </span>
-          </div>
-          <h2 className="mt-6 font-display text-4xl font-extrabold leading-tight text-white">
-            Bienvenue sur la plateforme
+        <div className="relative z-10 max-w-md">
+          <h2 className="font-display text-4xl font-extrabold leading-tight text-white">
+            Pilotez vos événements
             <br />
-            événementielle de l'ANSUT.
+            <span className="text-secondary">en toute confiance.</span>
           </h2>
-          <p className="mt-4 max-w-md text-base text-white/75">
-            Gérez vos inscriptions, accréditations, badges QR et analytics en temps réel.
+          <p className="mt-5 text-base leading-relaxed text-white/70">
+            Accédez à votre console de gestion pour gérer les inscriptions, accréditations,
+            conférences et analytics du SUTEL 2026.
           </p>
 
-          <div className="mt-8 grid gap-3 text-sm text-white/80">
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="h-4 w-4 text-secondary" />
-              Connexion sécurisée et chiffrée
-            </div>
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-4 w-4 text-secondary" />
-              Accès à toutes les fonctionnalités SUTEL 2026
-            </div>
+          <div className="mt-10 space-y-5">
+            <FeatureItem icon={ShieldCheck} text="Sécurité renforcée et contrôle d'accès par rôles" />
+            <FeatureItem icon={Zap} text="Données en temps réel et notifications instantanées" />
+            <FeatureItem icon={BarChart3} text="Tableaux de bord analytiques pour la Direction" />
           </div>
         </div>
 
-        <div className="relative text-xs text-white/60">
-          © 2026 ANSUT. Tous droits réservés.
+        <div className="relative z-10 text-xs text-white/40">
+          © {new Date().getFullYear()} ANSUT — Tous droits réservés
         </div>
       </div>
 
       {/* RIGHT — Form */}
-      <div className="flex items-center justify-center bg-background px-6 py-12">
-        <div className="w-full max-w-md">
-          <Link to="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
-            <AnsutLogo size="md" />
-            <span className="text-lg font-semibold">EVENT</span>
-          </Link>
+      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-sm">
+          {/* Logo mobile */}
+          <div className="mb-8 flex justify-center lg:hidden">
+            <Link to="/" className="flex items-center gap-2">
+              <AnsutLogo size="md" />
+              <span className="font-display text-sm font-bold">ANSUT EVENT</span>
+            </Link>
+          </div>
 
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
-            Connexion
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Accédez à votre espace de gestion SUTEL 2026.
-          </p>
+          <div className="text-center lg:text-left">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+              Connexion
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Entrez vos identifiants pour accéder à votre espace.
+            </p>
+          </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email" className="text-sm font-semibold">Adresse email</Label>
               <Input
                 id="email"
                 type="email"
                 required
-                placeholder="vous@ansut.ci"
+                placeholder="votre@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password" className="text-sm font-semibold">Mot de passe</Label>
               <Input
                 id="password"
                 type="password"
                 required
-                placeholder="••••••••"
+                placeholder="Votre mot de passe"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-11"
@@ -134,26 +129,38 @@ function LoginPage() {
             </div>
             <Button
               type="submit"
-              className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
+              className="h-11 w-full rounded-xl font-bold"
               disabled={loading}
             >
-              {loading ? "Connexion..." : (
-                <>
-                  Se connecter
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
+              {loading ? "Connexion en cours..." : "Se connecter"}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Pas de compte ?{" "}
+            Pas encore de compte ?{" "}
             <Link to="/signup" className="font-semibold text-primary hover:underline">
               Créer un compte
             </Link>
           </p>
+
+          <div className="mt-8 rounded-xl border border-border bg-muted/50 p-4 text-center">
+            <p className="text-xs text-muted-foreground">
+              En cas de difficulté, contactez l'administrateur de votre organisation ou la DTDI de l'ANSUT.
+            </p>
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function FeatureItem({ icon: Icon, text }: { icon: typeof ShieldCheck; text: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
+        <Icon className="h-4 w-4 text-secondary" />
+      </div>
+      <span className="text-sm leading-relaxed text-white/80">{text}</span>
     </div>
   );
 }

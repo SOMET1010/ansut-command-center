@@ -143,11 +143,11 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid gap-4 sm:grid-cols-2">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="name">Nom *</Label>
-          <Input id="name" value={v.name} onChange={(e) => update("name", e.target.value)} required />
+          <Label htmlFor="name" className="text-sm font-semibold">Nom de l'événement *</Label>
+          <Input id="name" value={v.name} onChange={(e) => update("name", e.target.value)} required placeholder="Ex: SUTEL 2026" className="h-11" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="slug">Slug (URL publique)</Label>
@@ -189,9 +189,11 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
           <Textarea id="description" rows={6} value={v.description} onChange={(e) => update("description", e.target.value)} />
         </div>
       </div>
-      <div className="flex gap-2">
-        <Button type="submit" disabled={saving}>{saving ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer l'événement"}</Button>
-        <Button type="button" variant="outline" onClick={() => navigate({ to: "/events" })}>Annuler</Button>
+      <div className="flex gap-3 border-t border-border pt-6">
+        <Button type="submit" variant="ansut-orange" className="rounded-xl px-6" disabled={saving}>
+          {saving ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer l'événement"}
+        </Button>
+        <Button type="button" variant="outline" className="rounded-xl" onClick={() => navigate({ to: "/events" })}>Annuler</Button>
       </div>
     </form>
   );
