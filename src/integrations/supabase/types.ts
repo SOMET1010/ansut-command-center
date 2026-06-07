@@ -54,22 +54,15 @@ export type Database = {
       }
       event_registrations: {
         Row: {
-          bio: string | null
           checked_in_at: string | null
           checked_in_by: string | null
-          country: string | null
           created_at: string
           email: string
           event_id: string
           full_name: string
           id: string
-          interests: string[] | null
-          is_visible_in_directory: boolean
-          linkedin_url: string | null
           organization: string | null
-          participant_category: string
           phone: string | null
-          photo_url: string | null
           position: string | null
           qr_token: string
           status: string
@@ -77,22 +70,15 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          bio?: string | null
           checked_in_at?: string | null
           checked_in_by?: string | null
-          country?: string | null
           created_at?: string
           email: string
           event_id: string
           full_name: string
           id?: string
-          interests?: string[] | null
-          is_visible_in_directory?: boolean
-          linkedin_url?: string | null
           organization?: string | null
-          participant_category?: string
           phone?: string | null
-          photo_url?: string | null
           position?: string | null
           qr_token?: string
           status?: string
@@ -100,22 +86,15 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          bio?: string | null
           checked_in_at?: string | null
           checked_in_by?: string | null
-          country?: string | null
           created_at?: string
           email?: string
           event_id?: string
           full_name?: string
           id?: string
-          interests?: string[] | null
-          is_visible_in_directory?: boolean
-          linkedin_url?: string | null
           organization?: string | null
-          participant_category?: string
           phone?: string | null
-          photo_url?: string | null
           position?: string | null
           qr_token?: string
           status?: string
@@ -130,64 +109,6 @@ export type Database = {
             referencedRelation: "events"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      event_conversations: {
-        Row: {
-          id: string
-          event_id: string
-          participant_a: string
-          participant_b: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          event_id: string
-          participant_a: string
-          participant_b: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          event_id?: string
-          participant_a?: string
-          participant_b?: string
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_conversations_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_conversations_participant_a_fkey"; columns: ["participant_a"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_conversations_participant_b_fkey"; columns: ["participant_b"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
-        ]
-      }
-      event_messages: {
-        Row: {
-          id: string
-          conversation_id: string
-          sender_id: string
-          content: string
-          read_at: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          conversation_id: string
-          sender_id: string
-          content: string
-          read_at?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          conversation_id?: string
-          sender_id?: string
-          content?: string
-          read_at?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          { foreignKeyName: "event_messages_conversation_id_fkey"; columns: ["conversation_id"]; referencedRelation: "event_conversations"; referencedColumns: ["id"] },
-          { foreignKeyName: "event_messages_sender_id_fkey"; columns: ["sender_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
         ]
       }
       events: {
