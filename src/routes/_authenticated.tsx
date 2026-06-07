@@ -74,9 +74,7 @@ function AuthLayout() {
     );
   }
 
-  const currentLabel =
-    NAV_SECTIONS.flatMap((s) => s.items).find((i) => pathname.startsWith(i.to))?.label ??
-    "Console";
+  const currentLabel = getCockpitBreadcrumbLabel(pathname);
 
   return (
     <div className="flex min-h-dvh w-full bg-background">
