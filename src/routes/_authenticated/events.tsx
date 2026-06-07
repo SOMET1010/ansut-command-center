@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, Trash2, Eye, Users, Calendar, Globe, FileText, Archive } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,38 +41,55 @@ const STATUS_CONFIG: Record<string, { label: string; className: string; icon: ty
   },
 };
 
+const EVENTS_KEY = ["events", "list"] as const;
+
 function EventsPage() {
   const navigate = useNavigate();
-  const [events, setEvents] = useState<EventRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  async function load() {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("events")
-      .select("id,name,slug,starts_at,ends_at,location,status")
-      .order("starts_at", { ascending: false });
-    if (error) toast.error(error.message);
-    setEvents((data ?? []) as EventRow[]);
-    setLoading(false);
-  }
+  const { data: events = [], isLoading: loading } = useQuery({
+    queryKey: EVENTS_KEY,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("id,name,slug,starts_at,ends_at,location,status")
+        .order("starts_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as EventRow[];
+    },
+  });
 
-  useEffect(() => { load(); }, []);
+  const togglePublishMut = useMutation({
+    mutationFn: async (ev: EventRow) => {
+      const next = ev.status === "published" ? "draft" : "published";
+      const { error } = await supabase.from("events").update({ status: next }).eq("id", ev.id);
+      if (error) throw error;
+      return next;
+    },
+    onSuccess: (next) => {
+      toast.success(next === "published" ? "Événement publié" : "Événement dépublié");
+      queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "events-count"] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
 
-  async function togglePublish(ev: EventRow) {
-    const next = ev.status === "published" ? "draft" : "published";
-    const { error } = await supabase.from("events").update({ status: next }).eq("id", ev.id);
-    if (error) return toast.error(error.message);
-    toast.success(next === "published" ? "Événement publié" : "Événement dépublié");
-    load();
-  }
+  const removeMut = useMutation({
+    mutationFn: async (ev: EventRow) => {
+      const { error } = await supabase.from("events").delete().eq("id", ev.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Événement supprimé");
+      queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "events-count"] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
 
-  async function remove(ev: EventRow) {
+  function remove(ev: EventRow) {
     if (!confirm(`Supprimer "${ev.name}" ? Cette action est irréversible.`)) return;
-    const { error } = await supabase.from("events").delete().eq("id", ev.id);
-    if (error) return toast.error(error.message);
-    toast.success("Événement supprimé");
-    load();
+    removeMut.mutate(ev);
   }
 
   const published = events.filter((e) => e.status === "published").length;
