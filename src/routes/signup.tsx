@@ -61,10 +61,10 @@ function SignupPage() {
             backgroundSize: "60px 60px",
           }}
         />
-        <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-accent/25 blur-[120px]" />
+        <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-secondary/25 blur-[120px]" />
 
         <Link to="/" className="relative flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-xl font-bold text-accent-foreground shadow-lg">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary text-xl font-bold text-secondary-foreground shadow-lg">
             A
           </div>
           <div className="leading-tight">
@@ -76,34 +76,32 @@ function SignupPage() {
         </Link>
 
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1">
-            <span className="flex h-2 w-2 animate-pulse rounded-full bg-accent" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
+          <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1">
+            <span className="flex h-2 w-2 animate-pulse rounded-full bg-secondary" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-secondary">
               Rejoignez SUTEL 2026
             </span>
           </div>
-          <h2 className="mt-6 font-display text-4xl font-extrabold leading-tight">
+          <h2 className="mt-6 font-display text-4xl font-extrabold leading-tight text-white">
             Créez votre compte et préparez
             <br />
-            <span className="bg-gradient-to-r from-white to-[oklch(0.75_0.08_245)] bg-clip-text text-transparent">
-              votre événement.
-            </span>
+            votre événement.
           </h2>
-          <p className="mt-4 max-w-md text-base text-white/70">
+          <p className="mt-4 max-w-md text-base text-white/75">
             En quelques clics, accédez à toutes les fonctionnalités de la plateforme officielle ANSUT.
           </p>
 
           <ul className="mt-8 space-y-3">
             {perks.map((p) => (
-              <li key={p} className="flex items-start gap-3 text-sm text-white/80">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <li key={p} className="flex items-start gap-3 text-sm text-white/85">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
                 {p}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="relative text-xs text-white/40">
+        <div className="relative text-xs text-white/60">
           © 2026 ANSUT. Tous droits réservés.
         </div>
       </div>
@@ -164,7 +162,7 @@ function SignupPage() {
             </div>
             <Button
               type="submit"
-              className="h-11 w-full rounded-xl bg-accent font-bold text-accent-foreground shadow-lg hover:bg-accent/90"
+              className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
               disabled={loading}
             >
               {loading ? "Création..." : (
@@ -178,7 +176,7 @@ function SignupPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Déjà un compte ?{" "}
-            <Link to="/login" className="font-semibold text-accent hover:underline">
+            <Link to="/login" className="font-semibold text-primary hover:underline">
               Se connecter
             </Link>
           </p>
