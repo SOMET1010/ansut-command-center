@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_trail: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          organization_id: string | null
+          payload: Json
+          table_name: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          organization_id?: string | null
+          payload?: Json
+          table_name: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          organization_id?: string | null
+          payload?: Json
+          table_name?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_trail_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_registrations: {
         Row: {
           checked_in_at: string | null
@@ -161,6 +199,75 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      notification_outbox: {
+        Row: {
+          attempts: number
+          channel: string
+          created_at: string
+          event_id: string | null
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          payload: Json
+          purpose: string
+          recipient: string
+          registration_id: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          channel: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          idempotency_key: string
+          last_error?: string | null
+          payload?: Json
+          purpose: string
+          recipient: string
+          registration_id?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          channel?: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          idempotency_key?: string
+          last_error?: string | null
+          payload?: Json
+          purpose?: string
+          recipient?: string
+          registration_id?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_outbox_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_outbox_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organizations: {
         Row: {
