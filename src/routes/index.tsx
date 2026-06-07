@@ -3,12 +3,8 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import {
   Calendar,
   QrCode,
-  BarChart3,
-  Vote,
-  Users,
   Mic,
   Building2,
-  CheckCircle2,
   PlayCircle,
   MapPin,
   ArrowRight,
