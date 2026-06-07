@@ -132,7 +132,7 @@ function Landing() {
             </div>
             <div className="leading-tight">
               <div className="font-display font-bold tracking-tight text-white">ANSUT EVENT</div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
                 SUTEL 2026 Official
               </div>
             </div>
