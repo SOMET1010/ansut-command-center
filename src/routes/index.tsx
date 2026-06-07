@@ -482,7 +482,7 @@ function StatCard({
         <Icon className="h-5 w-5" />
       </div>
       <div className="text-2xl font-bold leading-none text-white">{value}</div>
-      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/70">
+      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/85">
         {label}
       </div>
     </div>
