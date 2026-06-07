@@ -38,6 +38,12 @@ export function ExecHero({
           backgroundSize: "48px 48px",
         }}
       />
+      <div className="absolute right-4 top-4 z-10 flex items-center gap-2 md:right-6 md:top-6">
+        <AnsutLogo size="sm" />
+        <span className="hidden text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70 sm:inline">
+          Console DG
+        </span>
+      </div>
       <div className="relative grid gap-6 p-5 md:p-6 lg:grid-cols-[1.1fr_2fr] lg:items-center">
         <div>
           {eyebrow ? (
