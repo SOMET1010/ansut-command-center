@@ -69,7 +69,7 @@ function SignupPage() {
           </div>
           <div className="leading-tight">
             <div className="font-display text-lg font-bold">ANSUT EVENT</div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
               Plateforme officielle du SUTEL
             </div>
           </div>
