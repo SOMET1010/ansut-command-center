@@ -151,6 +151,73 @@ export type Database = {
           },
         ]
       }
+      event_meetings: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          message: string | null
+          proposed_location: string | null
+          proposed_time: string | null
+          recipient_id: string
+          requester_id: string
+          responded_at: string | null
+          response_message: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          message?: string | null
+          proposed_location?: string | null
+          proposed_time?: string | null
+          recipient_id: string
+          requester_id: string
+          responded_at?: string | null
+          response_message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          message?: string | null
+          proposed_location?: string | null
+          proposed_time?: string | null
+          recipient_id?: string
+          requester_id?: string
+          responded_at?: string | null
+          response_message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_meetings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_meetings_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_meetings_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_messages: {
         Row: {
           content: string
@@ -871,6 +938,27 @@ export type Database = {
       claim_first_admin: { Args: never; Returns: boolean }
       current_user_org: { Args: never; Returns: string }
       event_org: { Args: { _event_id: string }; Returns: string }
+      get_match_recommendations: {
+        Args: {
+          p_event_id: string
+          p_limit?: number
+          p_registration_id: string
+        }
+        Returns: {
+          bio: string
+          country: string
+          email: string
+          full_name: string
+          id: string
+          interests: string[]
+          job_title: string
+          linkedin_url: string
+          match_score: number
+          organization: string
+          participant_category: string
+          photo_url: string
+        }[]
+      }
       get_or_create_conversation: {
         Args: {
           p_event_id: string
