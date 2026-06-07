@@ -32,7 +32,16 @@ export function IfSuperAdmin({
  * Shows a friendly 403 with a link back home while the role loads silently.
  */
 export function RequireSuperAdmin({ children }: { children: ReactNode }) {
-  const { status, data, error } = useMyRole();
+  const { status, data } = useMyRole();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (status === "ready" && !data?.isSuperAdmin) {
+      navigate({ to: "/forbidden", replace: true });
+    } else if (status === "error") {
+      navigate({ to: "/forbidden", replace: true });
+    }
+  }, [status, data, navigate]);
 
   if (status === "loading") {
     return (
@@ -42,24 +51,16 @@ export function RequireSuperAdmin({ children }: { children: ReactNode }) {
     );
   }
 
-  if (status === "error" || !data?.isSuperAdmin) {
+  if (status !== "ready" || !data?.isSuperAdmin) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-2xl border bg-card p-8 text-center shadow-sm">
-          <ShieldAlert className="mx-auto h-10 w-10 text-destructive" />
-          <h1 className="mt-4 text-xl font-bold">Accès refusé</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Cette page est réservée aux super administrateurs.
-            {status === "error" && error ? ` (${error})` : ""}
-          </p>
-          <div className="mt-6 flex justify-center gap-2">
-            <Button asChild>
-              <Link to="/dashboard">Retour au tableau de bord</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link to="/me/role">Voir mon rôle</Link>
-            </Button>
-          </div>
+      <div className="flex min-h-[40vh] items-center justify-center px-4">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <ShieldAlert className="h-5 w-5 text-destructive" />
+          Redirection vers la page « Accès refusé »…
+        </div>
+        <div className="sr-only">
+          <Link to="/forbidden">Aller à la page Accès refusé</Link>
+          <Button asChild variant="ghost"><Link to="/dashboard">Tableau de bord</Link></Button>
         </div>
       </div>
     );
