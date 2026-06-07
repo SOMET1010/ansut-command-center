@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { IfSuperAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/events")({
   head: () => ({ meta: [{ title: "Événements — ANSUT EVENT" }] }),
@@ -140,10 +141,11 @@ function EventsPage() {
             Gérez vos événements et leurs inscriptions.
           </p>
         </div>
-        <Button onClick={() => navigate({ to: "/events/new" })} className="rounded-xl">
-          <Plus className="mr-2 h-4 w-4" /> Nouvel événement
-        </Button>
-      </div>
+        <IfSuperAdmin>
+          <Button onClick={() => navigate({ to: "/events/new" })} className="rounded-xl">
+            <Plus className="mr-2 h-4 w-4" /> Nouvel événement
+          </Button>
+        </IfSuperAdmin>
 
       {/* Compteurs rapides */}
       {!loading && events.length > 0 && (
