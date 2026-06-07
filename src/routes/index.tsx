@@ -52,48 +52,28 @@ export const Route = createFileRoute("/")({
   notFoundComponent: () => <div className="p-8 text-center">Page introuvable.</div>,
 });
 
+// Front-office uniquement — pas de lien vers le cockpit administrateur.
 const features = [
   {
-    icon: Users,
-    title: "Participants",
-    items: ["Inscription en ligne", "Validation des demandes", "Gestion des profils"],
-    href: "/participants" as const,
-    cta: "Gérer les participants",
-  },
-  {
     icon: Mic,
-    title: "Conférences",
-    items: ["Programme détaillé", "Intervenants & modérateurs", "Salles & sessions"],
+    title: "Programme & conférences",
+    items: ["Plénières et panels", "Intervenants & modérateurs", "Salles & sessions"],
     href: "/events" as const,
     cta: "Voir le programme",
   },
   {
     icon: QrCode,
-    title: "Accréditation",
-    items: ["Génération de badges QR", "Contrôle d'accès temps réel", "Gestion des accès"],
-    href: "/checkin" as const,
-    cta: "Gérer les accès",
-  },
-  {
-    icon: Vote,
-    title: "Live Polling",
-    items: ["Sondages en direct", "Questions & votes", "Résultats instantanés"],
-    href: "/polls" as const,
-    cta: "Participer",
+    title: "Inscription & badge",
+    items: ["Inscription en ligne guidée", "Badge QR par email", "Accès aux espaces"],
+    href: "/signup" as const,
+    cta: "S'inscrire au SUTEL 2026",
   },
   {
     icon: Building2,
-    title: "Exposition",
-    items: ["Liste des exposants", "Stands & sponsors", "Plan d'exposition"],
+    title: "Exposition & partenaires",
+    items: ["Liste des exposants", "Stands & sponsors", "Plan du salon"],
     href: "/events" as const,
-    cta: "Découvrir",
-  },
-  {
-    icon: BarChart3,
-    title: "Analytics",
-    items: ["Tableaux de bord", "Statistiques en temps réel", "Rapports exportables"],
-    href: "/dashboard" as const,
-    cta: "Voir les rapports",
+    cta: "Découvrir le salon",
   },
 ];
 
