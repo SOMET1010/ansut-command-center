@@ -8,6 +8,7 @@ export type CockpitNavTo =
   | "/events"
   | "/participants"
   | "/polls"
+  | "/announcements"
   | "/checkin"
   | "/admin/setup";
 
@@ -34,6 +35,7 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
       { to: "/events", label: "Événements" },
       { to: "/participants", label: "Participants", hidden: true },
       { to: "/polls", label: "Live Polling" },
+      { to: "/announcements", label: "Annonces" },
     ],
   },
   {

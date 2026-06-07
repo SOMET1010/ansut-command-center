@@ -798,6 +798,47 @@ export type Database = {
           },
         ]
       }
+      event_announcements: {
+        Row: {
+          id: string
+          event_id: string
+          title: string
+          content: string
+          announcement_type: string
+          is_pinned: boolean
+          published_at: string
+          expires_at: string | null
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          title: string
+          content: string
+          announcement_type?: string
+          is_pinned?: boolean
+          published_at?: string
+          expires_at?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          title?: string
+          content?: string
+          announcement_type?: string
+          is_pinned?: boolean
+          published_at?: string
+          expires_at?: string | null
+          created_by?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_announcements_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
