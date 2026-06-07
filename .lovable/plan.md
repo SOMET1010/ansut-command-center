@@ -1,90 +1,71 @@
-## Audit ANSUT — Correction cohérence couleurs / contrastes / espacements
+## Seed SUTEL 2026 — Plan d'exécution
 
-### Problèmes constatés (preuves visuelles)
+Objectif : insérer en base les **1 organisation + 4 événements + 10 inscriptions** réelles SUTEL 2026, puis vérifier le rendu UI. Aucune modification de schéma ni de composant React — tout passe par des opérations data sur les tables existantes.
 
-**Login & Signup**
-- Bouton `Se connecter` / `Créer mon compte` : `bg-accent text-accent-foreground` → fond bleu très clair (#DCE8F5) + texte clair = **bouton illisible**. Doit passer en `bg-primary` (CTA standard) ou `variant="ansut-orange"` (CTA dominant, 1/écran).
-- Liens `Pas de compte ?` / `Déjà un compte ?` : `text-accent` sur fond blanc = **invisible**. → `text-primary hover:underline`.
-- Côté navy : icônes `ShieldCheck` / `Sparkles` / chip "SUTEL 2026" en `text-accent` / `bg-accent/10` sur navy = contraste faible (gris bleuté). → `text-secondary` (orange, vrai accent de marque).
-- Pastille animée `bg-accent` dans la chip → `bg-secondary`.
+### Ajustements vs spec utilisateur (contraintes schéma actuel)
 
-**Landing**
-- Cartes features (Participants, Conférences, Accréditation, Live Polling, Exposition, Analytics) : `bg-secondary/40` = **orange à 40 % indésirable** (peau saumon). Casse la règle « orange parcimonie ». → `bg-muted` (gris doux institutionnel).
-- Section partenaires `bg-secondary/40` : même peau orange. → `bg-muted`.
-- Icônes features `text-accent` sur carte blanche : invisible. → `text-primary`.
-- Liens CTA cartes (`Gérer les participants` etc.) `text-accent` : invisible. → `text-primary`.
-- Stat highlight `border-accent/40 bg-accent/10 text-accent` sur navy = trop pâle. → `border-secondary/40 bg-secondary/10 text-secondary` (mise en valeur réelle).
-- Chip "SUTEL 2026 • DATES" et puce animée `bg-accent` sur navy = peu visible. → `bg-secondary` + `border-secondary/30`.
-- Nav top : `text-accent-foreground` sur bouton accent → bouton "Créer un compte" `bg-accent` invisible. → `variant="ansut-orange"`.
-- Carte "Programme du jour" : lien `Voir tout` en `text-accent` sur fond blanc = invisible. → `text-primary`.
-- Section "Votre badge, votre accès" sur fond `bg-primary` : badge step `border-accent/30 bg-accent/10 text-accent` (bleu pâle sur bleu) = faible contraste. → `border-secondary/40 bg-secondary/15 text-secondary`.
-- Halo décoratif `bg-accent/20 blur-[120px]` : invisible sur navy. → `bg-secondary/25` (touche orange chaude conforme à la marque).
-- Footer texte `text-white/60` sur `bg-primary` (#2256A3) : contraste ~2.8:1 = **AA non atteint**. → `text-white/75`.
+Le schéma déjà en place impose 3 petites adaptations par rapport au SQL fourni :
 
-**Dashboard, Events, Checkin**
-- `ExecHero` éveille `text-secondary` pour l'eyebrow Sparkles : OK.
-- Pages Events / Checkin : suite à la migration `card-elevated`, les colonnes restent OK mais le **placeholder ComingSoon** sur Participants/Polls n'a pas été audité (`text-accent` probable). → vérifier `coming-soon.tsx` et basculer.
-- Espacement dashboard : `section-gap` est en `flex-direction: column` (notre `@utility`) — bon. Cartes `KPICard` : padding `p-4` cohérent.
-- Events : `<Table>` shadcn récupère naturellement `text-muted-foreground`/`text-foreground` — pas de souci de contraste.
-- Checkin : badges `bg-ansut-orange-light` / `border-signal-warning` corrects (déjà migrés).
+1. `organizations.id` est de type **uuid** — l'identifiant texte `org_ansut_sutel_2026` est invalide. Je génère un uuid stable côté SQL (`gen_random_uuid()`) et le réutilise via une CTE pour les 4 événements. Le `slug` (NOT NULL) sera `ansut`.
+2. `event_registrations` a une colonne **`position`** (pas `job_title`). Je mappe le poste sur `position`.
+3. `events.created_by` reste `NULL` (seed admin, pas d'auth.uid() disponible côté outil).
 
-**Typographie globale**
-- `--font-display` et `--font-sans` pointent tous deux vers Inter. Conforme à la skill (Avenir indisponible en web font libre → Inter unique), mais on perd la différenciation visuelle des titres. **Conserver** Inter unique mais s'assurer que les `h1/h2/h3` utilisent bien `font-bold` / `font-semibold` (déjà appliqué en `@layer base`).
+Tout le reste (capacité 200, statut `published`, dates UTC, descriptions complètes avec thème SUTEL 3 en tête du Jour 1) est conservé à l'identique.
 
-**Espacements**
-- Pages internes (`/dashboard`, `/events`, `/checkin`) bénéficient désormais de `page-max-width content-padding py-4 md:py-5` via `_authenticated.tsx`. Les `p-8` / `p-6` résiduels en haut de chaque route doivent être **supprimés** (ils s'ajoutent au padding du shell → double bordure).
-  - `events.tsx` : déjà migré en `section-gap` (OK).
-  - `checkin.tsx` : déjà migré (OK).
-  - `dashboard.tsx` : OK.
-- Landing public reste hors shell auth → ses `py-24` / `max-w-7xl` propres sont OK.
+### Étape 1 — Insertion organisation + 4 événements
 
-### Corrections proposées (fichier par fichier)
+Une seule transaction SQL via l'outil `supabase--insert` :
 
-1. **`src/routes/login.tsx`**
-   - Bouton submit : `bg-accent text-accent-foreground` → `bg-primary text-primary-foreground` (ou variant `ansut-orange` pour un CTA dominant — décision : garder `bg-primary` pour cohérence avec dashboard et libérer l'orange pour les actions DG).
-   - Lien `Créer un compte` : `text-accent` → `text-primary`.
-   - Panneau navy : `text-accent`, `bg-accent/10`, `border-accent/30` → `text-secondary`, `bg-secondary/10`, `border-secondary/30`. Halo `bg-accent/25` → `bg-secondary/25`.
-   - Logo "A" badge : `bg-accent text-accent-foreground` → `bg-secondary text-secondary-foreground`.
-   - Gradient titre `from-white to-[oklch(0.75_0.08_245)]` : remplacer la couleur arbitraire par une variable token compatible (`to-secondary/70` ou simplement supprimer le gradient — texte blanc plein suffit).
+```text
+WITH org AS (
+  INSERT INTO organizations (name, slug) VALUES ('ANSUT — …', 'ansut')
+  RETURNING id
+)
+INSERT INTO events (organization_id, name, slug, description, location,
+                    starts_at, ends_at, capacity, status)
+SELECT org.id, ... FROM org
+UNION ALL ... (4 lignes)
+RETURNING id, slug;
+```
 
-2. **`src/routes/signup.tsx`** : mêmes substitutions (parité visuelle avec login).
+Événements seedés :
+- `sutel-2026-accueil` — 21/09/2026 09h→20h
+- `sutel-2026-jour1` — 22/09/2026 (description préfixée du thème officiel + co-organisateurs + Sénégal pays à l'honneur)
+- `sutel-2026-jour2` — 23/09/2026
+- `sutel-2026-jour3` — 24/09/2026
 
-3. **`src/routes/index.tsx` (landing)**
-   - Cartes features : `bg-secondary/40 hover:bg-card` → `bg-muted hover:bg-card`. Icônes `text-accent` → `text-primary`. Liens CTA `text-accent` → `text-primary`. Puces `bg-accent` → `bg-primary`.
-   - Section partenaires : `bg-secondary/40` → `bg-muted`.
-   - Nav : bouton "Créer un compte" `bg-accent` → `variant="ansut-orange"`.
-   - Hero chip + dot animé : `border-accent/30 bg-accent/10 text-accent` + `bg-accent` → versions `secondary`.
-   - Halo décoratif hero : `bg-accent/20` → `bg-secondary/20`.
-   - StatCard highlight : version `secondary` (les icônes restent en `text-secondary`, neutres en `text-white/70` au lieu de `text-accent`).
-   - Programme du jour : `text-accent` link → `text-primary`. Tag "Conférence" `bg-accent/10 text-accent` → `bg-primary/10 text-primary`.
-   - Section badge sur bg-primary : `border-accent/30 bg-accent/10 text-accent` → `border-secondary/40 bg-secondary/15 text-secondary`.
-   - CTA principal hero "S'inscrire au SUTEL 2026" : actuellement `bg-white text-primary` (OK, contraste fort).
-   - Sparkles "TOUT EN UN SEUL ENDROIT" : `text-accent` → `text-secondary` (1 occurrence, parcimonie respectée).
-   - Footer : `text-white/60` → `text-white/75` pour atteindre AA.
+### Étape 2 — Insertion 10 inscriptions de test
 
-4. **`src/components/coming-soon.tsx`** : auditer et migrer `text-accent` éventuels vers `text-primary` / `text-secondary`.
+Via `supabase--insert`, un seul `INSERT … SELECT` qui répartit les 10 participants sur les 4 événements (≈ 2-3 par événement, Jour 1 le plus chargé). J'utilise les 10 profils fournis (Amadou Diallo, Fatou Koné, Ibrahim Touré, etc.) en mappant `job_title → position`. Status = `confirmed`, `qr_token` généré par défaut.
 
-5. **`src/components/newsletter-form.tsx`** : auditer le bouton submit (probablement `bg-primary` — OK) et les liens secondaires.
+Note : la RPC `register_for_event` est `SECURITY DEFINER` mais déclenche `validate_registration` (capacité OK, status published OK). Je l'utilise pas — `INSERT` direct est plus simple et déterministe pour 10 lignes contrôlées, et la contrainte capacité (10/200 = 5%) est largement satisfaite.
 
-6. **Aucune modification de `src/styles.css`** : les tokens restent ceux validés par la skill ANSUT. Les corrections portent uniquement sur l'usage sémantique dans les composants.
+### Étape 3 — Vérifications post-seed
 
-### Règles d'or à respecter après correction
+Trois requêtes `supabase--read_query` :
 
-- **`--primary`** (bleu ANSUT) = CTA standard, icônes d'emphase, liens actifs.
-- **`--secondary`** (orange ANSUT) = **1 CTA dominant max / écran**, chips de marque, accents décoratifs sur fond sombre.
-- **`--accent`** = surface de hover discrète **uniquement** (`hover:bg-accent`). Jamais pour un CTA ou un texte.
-- **`--suta-purple`** = panneaux IA uniquement (déjà respecté via `SutaPanel`).
-- **Signaux** = états (critique/vigilance/stable/ok) — déjà OK.
+1. `SELECT slug, name, status, capacity FROM events ORDER BY starts_at` → confirme 4 lignes publiées.
+2. `SELECT e.slug, count(r.id) FROM events e LEFT JOIN event_registrations r ON r.event_id=e.id GROUP BY e.slug` → confirme les compteurs par événement.
+3. `SELECT count(*) FROM event_registrations` → doit retourner 10.
 
-### Vérification post-correction
+Puis vérification visuelle dans le preview :
+- `/events` (cockpit) — 4 cartes avec compteurs.
+- `/e/sutel-2026-jour1` — page publique avec titre, description, dates, formulaire d'inscription.
+- `/dashboard` — KPI dynamiques (4 événements, 10 inscrits, J-X vers 21/09/2026).
+- AlertBanner absent (10/200 = 5%, seuil 70%).
 
-Après application : recapture des 6 pages (`/`, `/login`, `/signup`, `/dashboard`, `/events`, `/checkin`) en 1366×768 et 390×844, vérification que :
-- Aucun bouton n'est illisible (texte ≥ 4.5:1 vs fond).
-- Orange présent au plus 1 fois par section.
-- Aucun `text-accent` ou `bg-accent` non-hover ne subsiste (`rg "text-accent|bg-accent[^-]" src/`).
+### Notes techniques
 
-### Hors scope
+- Pas de migration nécessaire (aucun changement de schéma).
+- Pas de modification de code React (les pages lisent déjà depuis Supabase).
+- Phones conservés au format international fourni (toutes les longueurs ≤ 32, OK avec la contrainte RLS).
+- Emails passent la regex RLS (`^...@...\..+$`).
+- Idempotence : si l'on relance, le slug `ansut` violera l'unicité — relance = nettoyage manuel attendu, je n'ajoute pas de `ON CONFLICT` sauf demande.
 
-- Refonte structurelle / wireframe (pages restent telles quelles).
-- Mode sombre toggle (les tokens dark sont prêts mais non exposés à l'UI).
-- Composants ANSUT additionnels (`GlobalFilterBar`, `NotificationCenter`, …) — non demandés ici.
+### Risques / questions ouvertes
+
+- **Slug org** : j'ai choisi `ansut` (court, propre). Si vous préférez `ansut-sutel-2026`, dites-le avant que j'exécute.
+- **created_by NULL** sur les événements : acceptable pour un seed ; les politiques RLS d'écriture admin restent inchangées.
+- **Pas de seed user_roles** : aucun compte de test n'est créé. Si vous voulez aussi un compte admin de démo, c'est une étape supplémentaire à valider.
+
+Dites-moi si on part comme ça ou si vous voulez ajuster le slug org / ajouter un compte de démo, et je bascule en build pour exécuter.
