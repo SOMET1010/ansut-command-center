@@ -146,6 +146,8 @@ function EventsPage() {
             <Plus className="mr-2 h-4 w-4" /> Nouvel événement
           </Button>
         </IfSuperAdmin>
+      </div>
+
 
       {/* Compteurs rapides */}
       {!loading && events.length > 0 && (
