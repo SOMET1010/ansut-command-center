@@ -9,6 +9,7 @@ export type CockpitNavTo =
   | "/participants"
   | "/polls"
   | "/checkin"
+  | "/notify-test"
   | "/admin/setup";
 
 export type CockpitNavItem = {
@@ -40,6 +41,7 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
     label: "Exécution",
     items: [
       { to: "/checkin", label: "Check-in" },
+      { to: "/notify-test", label: "Test notifications" },
       { to: "/admin/setup", label: "Administration" },
     ],
   },
