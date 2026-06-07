@@ -77,7 +77,7 @@ export function ExecHero({
                 key={s.label}
                 className="rounded-md border border-white/10 bg-white/[0.04] p-3"
               >
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-white/75">
                   {s.label}
                 </div>
                 <div className="mt-1 font-display text-xl font-bold tabular-nums">
