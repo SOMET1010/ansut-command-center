@@ -424,6 +424,88 @@ export type Database = {
           },
         ]
       }
+      live_poll_votes: {
+        Row: {
+          answer: Json
+          created_at: string
+          id: string
+          poll_id: string
+          voter_id: string | null
+        }
+        Insert: {
+          answer: Json
+          created_at?: string
+          id?: string
+          poll_id: string
+          voter_id?: string | null
+        }
+        Update: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          poll_id?: string
+          voter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "live_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_polls: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          options: Json
+          poll_type: string
+          question: string
+          session_id: string
+          show_results: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          options?: Json
+          poll_type?: string
+          question: string
+          session_id: string
+          show_results?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          options?: Json
+          poll_type?: string
+          question?: string
+          session_id?: string
+          show_results?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_polls_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscribers: {
         Row: {
           confirmed_at: string | null
@@ -590,6 +672,42 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_attendance: {
+        Row: {
+          created_at: string
+          id: string
+          participant_id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          participant_id: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          participant_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_attendance_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
             referencedColumns: ["id"]
           },
         ]
