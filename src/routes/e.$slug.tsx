@@ -58,13 +58,6 @@ const registrationSchema = z.object({
     ),
   organization: z.string().trim().max(150, { message: "Nom trop long (150 max)." }).optional().or(z.literal("")),
   position: z.string().trim().max(150, { message: "Intitulé trop long (150 max)." }).optional().or(z.literal("")),
-  telegram_username: z
-    .string()
-    .trim()
-    .max(50, { message: "Identifiant trop long (50 max)." })
-    .optional()
-    .or(z.literal(""))
-    .transform((v) => v?.replace(/^@/, "") || ""),
 });
 
 type FormErrors = Partial<Record<keyof z.infer<typeof registrationSchema>, string>>;
@@ -80,7 +73,7 @@ function PublicEventPage() {
   const [registrationCount, setRegistrationCount] = useState<number>(0);
   const [isFull, setIsFull] = useState(false);
   const [form, setForm] = useState({
-    full_name: "", email: "", phone: "", organization: "", position: "", telegram_username: "",
+    full_name: "", email: "", phone: "", organization: "", position: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -142,7 +135,6 @@ function PublicEventPage() {
       p_phone: parsed.data.phone ?? "",
       p_organization: parsed.data.organization ?? "",
       p_position: parsed.data.position ?? "",
-      p_telegram_username: parsed.data.telegram_username ?? "",
     });
     setSubmitting(false);
     if (error) {
@@ -158,23 +150,21 @@ function PublicEventPage() {
 
     // Confirmation multi-canal (best-effort, ne bloque pas l'UI).
     // Le serveur regénère destinataire + contenu depuis le qr_token.
+    // Canaux : Email (toujours), WhatsApp + Telegram (si téléphone fourni).
     if (token) {
-      // WhatsApp si téléphone fourni
-      if (parsed.data.phone) {
-        sendRegistrationConfirmation({
-          data: { qr_token: token as string, channel: "WhatsApp" },
-        }).catch((err) => console.warn("Hub WhatsApp failed", err));
-      }
-      // Telegram si username fourni
-      if (parsed.data.telegram_username) {
-        sendRegistrationConfirmation({
-          data: { qr_token: token as string, channel: "Telegram" },
-        }).catch((err) => console.warn("Hub Telegram failed", err));
-      }
       // Email toujours
       sendRegistrationConfirmation({
         data: { qr_token: token as string, channel: "Email" },
       }).catch((err) => console.warn("Hub Email failed", err));
+      // WhatsApp + Telegram si téléphone fourni (les deux utilisent le numéro)
+      if (parsed.data.phone) {
+        sendRegistrationConfirmation({
+          data: { qr_token: token as string, channel: "WhatsApp" },
+        }).catch((err) => console.warn("Hub WhatsApp failed", err));
+        sendRegistrationConfirmation({
+          data: { qr_token: token as string, channel: "Telegram" },
+        }).catch((err) => console.warn("Hub Telegram failed", err));
+      }
     }
 
     setDone(true);
@@ -316,23 +306,14 @@ function PublicEventPage() {
                 <FormField
                   id="phone"
                   type="tel"
-                  label="Téléphone (WhatsApp / SMS)"
-                  helper="Optionnel — pour recevoir des confirmations par WhatsApp ou SMS."
+                  label="Téléphone (WhatsApp / SMS / Telegram)"
+                  helper="Optionnel — pour recevoir des confirmations par WhatsApp, SMS et Telegram."
                   placeholder="+225 07 00 00 00 00"
                   error={errors.phone}
                   autoComplete="tel"
                   inputMode="tel"
                   value={form.phone}
                   onChange={(v) => updateField("phone", v)}
-                />
-                <FormField
-                  id="telegram_username"
-                  label="Telegram"
-                  helper="Optionnel — votre @username pour recevoir une confirmation Telegram."
-                  placeholder="@votre_username"
-                  error={errors.telegram_username}
-                  value={form.telegram_username}
-                  onChange={(v) => updateField("telegram_username", v)}
                 />
                 <FormField
                   id="organization"

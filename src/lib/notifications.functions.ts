@@ -5,11 +5,13 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 /**
  * Envoi de notifications via le Hub ANSUT.
  *
- * Le Hub ANSUT est le point d'entrée unique pour tous les canaux :
- *  - Email
- *  - WhatsApp (templates Business)
- *  - SMS
- *  - Telegram
+ * Endpoint unique : {ANSUT_HUB_URL}/api/message/send
+ *
+ * Canaux supportés (tous utilisent le même endpoint) :
+ *  - Email    → to = adresse email
+ *  - WhatsApp → to = numéro de téléphone (format international, ex: 22507000000)
+ *  - SMS      → to = numéro de téléphone (format international)
+ *  - Telegram → to = numéro de téléphone (format international)
  *
  * Sécurité :
  *  - L'appelant ne peut PAS choisir le destinataire ni le contenu.
@@ -45,7 +47,7 @@ export const sendRegistrationConfirmation = createServerFn({ method: "POST" })
     // Lookup registration server-side — RLS bypass intentional (anonymous flow).
     const { data: reg, error: regErr } = await supabaseAdmin
       .from("event_registrations")
-      .select("full_name, email, phone, telegram_username, event_id")
+      .select("full_name, email, phone, event_id")
       .eq("qr_token", data.qr_token)
       .maybeSingle();
     if (regErr || !reg) {
@@ -53,19 +55,8 @@ export const sendRegistrationConfirmation = createServerFn({ method: "POST" })
     }
 
     // Déterminer le destinataire selon le canal
-    let recipient: string | null = null;
-    switch (data.channel) {
-      case "Email":
-        recipient = reg.email;
-        break;
-      case "WhatsApp":
-      case "SMS":
-        recipient = reg.phone;
-        break;
-      case "Telegram":
-        recipient = reg.telegram_username;
-        break;
-    }
+    // Email → email | WhatsApp, SMS, Telegram → numéro de téléphone
+    const recipient = data.channel === "Email" ? reg.email : reg.phone;
     if (!recipient) {
       return { ok: false as const, error: `Destinataire manquant pour le canal ${data.channel}` };
     }
@@ -123,15 +114,21 @@ export async function sendViaHub(opts: HubSendOptions): Promise<{ ok: boolean; e
   }
 
   const url = `${baseUrl.replace(/\/+$/, "")}/api/message/send`;
+
+  // Normaliser le destinataire : retirer espaces, +, points, tirets pour les canaux téléphone
+  const to = opts.channel === "Email"
+    ? opts.to.trim()
+    : opts.to.replace(/[\s.+()-]/g, "");
+
   const payload: Record<string, unknown> = {
     username,
     password,
     channel: opts.channel,
-    to: opts.to.replace(/\s+/g, ""),
+    to,
     content: opts.content,
   };
 
-  // Paramètres spécifiques par canal
+  // Paramètres spécifiques par canal selon la doc Hub ANSUT
   switch (opts.channel) {
     case "Email":
       payload.subject = opts.subject ?? "ANSUT EVENT — Notification";
@@ -139,6 +136,7 @@ export async function sendViaHub(opts: HubSendOptions): Promise<{ ok: boolean; e
       break;
 
     case "WhatsApp":
+      // Template WhatsApp si des paramètres sont fournis
       if (opts.params && opts.params.length > 0) {
         payload.whatsAppTemplate = {
           name: "ansut_event_confirmation",
@@ -155,13 +153,11 @@ export async function sendViaHub(opts: HubSendOptions): Promise<{ ok: boolean; e
       break;
 
     case "SMS":
-      // Le Hub ANSUT gère le SMS directement via le champ channel
-      // Pas de paramètres supplémentaires nécessaires
+      // Pas de paramètres supplémentaires — le Hub gère directement
       break;
 
     case "Telegram":
-      // Le Hub ANSUT gère Telegram directement via le champ channel
-      // Le champ "to" contient le chat_id ou username Telegram
+      // Pas de paramètres supplémentaires — le Hub route via le numéro de téléphone
       break;
   }
 
@@ -186,11 +182,14 @@ export async function sendViaHub(opts: HubSendOptions): Promise<{ ok: boolean; e
 /**
  * Envoie un message sur tous les canaux disponibles pour un participant donné.
  * Utilise exclusivement le Hub ANSUT comme point d'entrée.
+ *
+ * Règle de routage :
+ *  - Email → nécessite une adresse email
+ *  - WhatsApp, SMS, Telegram → nécessitent un numéro de téléphone
  */
 export async function sendMultiChannel(opts: {
   email: string | null;
   phone: string | null;
-  telegramUsername: string | null;
   content: string;
   subject?: string;
   eventName: string;
@@ -200,19 +199,8 @@ export async function sendMultiChannel(opts: {
   const results: Record<string, { ok: boolean; error?: string }> = {};
 
   for (const channel of opts.channels) {
-    let to: string | null = null;
-    switch (channel) {
-      case "Email":
-        to = opts.email;
-        break;
-      case "WhatsApp":
-      case "SMS":
-        to = opts.phone;
-        break;
-      case "Telegram":
-        to = opts.telegramUsername;
-        break;
-    }
+    // Email → email, tout le reste → téléphone
+    const to = channel === "Email" ? opts.email : opts.phone;
 
     if (!to) {
       results[channel] = { ok: false, error: "Destinataire manquant" };

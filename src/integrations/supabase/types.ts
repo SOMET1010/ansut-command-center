@@ -28,7 +28,6 @@ export type Database = {
           position: string | null
           qr_token: string
           status: string
-          telegram_username: string | null
           updated_at: string
           user_id: string | null
         }
@@ -45,7 +44,6 @@ export type Database = {
           position?: string | null
           qr_token?: string
           status?: string
-          telegram_username?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -62,7 +60,6 @@ export type Database = {
           position?: string | null
           qr_token?: string
           status?: string
-          telegram_username?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -324,7 +321,6 @@ export type Database = {
           p_organization: string
           p_phone: string
           p_position: string
-          p_telegram_username?: string
         }
         Returns: string
       }

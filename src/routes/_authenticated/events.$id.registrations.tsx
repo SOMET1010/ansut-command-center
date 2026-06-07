@@ -28,7 +28,6 @@ type Reg = {
   phone: string | null;
   organization: string | null;
   position: string | null;
-  telegram_username: string | null;
   status: string;
   qr_token: string;
   created_at: string;
@@ -300,7 +299,7 @@ function RegistrationsPage() {
                     { id: "Email", label: "Email", icon: Mail, desc: "Tous les inscrits avec email" },
                     { id: "WhatsApp", label: "WhatsApp", icon: MessageSquare, desc: "Inscrits avec n° de téléphone" },
                     { id: "SMS", label: "SMS", icon: Phone, desc: "Inscrits avec n° de téléphone" },
-                    { id: "Telegram", label: "Telegram", icon: Send, desc: "Inscrits avec ID Telegram" },
+                    { id: "Telegram", label: "Telegram", icon: Send, desc: "Inscrits avec n° de téléphone" },
                   ].map((ch) => (
                     <label key={ch.id} className="flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted">
                       <input
@@ -426,7 +425,6 @@ function RegistrationsPage() {
                 <TableHead>Email</TableHead>
                 <TableHead className="hidden md:table-cell">Téléphone</TableHead>
                 <TableHead className="hidden lg:table-cell">Organisation</TableHead>
-                <TableHead className="hidden xl:table-cell">Telegram</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead className="hidden sm:table-cell">Inscrit le</TableHead>
                 <TableHead className="text-right">Badge</TableHead>
@@ -441,7 +439,6 @@ function RegistrationsPage() {
                     <TableCell className="text-muted-foreground">{r.email}</TableCell>
                     <TableCell className="hidden md:table-cell">{r.phone ?? "—"}</TableCell>
                     <TableCell className="hidden lg:table-cell">{r.organization ?? "—"}</TableCell>
-                    <TableCell className="hidden xl:table-cell">{r.telegram_username ? `@${r.telegram_username}` : "—"}</TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}>
                         {badge.label}

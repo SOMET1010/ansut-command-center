@@ -7,10 +7,10 @@ import { type NotificationChannel, sendMultiChannel } from "./notifications.func
  * Envoi de rappels multi-canal aux participants inscrits à un événement.
  *
  * Tous les canaux transitent par le Hub ANSUT :
- *  - Email
- *  - WhatsApp
- *  - SMS
- *  - Telegram
+ *  - Email    → to = adresse email
+ *  - WhatsApp → to = numéro de téléphone
+ *  - SMS      → to = numéro de téléphone
+ *  - Telegram → to = numéro de téléphone
  *
  * L'organisateur choisit les canaux à utiliser depuis l'interface.
  *
@@ -74,7 +74,7 @@ export const sendEventReminder = createServerFn({ method: "POST" })
     // Récupérer les inscrits confirmés/pending
     const { data: registrations, error: regErr } = await supabaseAdmin
       .from("event_registrations")
-      .select("id, full_name, email, phone, telegram_username, status")
+      .select("id, full_name, email, phone, status")
       .eq("event_id", data.event_id)
       .in("status", ["confirmed", "pending"]);
 
@@ -117,13 +117,15 @@ export const sendEventReminder = createServerFn({ method: "POST" })
 
       const params = [reg.full_name.trim(), event.name.trim(), dateStr, location];
 
-      // Déterminer les canaux applicables pour ce participant
+      // Déterminer les canaux applicables pour ce participant :
+      // Email → nécessite un email
+      // WhatsApp, SMS, Telegram → nécessitent un numéro de téléphone
       const regChannels: NotificationChannel[] = [];
       for (const ch of availableChannels) {
         if (ch === "Email" && reg.email) regChannels.push("Email");
-        if (ch === "WhatsApp" && reg.phone) regChannels.push("WhatsApp");
-        if (ch === "SMS" && reg.phone) regChannels.push("SMS");
-        if (ch === "Telegram" && reg.telegram_username) regChannels.push("Telegram");
+        if ((ch === "WhatsApp" || ch === "SMS" || ch === "Telegram") && reg.phone) {
+          regChannels.push(ch);
+        }
       }
 
       if (regChannels.length === 0) continue;
@@ -131,7 +133,6 @@ export const sendEventReminder = createServerFn({ method: "POST" })
       const { results } = await sendMultiChannel({
         email: reg.email ?? null,
         phone: reg.phone ?? null,
-        telegramUsername: reg.telegram_username ?? null,
         content: personalizedText,
         subject: `Rappel — ${event.name} · ${dateStr}`,
         eventName: event.name,
