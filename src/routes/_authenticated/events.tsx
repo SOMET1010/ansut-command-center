@@ -92,6 +92,15 @@ function EventsPage() {
 
   const duplicateMut = useMutation({
     mutationFn: async (ev: EventRow) => {
+      // Récupérer l'organization_id avant l'insert
+      const { data: orig, error: lookupErr } = await supabase
+        .from("events")
+        .select("organization_id")
+        .eq("id", ev.id)
+        .single();
+      if (lookupErr || !orig?.organization_id) {
+        throw new Error("Impossible de retrouver l'organisation de l'événement");
+      }
       // Générer un slug unique
       const newSlug = `${ev.slug}-copie-${Date.now().toString(36)}`;
       const { error } = await supabase.from("events").insert({
@@ -104,7 +113,7 @@ function EventsPage() {
         capacity: ev.capacity,
         cover_url: ev.cover_url,
         status: "draft",
-        organization_id: (await supabase.from("events").select("organization_id").eq("id", ev.id).single()).data?.organization_id,
+        organization_id: orig.organization_id,
       });
       if (error) throw error;
     },
