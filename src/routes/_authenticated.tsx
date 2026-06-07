@@ -9,6 +9,7 @@ import {
   LogOut,
   ShieldCheck,
   Bell,
+  Megaphone,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -37,6 +38,7 @@ const ICONS: Record<CockpitNavTo, IconCmp> = {
   "/events": Calendar,
   "/participants": Users,
   "/polls": Vote,
+  "/announcements": Megaphone,
   "/checkin": QrCode,
   "/admin/setup": ShieldCheck,
 };
