@@ -10,6 +10,14 @@ const SubscribeSchema = z.object({
 export const subscribeNewsletter = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => SubscribeSchema.parse(input))
   .handler(async ({ data }) => {
+    // Lecture préalable : permet de savoir si on doit (ré)envoyer un email de
+    // confirmation ou si l'adresse a déjà reçu un envoi récent (anti email-bomb).
+    const { data: existing } = await supabaseAdmin
+      .from("newsletter_subscribers")
+      .select("created_at, updated_at, confirmed_at")
+      .eq("email", data.email)
+      .maybeSingle();
+
     const { error } = await supabaseAdmin
       .from("newsletter_subscribers")
       .upsert(
@@ -26,9 +34,17 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
       return { ok: false as const, error: "Inscription impossible, réessayez." };
     }
 
-    // Envoi de l'email de confirmation via le Hub ANSUT (channel Email).
-    // L'inscription DB reste valide même si l'email échoue ; on renvoie
-    // un statut détaillé pour que l'UI puisse l'afficher.
+    // Anti email-bomb : si l'adresse existe déjà et qu'un email a été
+    // envoyé/maj dans les 10 dernières minutes, on n'en envoie pas un nouveau.
+    const COOLDOWN_MS = 10 * 60 * 1000;
+    const last = existing?.updated_at ?? existing?.created_at;
+    const recentlyTouched = last
+      ? Date.now() - new Date(last).getTime() < COOLDOWN_MS
+      : false;
+    if (existing && recentlyTouched) {
+      return { ok: true as const, emailStatus: "skipped" as const, emailError: "cooldown" };
+    }
+
     let emailStatus: "sent" | "skipped" | "failed" = "skipped";
     let emailError: string | undefined;
 
