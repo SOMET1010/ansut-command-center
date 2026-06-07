@@ -226,18 +226,21 @@ export type Database = {
       event_session_speakers: {
         Row: {
           created_at: string
+          role: string | null
           session_id: string
           sort_order: number
           speaker_id: string
         }
         Insert: {
           created_at?: string
+          role?: string | null
           session_id: string
           sort_order?: number
           speaker_id: string
         }
         Update: {
           created_at?: string
+          role?: string | null
           session_id?: string
           sort_order?: number
           speaker_id?: string
