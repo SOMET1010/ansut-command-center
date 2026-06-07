@@ -15,10 +15,13 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PollPollIdRouteImport } from './routes/poll.$pollId'
 import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
 import { Route as MessagesSlugRouteImport } from './routes/messages.$slug'
 import { Route as MeRoleRouteImport } from './routes/me.role'
+import { Route as LiveSessionIdRouteImport } from './routes/live.$sessionId'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
+import { Route as AttendanceSessionIdRouteImport } from './routes/attendance.$sessionId'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
@@ -62,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PollPollIdRoute = PollPollIdRouteImport.update({
+  id: '/poll/$pollId',
+  path: '/poll/$pollId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NetworkingSlugRoute = NetworkingSlugRouteImport.update({
   id: '/networking/$slug',
   path: '/networking/$slug',
@@ -77,9 +85,19 @@ const MeRoleRoute = MeRoleRouteImport.update({
   path: '/me/role',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LiveSessionIdRoute = LiveSessionIdRouteImport.update({
+  id: '/live/$sessionId',
+  path: '/live/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
   path: '/e/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AttendanceSessionIdRoute = AttendanceSessionIdRouteImport.update({
+  id: '/attendance/$sessionId',
+  path: '/attendance/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendaSlugRoute = AgendaSlugRouteImport.update({
@@ -164,10 +182,13 @@ export interface FileRoutesByFullPath {
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
+  '/live/$sessionId': typeof LiveSessionIdRoute
   '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
+  '/poll/$pollId': typeof PollPollIdRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -188,10 +209,13 @@ export interface FileRoutesByTo {
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
+  '/live/$sessionId': typeof LiveSessionIdRoute
   '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
+  '/poll/$pollId': typeof PollPollIdRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -214,10 +238,13 @@ export interface FileRoutesById {
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
+  '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
+  '/live/$sessionId': typeof LiveSessionIdRoute
   '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
+  '/poll/$pollId': typeof PollPollIdRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -240,10 +267,13 @@ export interface FileRouteTypes {
     | '/participants'
     | '/polls'
     | '/agenda/$slug'
+    | '/attendance/$sessionId'
     | '/e/$slug'
+    | '/live/$sessionId'
     | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
+    | '/poll/$pollId'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -264,10 +294,13 @@ export interface FileRouteTypes {
     | '/participants'
     | '/polls'
     | '/agenda/$slug'
+    | '/attendance/$sessionId'
     | '/e/$slug'
+    | '/live/$sessionId'
     | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
+    | '/poll/$pollId'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -289,10 +322,13 @@ export interface FileRouteTypes {
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/agenda/$slug'
+    | '/attendance/$sessionId'
     | '/e/$slug'
+    | '/live/$sessionId'
     | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
+    | '/poll/$pollId'
     | '/_authenticated/admin/setup'
     | '/_authenticated/events/new'
     | '/_authenticated/events/$id/edit'
@@ -310,10 +346,13 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   AgendaSlugRoute: typeof AgendaSlugRoute
+  AttendanceSessionIdRoute: typeof AttendanceSessionIdRoute
   ESlugRoute: typeof ESlugRoute
+  LiveSessionIdRoute: typeof LiveSessionIdRoute
   MeRoleRoute: typeof MeRoleRoute
   MessagesSlugRoute: typeof MessagesSlugRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
+  PollPollIdRoute: typeof PollPollIdRoute
   ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
   ApiPublicAuthTokenRoute: typeof ApiPublicAuthTokenRoute
 }
@@ -362,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/poll/$pollId': {
+      id: '/poll/$pollId'
+      path: '/poll/$pollId'
+      fullPath: '/poll/$pollId'
+      preLoaderRoute: typeof PollPollIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/networking/$slug': {
       id: '/networking/$slug'
       path: '/networking/$slug'
@@ -383,11 +429,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/live/$sessionId': {
+      id: '/live/$sessionId'
+      path: '/live/$sessionId'
+      fullPath: '/live/$sessionId'
+      preLoaderRoute: typeof LiveSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/e/$slug': {
       id: '/e/$slug'
       path: '/e/$slug'
       fullPath: '/e/$slug'
       preLoaderRoute: typeof ESlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/attendance/$sessionId': {
+      id: '/attendance/$sessionId'
+      path: '/attendance/$sessionId'
+      fullPath: '/attendance/$sessionId'
+      preLoaderRoute: typeof AttendanceSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agenda/$slug': {
@@ -532,10 +592,13 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   AgendaSlugRoute: AgendaSlugRoute,
+  AttendanceSessionIdRoute: AttendanceSessionIdRoute,
   ESlugRoute: ESlugRoute,
+  LiveSessionIdRoute: LiveSessionIdRoute,
   MeRoleRoute: MeRoleRoute,
   MessagesSlugRoute: MessagesSlugRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
+  PollPollIdRoute: PollPollIdRoute,
   ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,
   ApiPublicAuthTokenRoute: ApiPublicAuthTokenRoute,
 }

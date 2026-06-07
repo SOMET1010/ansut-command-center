@@ -4,10 +4,15 @@ import { ArrowLeft, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { EventForm, eventToValues } from "@/components/event-form";
 import { Button } from "@/components/ui/button";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/events/$id/edit")({
   head: () => ({ meta: [{ title: "Éditer l'événement — ANSUT EVENT" }] }),
-  component: EditEvent,
+  component: () => (
+    <RequireSuperAdmin>
+      <EditEvent />
+    </RequireSuperAdmin>
+  ),
 });
 
 function EditEvent() {

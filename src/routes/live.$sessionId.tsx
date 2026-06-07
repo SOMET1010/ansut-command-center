@@ -122,7 +122,7 @@ function LivePresentation() {
         const poll = polls[0];
         setActivePoll({
           ...poll,
-          options: Array.isArray(poll.options) ? poll.options : [],
+          options: (Array.isArray(poll.options) ? poll.options : []) as string[],
         });
 
         // Compter les votes
