@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnsutLogo } from "@/components/ansut/Logo";
 import {
-  COCKPIT_NAV_SECTIONS,
+  COCKPIT_VISIBLE_NAV_SECTIONS,
   getCockpitBreadcrumbLabel,
   type CockpitNavTo,
 } from "@/lib/cockpit-nav";
@@ -41,9 +41,9 @@ const ICONS: Record<CockpitNavTo, IconCmp> = {
   "/admin/setup": ShieldCheck,
 };
 
-const NAV_SECTIONS: NavSection[] = COCKPIT_NAV_SECTIONS.map((s) => ({
+const NAV_SECTIONS: NavSection[] = COCKPIT_VISIBLE_NAV_SECTIONS.map((s) => ({
   label: s.label,
-  items: s.items.map((i) => ({ ...i, icon: ICONS[i.to] })),
+  items: s.items.map((i) => ({ to: i.to, label: i.label, icon: ICONS[i.to] })),
 }));
 
 function AuthLayout() {
