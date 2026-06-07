@@ -65,11 +65,9 @@ function SignupPage() {
         <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-secondary/25 blur-[120px]" />
 
         <Link to="/" className="relative flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary text-xl font-bold text-secondary-foreground shadow-lg">
-            A
-          </div>
+          <AnsutLogo size="lg" />
           <div className="leading-tight">
-            <div className="font-display text-lg font-bold">ANSUT EVENT</div>
+            <div className="font-display text-lg font-bold">EVENT</div>
             <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
               Plateforme officielle du SUTEL
             </div>
