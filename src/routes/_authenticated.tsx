@@ -91,15 +91,13 @@ function AuthLayout() {
         )}
       >
         {/* Brand */}
-        <div className={cn("flex h-14 items-center gap-3 border-b border-sidebar-border px-3", collapsed && "justify-center px-0")}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-base font-bold text-sidebar-primary-foreground">
-            A
-          </div>
+        <div className={cn("flex h-14 items-center gap-2.5 border-b border-sidebar-border px-3", collapsed && "justify-center px-0")}>
+          <AnsutLogo size={collapsed ? "sm" : "md"} />
           {!collapsed && (
             <div className="min-w-0 leading-tight">
               <div className="truncate font-display text-sm font-bold">ANSUT EVENT</div>
               <div className="truncate text-[10px] uppercase tracking-[0.18em] text-sidebar-foreground/55">
-                SUTEL 2026
+                Console DG · SUTEL 2026
               </div>
             </div>
           )}
