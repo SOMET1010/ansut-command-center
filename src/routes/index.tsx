@@ -124,33 +124,47 @@ function Landing() {
 
   return (
     <div className="min-h-dvh bg-background">
+      {/* TOP UTILITY BAR */}
+      <div className="fixed top-0 z-[60] w-full border-b border-white/10 bg-[#08172E]/95 backdrop-blur-md">
+        <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 text-[10px] font-medium uppercase tracking-[0.18em] text-white/70 sm:px-6">
+          <span className="hidden sm:inline">République de Côte d'Ivoire · Ministère de la Communication & de l'Économie Numérique</span>
+          <span className="sm:hidden">RCI · ANSUT</span>
+          <div className="flex items-center gap-4">
+            <span className="hidden md:inline">FR</span>
+            <span className="hidden md:inline opacity-40">|</span>
+            <span className="hidden md:inline opacity-60">EN</span>
+            <span className="opacity-60">Édition officielle 2026</span>
+          </div>
+        </div>
+      </div>
+
       {/* STICKY NAV */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-primary/95 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6">
-          <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
+      <nav className="fixed top-8 z-50 w-full border-b border-white/5 bg-[#0E2440]/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+          <Link to="/" className="flex min-w-0 items-center gap-3">
             <AnsutLogo size="md" className="shrink-0" />
             <div className="min-w-0 leading-tight">
-              <div className="truncate font-display font-bold tracking-tight text-white">EVENT</div>
-              <div className="hidden text-[10px] uppercase tracking-[0.2em] text-white/75 md:block">
-                SUTEL 2026 Official
+              <div className="truncate font-display text-[15px] font-semibold tracking-[0.02em] text-white">ANSUT Event</div>
+              <div className="hidden text-[9px] uppercase tracking-[0.25em] text-white/55 md:block">
+                SUTEL 2026 — Plateforme officielle
               </div>
             </div>
           </Link>
 
           <div className="hidden items-center gap-8 lg:flex">
-            <Link to="/" className="text-sm font-medium text-white">Accueil</Link>
-            <Link to="/events" className="text-sm font-medium text-white/70 transition hover:text-white">Programme</Link>
-            <Link to="/participants" className="text-sm font-medium text-white/70 transition hover:text-white">Participants</Link>
-            <Link to="/events" className="text-sm font-medium text-white/70 transition hover:text-white">Exposition</Link>
-            <Link to="/events" className="text-sm font-medium text-white/70 transition hover:text-white">Partenaires</Link>
-            <Link to="/dashboard" className="text-sm font-medium text-white/70 transition hover:text-white">Statistiques</Link>
+            <Link to="/" className="text-[13px] font-medium text-white">Accueil</Link>
+            <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Programme</Link>
+            <Link to="/participants" className="text-[13px] font-medium text-white/65 transition hover:text-white">Participants</Link>
+            <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Exposition</Link>
+            <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Partenaires</Link>
+            <Link to="/dashboard" className="text-[13px] font-medium text-white/65 transition hover:text-white">Statistiques</Link>
           </div>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-            <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white sm:size-default">
+            <Button asChild variant="ghost" size="sm" className="text-white/80 hover:bg-white/10 hover:text-white">
               <Link to="/login">Connexion</Link>
             </Button>
-            <Button asChild variant="ansut-orange" size="sm" className="rounded-full shadow-sm sm:size-default">
+            <Button asChild variant="ansut-orange" size="sm" className="rounded-full px-4 shadow-sm">
               <Link to="/signup">
                 <span className="sm:hidden">S'inscrire</span>
                 <span className="hidden sm:inline">Créer un compte</span>
@@ -160,74 +174,95 @@ function Landing() {
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="relative overflow-hidden pb-24 pt-32 text-white lg:pt-48" style={{ background: "var(--gradient-hero)" }}>
-        {/* Background image + grid pattern */}
+      {/* HERO — full bleed institutional */}
+      <section className="relative flex min-h-[100svh] items-end overflow-hidden pb-16 pt-40 text-white lg:pb-24 lg:pt-44">
+        {/* Background */}
         <div className="absolute inset-0">
           <img
             src={heroImage}
             alt=""
             width={1920}
             height={1080}
-            className="h-full w-full object-cover opacity-15"
+            className="h-full w-full object-cover object-center"
           />
+          {/* Cinematic overlays */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(34,86,163,0.45),transparent_60%)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#08172E]/95 via-[#08172E]/75 to-[#08172E]/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#08172E] via-[#08172E]/30 to-transparent" />
+          {/* Fine grid */}
           <div
-            className="absolute inset-0 opacity-[0.07]"
+            className="absolute inset-0 opacity-[0.05]"
             style={{
               backgroundImage:
                 "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
+              backgroundSize: "80px 80px",
             }}
           />
-          <div className="absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-secondary/20 blur-[120px]" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-6">
-          <div className="grid items-start gap-12 lg:grid-cols-12">
+        <div className="relative mx-auto w-full max-w-7xl px-6">
+          <div className="grid items-end gap-16 lg:grid-cols-12">
             {/* LEFT */}
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1">
-                <span className="flex h-2 w-2 animate-pulse rounded-full bg-secondary" />
-                <span className="text-[11px] font-bold uppercase tracking-wider text-secondary">
-                  {ev?.name?.includes("SUTEL") ? ev.name : "SUTEL 2026"} • {formatDates(ev?.starts_at, ev?.ends_at)}
-                </span>
+              {/* Eyebrow */}
+              <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
+                <span className="h-px w-10 bg-secondary" />
+                <span>Sommet officiel du numérique ivoirien</span>
               </div>
 
-              <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight lg:text-7xl">
-                Plateforme officielle
+              {/* Headline — editorial */}
+              <h1 className="mt-6 font-display text-[44px] font-bold leading-[0.98] tracking-[-0.025em] sm:text-6xl lg:text-[88px]">
+                SUTEL <span style={{ fontFamily: "'Instrument Serif', serif" }} className="italic font-normal text-white/90">2026</span>
                 <br />
-                <span className="bg-gradient-to-r from-white via-[oklch(0.85_0.05_245)] to-[oklch(0.70_0.10_245)] bg-clip-text text-transparent">
-                  du SUTEL 2026
-                </span>
+                <span className="text-white/85">Bâtir l'avenir</span>
+                <br />
+                <span style={{ fontFamily: "'Instrument Serif', serif" }} className="italic font-normal text-secondary">numérique</span>
+                <span className="text-white/85"> ivoirien.</span>
               </h1>
 
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/70">
-                Gérez les inscriptions, accréditations, conférences, badges QR, accès, live polling
-                et analytics en temps réel pour le plus grand événement télécom de Côte d'Ivoire.
+              <p className="mt-8 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
+                Le rendez-vous institutionnel des décideurs, opérateurs et partenaires
+                du service universel des télécommunications. Plateforme officielle
+                d'inscription, d'accréditation, de programme et d'analytics temps réel.
               </p>
 
-              {ev?.location && (
-                <div className="mt-5 flex items-center gap-2 text-sm text-white/70">
-                  <MapPin className="h-4 w-4" />
-                  {ev.location}
+              {/* Meta line */}
+              <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-white/10 py-5 text-sm">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Dates</div>
+                  <div className="mt-1 font-semibold text-white">{formatDates(ev?.starts_at, ev?.ends_at)}</div>
                 </div>
-              )}
+                {ev?.location && (
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Lieu</div>
+                    <div className="mt-1 flex items-center gap-1.5 font-semibold text-white">
+                      <MapPin className="h-3.5 w-3.5 text-secondary" />
+                      {ev.location}
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Édition</div>
+                  <div className="mt-1 font-semibold text-white">III · Officielle</div>
+                </div>
+              </div>
 
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="mt-10 flex flex-wrap gap-3">
                 <Button
                   asChild
                   size="lg"
-                  className="rounded-xl bg-white px-8 py-6 text-base font-bold text-primary shadow-2xl hover:bg-white/95"
+                  variant="ansut-orange"
+                  className="rounded-full px-8 py-6 text-[15px] font-semibold shadow-[0_10px_40px_-10px_rgba(240,130,36,0.6)]"
                 >
                   {ev?.slug ? (
                     <Link to="/e/$slug" params={{ slug: ev.slug }}>
-                      S'inscrire au SUTEL 2026
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      Demander son accréditation
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   ) : (
                     <Link to="/signup">
-                      S'inscrire au SUTEL 2026
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      Demander son accréditation
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   )}
                 </Button>
@@ -235,43 +270,35 @@ function Landing() {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="rounded-xl border-white/20 bg-white/5 px-8 py-6 text-base font-bold text-white backdrop-blur-sm hover:bg-white/10 hover:text-white"
+                  className="rounded-full border-white/25 bg-transparent px-8 py-6 text-[15px] font-semibold text-white backdrop-blur-sm hover:border-white/60 hover:bg-white/5 hover:text-white"
                 >
                   <Link to="/events">
-                    <PlayCircle className="mr-2 h-5 w-5" />
-                    Découvrir la plateforme
+                    <PlayCircle className="mr-2 h-4 w-4" />
+                    Découvrir le programme
                   </Link>
                 </Button>
               </div>
-
-              {/* STATS */}
-              <div className="mt-16 grid grid-cols-2 gap-3 sm:grid-cols-5">
-                <StatCard icon={Users} label="Inscrits" value={stats.participants.toLocaleString("fr-FR")} />
-                <StatCard icon={QrCode} label="Badges" value={stats.badges.toLocaleString("fr-FR")} />
-                <StatCard icon={Mic} label="Conférences" value={stats.conferences.toString()} />
-                <StatCard icon={Building2} label="Partenaires" value={stats.partners.toString()} />
-                <StatCard icon={BarChart3} label="Présence" value={`${stats.attendanceRate}%`} highlight />
-              </div>
             </div>
 
-            {/* RIGHT — Programme du jour */}
+            {/* RIGHT — Programme du jour, institutional card */}
             <aside className="lg:col-span-5">
-              <div className="overflow-hidden rounded-3xl bg-white p-8 text-foreground shadow-2xl">
-                <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Programme du jour</h2>
-                  <Link to="/events" className="text-sm font-semibold text-primary hover:underline">
-                    Voir tout
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+                <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">À l'agenda</div>
+                    <h2 className="mt-1 text-base font-semibold text-white">Programme du jour</h2>
+                  </div>
+                  <Link to="/events" className="text-xs font-semibold text-secondary hover:underline">
+                    Voir tout →
                   </Link>
                 </div>
 
-                <ul className="space-y-3">
+                <ul className="space-y-2">
                   {data.agenda.length === 0 && (
-                    <li className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border p-8 text-center">
-                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                        <Calendar className="h-8 w-8 text-muted-foreground/50" />
-                      </div>
-                      <p className="font-medium text-muted-foreground">
-                        Aucun événement programmé pour le moment.
+                    <li className="flex min-h-[220px] flex-col items-center justify-center rounded-xl border border-dashed border-white/15 p-6 text-center">
+                      <Calendar className="mb-3 h-7 w-7 text-white/30" />
+                      <p className="text-sm text-white/55">
+                        Le programme officiel sera publié prochainement.
                       </p>
                     </li>
                   )}
@@ -280,21 +307,21 @@ function Landing() {
                     return (
                       <li
                         key={item.id}
-                        className="flex gap-3 rounded-xl border border-border p-3 transition-colors hover:bg-secondary"
+                        className="flex gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 transition-colors hover:border-white/15 hover:bg-white/[0.05]"
                       >
-                        <div className="flex w-14 shrink-0 flex-col text-xs font-semibold text-muted-foreground">
-                          <span className="text-foreground">{r.start}</span>
-                          <span>{r.end}</span>
+                        <div className="flex w-12 shrink-0 flex-col text-[11px] font-semibold tabular-nums">
+                          <span className="text-white">{r.start}</span>
+                          <span className="text-white/40">{r.end}</span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className="inline-block rounded bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                          <span className="inline-block rounded bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-secondary">
                             Conférence
                           </span>
-                          <p className="mt-1 line-clamp-2 text-sm font-medium leading-snug">
+                          <p className="mt-1 line-clamp-2 text-sm font-medium leading-snug text-white">
                             {item.name}
                           </p>
                           {item.location && (
-                            <p className="mt-0.5 text-xs text-muted-foreground">{item.location}</p>
+                            <p className="mt-0.5 text-xs text-white/45">{item.location}</p>
                           )}
                         </div>
                       </li>
@@ -302,17 +329,31 @@ function Landing() {
                   })}
                 </ul>
 
-                <Button asChild className="mt-6 w-full rounded-xl bg-primary py-6 font-bold hover:bg-primary/90">
+                <Button asChild variant="outline" className="mt-5 w-full rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white">
                   <Link to="/events">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Voir le programme complet
+                    Programme complet
+                    <ArrowRight className="ml-2 h-3.5 w-3.5" />
                   </Link>
                 </Button>
               </div>
+
+              {/* Key figures strip */}
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                <MiniStat label="Inscrits" value={stats.participants.toLocaleString("fr-FR")} />
+                <MiniStat label="Conférences" value={stats.conferences.toString()} />
+                <MiniStat label="Partenaires" value={stats.partners.toString()} />
+              </div>
             </aside>
+          </div>
+
+          {/* Scroll cue */}
+          <div className="mt-16 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/40">
+            <span className="h-px w-12 bg-white/20" />
+            <span>Défiler pour explorer la plateforme</span>
           </div>
         </div>
       </section>
+
 
       {/* FEATURES */}
       <section className="bg-background py-24">
@@ -490,6 +531,15 @@ function StatCard({
       <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/85">
         {label}
       </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-sm">
+      <div className="text-lg font-bold tabular-nums leading-none text-white">{value}</div>
+      <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">{label}</div>
     </div>
   );
 }
