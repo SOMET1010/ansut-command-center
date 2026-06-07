@@ -47,7 +47,7 @@ function SignupPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid min-h-dvh lg:grid-cols-2">
       {/* LEFT — Branded navy panel */}
       <div
         className="relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex"

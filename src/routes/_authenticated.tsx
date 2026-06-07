@@ -68,7 +68,7 @@ function AuthLayout() {
   if (loading || !isAuthenticated) {
     return (
       <div
-        className="flex min-h-screen items-center justify-center text-white/80"
+        className="flex min-h-dvh items-center justify-center text-white/80"
         style={{ background: "var(--gradient-sidebar)" }}
       >
         Chargement…
@@ -81,7 +81,7 @@ function AuthLayout() {
     "Console";
 
   return (
-    <div className="flex min-h-screen w-full bg-background">
+    <div className="flex min-h-dvh w-full bg-background">
       {/* SIDEBAR */}
       <aside
         className={cn(
