@@ -480,35 +480,6 @@ function Landing() {
   );
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  highlight,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border p-4 backdrop-blur-sm transition-all hover:bg-white/10 ${
-        highlight
-          ? "border-secondary/40 bg-secondary/10"
-          : "border-white/10 bg-white/5"
-      }`}
-    >
-      <div className={`mb-2 ${highlight ? "text-secondary" : "text-white/70"}`}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="text-2xl font-bold leading-none text-white">{value}</div>
-      <div className="mt-2 text-[10px] font-bold uppercase tracking-wider text-white/85">
-        {label}
-      </div>
-    </div>
-  );
-}
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
