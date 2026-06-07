@@ -138,7 +138,7 @@ function QuickAction({
       to={to}
       className="card-elevated card-elevated-hover group flex flex-col rounded-lg border border-border bg-card p-4 transition-transform hover:-translate-y-0.5"
     >
-      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-accent text-primary">
+      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
         <Icon className="h-4 w-4" />
       </div>
       <h3 className="font-display text-sm font-semibold text-foreground">{title}</h3>

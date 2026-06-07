@@ -44,7 +44,7 @@ export function KPICard({
           {label}
         </span>
         {Icon ? (
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-primary">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
             <Icon className="h-4 w-4" />
           </div>
         ) : level ? (

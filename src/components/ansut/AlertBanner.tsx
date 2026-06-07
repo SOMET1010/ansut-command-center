@@ -16,13 +16,13 @@ const STYLES: Record<SignalLevel, { bg: string; border: string; text: string; ic
     icon: AlertTriangle,
   },
   stable: {
-    bg: "bg-accent",
+    bg: "bg-primary/5",
     border: "border-signal-stable",
     text: "text-signal-stable",
     icon: Info,
   },
   ok: {
-    bg: "bg-accent",
+    bg: "bg-signal-ok/10",
     border: "border-signal-ok",
     text: "text-signal-ok",
     icon: CheckCircle2,
