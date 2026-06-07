@@ -185,7 +185,10 @@ function AuthLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* TopBar */}
         <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-border bg-card/85 px-4 backdrop-blur-md">
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2.5 text-xs">
+            <Link to="/dashboard" className="md:hidden" aria-label="Accueil console">
+              <AnsutLogo size="sm" />
+            </Link>
             <Link
               to="/dashboard"
               className="font-semibold text-muted-foreground transition-colors hover:text-foreground"
