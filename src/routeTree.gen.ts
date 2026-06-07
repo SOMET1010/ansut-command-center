@@ -17,6 +17,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
 import { Route as MessagesSlugRouteImport } from './routes/messages.$slug'
+import { Route as MeRoleRouteImport } from './routes/me.role'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
@@ -69,6 +70,11 @@ const NetworkingSlugRoute = NetworkingSlugRouteImport.update({
 const MessagesSlugRoute = MessagesSlugRouteImport.update({
   id: '/messages/$slug',
   path: '/messages/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeRoleRoute = MeRoleRouteImport.update({
+  id: '/me/role',
+  path: '/me/role',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ESlugRoute = ESlugRouteImport.update({
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/e/$slug': typeof ESlugRoute
+  '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/e/$slug': typeof ESlugRoute
+  '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/e/$slug': typeof ESlugRoute
+  '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/polls'
     | '/agenda/$slug'
     | '/e/$slug'
+    | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
     | '/admin/setup'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/polls'
     | '/agenda/$slug'
     | '/e/$slug'
+    | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
     | '/admin/setup'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/_authenticated/polls'
     | '/agenda/$slug'
     | '/e/$slug'
+    | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
     | '/_authenticated/admin/setup'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   AgendaSlugRoute: typeof AgendaSlugRoute
   ESlugRoute: typeof ESlugRoute
+  MeRoleRoute: typeof MeRoleRoute
   MessagesSlugRoute: typeof MessagesSlugRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
   ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
@@ -361,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/messages/$slug'
       fullPath: '/messages/$slug'
       preLoaderRoute: typeof MessagesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/role': {
+      id: '/me/role'
+      path: '/me/role'
+      fullPath: '/me/role'
+      preLoaderRoute: typeof MeRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/e/$slug': {
@@ -513,6 +533,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   AgendaSlugRoute: AgendaSlugRoute,
   ESlugRoute: ESlugRoute,
+  MeRoleRoute: MeRoleRoute,
   MessagesSlugRoute: MessagesSlugRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
   ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,

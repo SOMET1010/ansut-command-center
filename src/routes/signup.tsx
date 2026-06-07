@@ -34,7 +34,7 @@ function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${window.location.origin}/me/role`,
         data: { full_name: fullName },
       },
     });
@@ -43,8 +43,8 @@ function SignupPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Compte créé. Bienvenue !");
-    navigate({ to: "/dashboard" });
+    toast.success("Compte créé. Vérification de votre rôle…");
+    navigate({ to: "/me/role" });
   }
 
   return (
