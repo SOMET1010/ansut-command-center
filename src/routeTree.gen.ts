@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
+import { Route as AuthenticatedNotifyTestRouteImport } from './routes/_authenticated/notify-test'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
@@ -73,6 +74,11 @@ const AuthenticatedParticipantsRoute =
     path: '/participants',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedNotifyTestRoute = AuthenticatedNotifyTestRouteImport.update({
+  id: '/notify-test',
+  path: '/notify-test',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
+  '/notify-test': typeof AuthenticatedNotifyTestRoute
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/e/$slug': typeof ESlugRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
+  '/notify-test': typeof AuthenticatedNotifyTestRoute
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/e/$slug': typeof ESlugRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
+  '/_authenticated/notify-test': typeof AuthenticatedNotifyTestRoute
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/e/$slug': typeof ESlugRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/dashboard'
     | '/events'
+    | '/notify-test'
     | '/participants'
     | '/polls'
     | '/e/$slug'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/dashboard'
     | '/events'
+    | '/notify-test'
     | '/participants'
     | '/polls'
     | '/e/$slug'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/events'
+    | '/_authenticated/notify-test'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/e/$slug'
@@ -318,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParticipantsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/notify-test': {
+      id: '/_authenticated/notify-test'
+      path: '/notify-test'
+      fullPath: '/notify-test'
+      preLoaderRoute: typeof AuthenticatedNotifyTestRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/events': {
       id: '/_authenticated/events'
       path: '/events'
@@ -404,6 +423,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
+  AuthenticatedNotifyTestRoute: typeof AuthenticatedNotifyTestRoute
   AuthenticatedParticipantsRoute: typeof AuthenticatedParticipantsRoute
   AuthenticatedPollsRoute: typeof AuthenticatedPollsRoute
   AuthenticatedAdminSetupRoute: typeof AuthenticatedAdminSetupRoute
@@ -413,6 +433,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
+  AuthenticatedNotifyTestRoute: AuthenticatedNotifyTestRoute,
   AuthenticatedParticipantsRoute: AuthenticatedParticipantsRoute,
   AuthenticatedPollsRoute: AuthenticatedPollsRoute,
   AuthenticatedAdminSetupRoute: AuthenticatedAdminSetupRoute,

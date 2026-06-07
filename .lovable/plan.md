@@ -1,90 +1,99 @@
-## Audit ANSUT — Correction cohérence couleurs / contrastes / espacements
+## Périmètre
 
-### Problèmes constatés (preuves visuelles)
+Brancher la passerelle **ANSUT Hub** (skill `ansut-hub-notify`) pour envoyer **SMS + Email + WhatsApp + Telegram** sur trois événements métier. OTP de connexion **reporté** à un chantier ultérieur (table + edge fn déjà cadrées dans le skill `ansut-hub-otp`).
 
-**Login & Signup**
-- Bouton `Se connecter` / `Créer mon compte` : `bg-accent text-accent-foreground` → fond bleu très clair (#DCE8F5) + texte clair = **bouton illisible**. Doit passer en `bg-primary` (CTA standard) ou `variant="ansut-orange"` (CTA dominant, 1/écran).
-- Liens `Pas de compte ?` / `Déjà un compte ?` : `text-accent` sur fond blanc = **invisible**. → `text-primary hover:underline`.
-- Côté navy : icônes `ShieldCheck` / `Sparkles` / chip "SUTEL 2026" en `text-accent` / `bg-accent/10` sur navy = contraste faible (gris bleuté). → `text-secondary` (orange, vrai accent de marque).
-- Pastille animée `bg-accent` dans la chip → `bg-secondary`.
+Secrets `ANSUT_HUB_URL / USERNAME / PASSWORD` déjà provisionnés ✓
 
-**Landing**
-- Cartes features (Participants, Conférences, Accréditation, Live Polling, Exposition, Analytics) : `bg-secondary/40` = **orange à 40 % indésirable** (peau saumon). Casse la règle « orange parcimonie ». → `bg-muted` (gris doux institutionnel).
-- Section partenaires `bg-secondary/40` : même peau orange. → `bg-muted`.
-- Icônes features `text-accent` sur carte blanche : invisible. → `text-primary`.
-- Liens CTA cartes (`Gérer les participants` etc.) `text-accent` : invisible. → `text-primary`.
-- Stat highlight `border-accent/40 bg-accent/10 text-accent` sur navy = trop pâle. → `border-secondary/40 bg-secondary/10 text-secondary` (mise en valeur réelle).
-- Chip "SUTEL 2026 • DATES" et puce animée `bg-accent` sur navy = peu visible. → `bg-secondary` + `border-secondary/30`.
-- Nav top : `text-accent-foreground` sur bouton accent → bouton "Créer un compte" `bg-accent` invisible. → `variant="ansut-orange"`.
-- Carte "Programme du jour" : lien `Voir tout` en `text-accent` sur fond blanc = invisible. → `text-primary`.
-- Section "Votre badge, votre accès" sur fond `bg-primary` : badge step `border-accent/30 bg-accent/10 text-accent` (bleu pâle sur bleu) = faible contraste. → `border-secondary/40 bg-secondary/15 text-secondary`.
-- Halo décoratif `bg-accent/20 blur-[120px]` : invisible sur navy. → `bg-secondary/25` (touche orange chaude conforme à la marque).
-- Footer texte `text-white/60` sur `bg-primary` (#2256A3) : contraste ~2.8:1 = **AA non atteint**. → `text-white/75`.
+## Architecture
 
-**Dashboard, Events, Checkin**
-- `ExecHero` éveille `text-secondary` pour l'eyebrow Sparkles : OK.
-- Pages Events / Checkin : suite à la migration `card-elevated`, les colonnes restent OK mais le **placeholder ComingSoon** sur Participants/Polls n'a pas été audité (`text-accent` probable). → vérifier `coming-soon.tsx` et basculer.
-- Espacement dashboard : `section-gap` est en `flex-direction: column` (notre `@utility`) — bon. Cartes `KPICard` : padding `p-4` cohérent.
-- Events : `<Table>` shadcn récupère naturellement `text-muted-foreground`/`text-foreground` — pas de souci de contraste.
-- Checkin : badges `bg-ansut-orange-light` / `border-signal-warning` corrects (déjà migrés).
+```text
+┌──────────────────────┐      ┌──────────────────┐       ┌──────────────┐
+│ Trigger DB / Cron    │─────▶│ ansut-notify     │──────▶│ ANSUT Hub    │
+│ (insert / update)    │      │ (edge function)  │       │ gouv.ci      │
+└──────────────────────┘      └────────┬─────────┘       └──────────────┘
+                                       │
+                                       ▼
+                               audit_trail (log)
+```
 
-**Typographie globale**
-- `--font-display` et `--font-sans` pointent tous deux vers Inter. Conforme à la skill (Avenir indisponible en web font libre → Inter unique), mais on perd la différenciation visuelle des titres. **Conserver** Inter unique mais s'assurer que les `h1/h2/h3` utilisent bien `font-bold` / `font-semibold` (déjà appliqué en `@layer base`).
+Tous les envois passent par **une seule** edge function `ansut-notify` (single audit trail, single fallback). Aucun appel direct au Hub depuis ailleurs.
 
-**Espacements**
-- Pages internes (`/dashboard`, `/events`, `/checkin`) bénéficient désormais de `page-max-width content-padding py-4 md:py-5` via `_authenticated.tsx`. Les `p-8` / `p-6` résiduels en haut de chaque route doivent être **supprimés** (ils s'ajoutent au padding du shell → double bordure).
-  - `events.tsx` : déjà migré en `section-gap` (OK).
-  - `checkin.tsx` : déjà migré (OK).
-  - `dashboard.tsx` : OK.
-- Landing public reste hors shell auth → ses `py-24` / `max-w-7xl` propres sont OK.
+## Étape 1 — Infrastructure commune
 
-### Corrections proposées (fichier par fichier)
+1. **Table `audit_trail`** (si absente) + `notification_preferences` par participant (channels opt-in/opt-out).
+2. **Edge function `ansut-notify`** (référence verbatim du skill, 356 lignes) — auth-gated (`admin` / `org_admin`), 4 canaux, fallback WhatsApp #131058 → texte, audit log silencieux.
+3. **Helper TypeScript** `src/lib/notifications.ts` pour appeler `ansut-notify` depuis le code app (server fn) — déjà ébauché dans `src/lib/notifications.functions.ts`.
 
-1. **`src/routes/login.tsx`**
-   - Bouton submit : `bg-accent text-accent-foreground` → `bg-primary text-primary-foreground` (ou variant `ansut-orange` pour un CTA dominant — décision : garder `bg-primary` pour cohérence avec dashboard et libérer l'orange pour les actions DG).
-   - Lien `Créer un compte` : `text-accent` → `text-primary`.
-   - Panneau navy : `text-accent`, `bg-accent/10`, `border-accent/30` → `text-secondary`, `bg-secondary/10`, `border-secondary/30`. Halo `bg-accent/25` → `bg-secondary/25`.
-   - Logo "A" badge : `bg-accent text-accent-foreground` → `bg-secondary text-secondary-foreground`.
-   - Gradient titre `from-white to-[oklch(0.75_0.08_245)]` : remplacer la couleur arbitraire par une variable token compatible (`to-secondary/70` ou simplement supprimer le gradient — texte blanc plein suffit).
+## Étape 2 — Inscription confirmée
 
-2. **`src/routes/signup.tsx`** : mêmes substitutions (parité visuelle avec login).
+Déclencheur : trigger SQL `AFTER INSERT ON event_registrations`.
 
-3. **`src/routes/index.tsx` (landing)**
-   - Cartes features : `bg-secondary/40 hover:bg-card` → `bg-muted hover:bg-card`. Icônes `text-accent` → `text-primary`. Liens CTA `text-accent` → `text-primary`. Puces `bg-accent` → `bg-primary`.
-   - Section partenaires : `bg-secondary/40` → `bg-muted`.
-   - Nav : bouton "Créer un compte" `bg-accent` → `variant="ansut-orange"`.
-   - Hero chip + dot animé : `border-accent/30 bg-accent/10 text-accent` + `bg-accent` → versions `secondary`.
-   - Halo décoratif hero : `bg-accent/20` → `bg-secondary/20`.
-   - StatCard highlight : version `secondary` (les icônes restent en `text-secondary`, neutres en `text-white/70` au lieu de `text-accent`).
-   - Programme du jour : `text-accent` link → `text-primary`. Tag "Conférence" `bg-accent/10 text-accent` → `bg-primary/10 text-primary`.
-   - Section badge sur bg-primary : `border-accent/30 bg-accent/10 text-accent` → `border-secondary/40 bg-secondary/15 text-secondary`.
-   - CTA principal hero "S'inscrire au SUTEL 2026" : actuellement `bg-white text-primary` (OK, contraste fort).
-   - Sparkles "TOUT EN UN SEUL ENDROIT" : `text-accent` → `text-secondary` (1 occurrence, parcimonie respectée).
-   - Footer : `text-white/60` → `text-white/75` pour atteindre AA.
+- Edge function dédiée `notify-registration` invoquée via `pg_net` ou trigger HTTP.
+- Construit le message : nom événement, date, lieu, **lien badge QR** (route publique `/badge/<qr_token>.png` — fonction `generate-badge` à créer si absente, ou utiliser `src/lib/badges.ts` existant).
+- Envoie en **parallèle** SMS (ANSUT sender) + Email (HTML avec QR inline) + WhatsApp si template approuvé.
 
-4. **`src/components/coming-soon.tsx`** : auditer et migrer `text-accent` éventuels vers `text-primary` / `text-secondary`.
+## Étape 3 — Check-in effectué
 
-5. **`src/components/newsletter-form.tsx`** : auditer le bouton submit (probablement `bg-primary` — OK) et les liens secondaires.
+Déclencheur : modification de `check_in_registration` (RPC existante) — ajouter en fin de fonction un `INSERT` dans `notification_outbox` consommé par `process-notification-queue`.
 
-6. **Aucune modification de `src/styles.css`** : les tokens restent ceux validés par la skill ANSUT. Les corrections portent uniquement sur l'usage sémantique dans les composants.
+- Message court : « Bienvenue {nom}, votre check-in à {event} est confirmé. »
+- Canaux : SMS uniquement (rapide, in-event).
 
-### Règles d'or à respecter après correction
+## Étape 4 — Rappel J-1
 
-- **`--primary`** (bleu ANSUT) = CTA standard, icônes d'emphase, liens actifs.
-- **`--secondary`** (orange ANSUT) = **1 CTA dominant max / écran**, chips de marque, accents décoratifs sur fond sombre.
-- **`--accent`** = surface de hover discrète **uniquement** (`hover:bg-accent`). Jamais pour un CTA ou un texte.
-- **`--suta-purple`** = panneaux IA uniquement (déjà respecté via `SutaPanel`).
-- **Signaux** = états (critique/vigilance/stable/ok) — déjà OK.
+Déclencheur : `pg_cron` quotidien à 09:00 Africa/Abidjan.
 
-### Vérification post-correction
+```sql
+SELECT cron.schedule('event-reminders-jminus1', '0 9 * * *', $$
+  SELECT net.http_post(
+    url := 'https://…/functions/v1/event-reminder-cron',
+    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
+  );
+$$);
+```
 
-Après application : recapture des 6 pages (`/`, `/login`, `/signup`, `/dashboard`, `/events`, `/checkin`) en 1366×768 et 390×844, vérification que :
-- Aucun bouton n'est illisible (texte ≥ 4.5:1 vs fond).
-- Orange présent au plus 1 fois par section.
-- Aucun `text-accent` ou `bg-accent` non-hover ne subsiste (`rg "text-accent|bg-accent[^-]" src/`).
+Edge function `event-reminder-cron` :
+1. Fetch toutes les inscriptions des événements démarrant **demain**.
+2. Pour chacune, invoque `ansut-notify` (SMS + Email).
+3. Log dans `audit_trail` avec `action: 'REMINDER_J1_SENT'`.
 
-### Hors scope
+## Étape 5 — UI cockpit
 
-- Refonte structurelle / wireframe (pages restent telles quelles).
-- Mode sombre toggle (les tokens dark sont prêts mais non exposés à l'UI).
-- Composants ANSUT additionnels (`GlobalFilterBar`, `NotificationCenter`, …) — non demandés ici.
+- **Page `/notifications`** dans le cockpit : timeline des envois (depuis `audit_trail`), filtres par canal/statut, bouton "Renvoyer".
+- **Préférences participant** sur la page d'inscription publique : checkboxes opt-in SMS/Email/WhatsApp.
+- **Test manuel** : bouton "Envoyer test" sur la page event (admin only).
+
+## Étape 6 — Templates WhatsApp
+
+Action `list_templates` exposée dans `ansut-notify` → UI admin pour visualiser les templates approuvés Meta. Création des templates côté Hub gouv.ci (hors plateforme — instruction utilisateur).
+
+## Étape 7 — Tests
+
+- Unit tests pour le helper `notifications.ts` (mock fetch vers ansut-notify).
+- E2E Playwright : déclencher une inscription test → vérifier qu'une entrée `audit_trail.NOTIFY_SENT` apparaît (Hub mocké en preview).
+- Test manuel cockpit : envoyer un SMS/Email à un numéro de test pour valider la chaîne complète.
+
+## Détails techniques
+
+- **Pas de `Deno`** dans le runtime moderne — on déploie via `supabase--deploy_edge_functions` (Deno côté Supabase Edge Functions, c'est OK).
+- **Audit trail** : table `audit_trail (id, table_name, action, payload jsonb, user_id, created_at)`.
+- **Idempotence** : clé `notification_outbox.idempotency_key = '{purpose}:{registration_id}'` pour éviter doublons sur retry pg_cron.
+- **Rate limit Hub** : pas de cap connu, mais on bufferise via `notification_outbox` consommé en lot (max 50/min).
+- **Numéros téléphone** : normalisation E.164 côté trigger (préfixe +225 par défaut si absent).
+- **Erreurs Hub** : non-bloquantes pour le métier ; remontées dans `audit_trail.payload->>'error'` + toast cockpit.
+
+## Hors périmètre (chantiers suivants)
+
+- OTP de connexion 2FA (skill `ansut-hub-otp` séparé).
+- Templates WhatsApp à faire approuver côté Meta (action utilisateur DSIS).
+- Marketing / newsletter de masse (interdit par les guidelines — utiliser Lovable Emails dédié si besoin un jour).
+
+## Question avant exécution
+
+Le plan a 7 étapes et touche DB + edge functions + cron + UI cockpit. Je propose d'**exécuter en 3 vagues** :
+
+1. **Vague 1 (fondations)** : `ansut-notify` + `audit_trail` + helper + UI test manuel.
+2. **Vague 2 (triggers)** : inscription confirmée + check-in.
+3. **Vague 3 (cron)** : rappel J-1 + page `/notifications` cockpit.
+
+Validez-vous ce plan et l'ordre des vagues ? On démarre par la Vague 1 ?

@@ -153,7 +153,7 @@ function PublicEventPage() {
     // ne peut donc pas cibler un numéro arbitraire ni un message arbitraire.
     if (parsed.data.phone && token) {
       sendRegistrationConfirmation({
-        data: { qr_token: token as string, channel: "WhatsApp" },
+        data: { qr_token: token as string, channel: "whatsapp" },
       }).catch((err) => console.warn("Hub notify failed", err));
     }
 
