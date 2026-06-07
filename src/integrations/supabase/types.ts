@@ -132,6 +132,64 @@ export type Database = {
           },
         ]
       }
+      event_conversations: {
+        Row: {
+          id: string
+          event_id: string
+          participant_a: string
+          participant_b: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          participant_a: string
+          participant_b: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          participant_a?: string
+          participant_b?: string
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_conversations_event_id_fkey"; columns: ["event_id"]; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_conversations_participant_a_fkey"; columns: ["participant_a"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_conversations_participant_b_fkey"; columns: ["participant_b"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+        ]
+      }
+      event_messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          sender_id?: string
+          content?: string
+          read_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "event_messages_conversation_id_fkey"; columns: ["conversation_id"]; referencedRelation: "event_conversations"; referencedColumns: ["id"] },
+          { foreignKeyName: "event_messages_sender_id_fkey"; columns: ["sender_id"]; referencedRelation: "event_registrations"; referencedColumns: ["id"] },
+        ]
+      }
       events: {
         Row: {
           capacity: number | null

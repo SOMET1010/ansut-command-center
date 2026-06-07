@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
-import { Search, Users, MapPin, Building2, Linkedin, User } from "lucide-react";
+import { Search, Users, MapPin, Building2, Linkedin, User, MessageCircle } from "lucide-react";
 
 /* ─── Types ─── */
 type Participant = {
@@ -321,6 +321,13 @@ function ParticipantCard({ participant: p }: { participant: Participant }) {
             <Linkedin className="h-4 w-4" />
           </a>
         )}
+        <Link
+          to={`/messages/${slug}?to=${p.id}`}
+          className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-colors"
+        >
+          <MessageCircle className="h-3.5 w-3.5" />
+          Contacter
+        </Link>
       </div>
     </div>
   );
