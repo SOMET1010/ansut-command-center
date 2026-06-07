@@ -31,36 +31,66 @@ describe("Cockpit topbar — ANSUT logo", () => {
 });
 
 describe("Cockpit breadcrumb — getCockpitBreadcrumbLabel", () => {
-  it("returns the matching label for each registered cockpit route", () => {
+  it("returns the matching label for each registered cockpit nav item", () => {
     for (const item of COCKPIT_NAV_ITEMS) {
       expect(getCockpitBreadcrumbLabel(item.to)).toBe(item.label);
     }
   });
 
-  it("matches nested routes by longest prefix", () => {
-    expect(getCockpitBreadcrumbLabel("/events/new")).toBe("Événements");
-    expect(getCockpitBreadcrumbLabel("/events/abc-123/registrations")).toBe(
-      "Événements",
-    );
-    expect(getCockpitBreadcrumbLabel("/admin/setup")).toBe("Administration");
+  // Real route files under src/routes/_authenticated/ — keep this table in sync
+  // when adding/removing a cockpit page.
+  const ALL_COCKPIT_URLS: Array<[url: string, label: string]> = [
+    ["/dashboard", "Tableau de bord"],
+    ["/events", "Événements"],
+    ["/events/new", "Événements"],
+    ["/events/abc-123/edit", "Événements"],
+    ["/events/abc-123/registrations", "Événements"],
+    ["/participants", "Participants"],
+    ["/polls", "Live Polling"],
+    ["/checkin", "Check-in"],
+    ["/admin/setup", "Administration"],
+  ];
+
+  it.each(ALL_COCKPIT_URLS)("resolves '%s' to '%s'", (url, expected) => {
+    expect(getCockpitBreadcrumbLabel(url)).toBe(expected);
   });
 
-  it("updates the label when the pathname changes across routes", () => {
-    const sequence = ["/dashboard", "/events", "/participants", "/checkin", "/polls"];
+  it("uses longest-prefix matching (sub-routes never collide with siblings)", () => {
+    // /admin/setup must NOT fall back to a hypothetical /admin parent
+    expect(getCockpitBreadcrumbLabel("/admin/setup")).toBe("Administration");
+    // /events is not a prefix of /eventsomething
+    expect(getCockpitBreadcrumbLabel("/eventsomething")).toBe("Console");
+  });
+
+  it("updates the label at every step of a cockpit navigation sequence", () => {
+    const sequence = [
+      "/dashboard",
+      "/events",
+      "/events/new",
+      "/events/abc-123/registrations",
+      "/participants",
+      "/polls",
+      "/checkin",
+      "/admin/setup",
+    ];
     const labels = sequence.map(getCockpitBreadcrumbLabel);
     expect(labels).toEqual([
       "Tableau de bord",
       "Événements",
+      "Événements",
+      "Événements",
       "Participants",
-      "Check-in",
       "Live Polling",
+      "Check-in",
+      "Administration",
     ]);
-    // Every transition must produce a distinct label — guards against a stuck breadcrumb.
-    expect(new Set(labels).size).toBe(labels.length);
   });
 
-  it("falls back to 'Console' for unknown routes", () => {
+  it("falls back to 'Console' for unknown or public routes", () => {
     expect(getCockpitBreadcrumbLabel("/")).toBe("Console");
-    expect(getCockpitBreadcrumbLabel("/unknown")).toBe("Console");
+    expect(getCockpitBreadcrumbLabel("/login")).toBe("Console");
+    expect(getCockpitBreadcrumbLabel("/signup")).toBe("Console");
+    expect(getCockpitBreadcrumbLabel("/unknown/deeply/nested")).toBe("Console");
+    expect(getCockpitBreadcrumbLabel("")).toBe("Console");
   });
 });
