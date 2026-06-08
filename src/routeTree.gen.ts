@@ -32,6 +32,7 @@ import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedSecurityAuditRouteImport } from './routes/_authenticated/security-audit'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
+import { Route as AuthenticatedExportsRouteImport } from './routes/_authenticated/exports'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
@@ -161,6 +162,11 @@ const AuthenticatedParticipantsRoute =
     path: '/participants',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedExportsRoute = AuthenticatedExportsRouteImport.update({
+  id: '/exports',
+  path: '/exports',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
+  '/exports': typeof AuthenticatedExportsRoute
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
+  '/exports': typeof AuthenticatedExportsRoute
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
+  '/_authenticated/exports': typeof AuthenticatedExportsRoute
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/_authenticated/security-audit': typeof AuthenticatedSecurityAuditRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/dashboard'
     | '/events'
+    | '/exports'
     | '/participants'
     | '/polls'
     | '/security-audit'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/dashboard'
     | '/events'
+    | '/exports'
     | '/participants'
     | '/polls'
     | '/security-audit'
@@ -414,6 +425,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/events'
+    | '/_authenticated/exports'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/_authenticated/security-audit'
@@ -625,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParticipantsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/exports': {
+      id: '/_authenticated/exports'
+      path: '/exports'
+      fullPath: '/exports'
+      preLoaderRoute: typeof AuthenticatedExportsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/events': {
       id: '/_authenticated/events'
       path: '/events'
@@ -728,6 +747,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
+  AuthenticatedExportsRoute: typeof AuthenticatedExportsRoute
   AuthenticatedParticipantsRoute: typeof AuthenticatedParticipantsRoute
   AuthenticatedPollsRoute: typeof AuthenticatedPollsRoute
   AuthenticatedSecurityAuditRoute: typeof AuthenticatedSecurityAuditRoute
@@ -739,6 +759,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
+  AuthenticatedExportsRoute: AuthenticatedExportsRoute,
   AuthenticatedParticipantsRoute: AuthenticatedParticipantsRoute,
   AuthenticatedPollsRoute: AuthenticatedPollsRoute,
   AuthenticatedSecurityAuditRoute: AuthenticatedSecurityAuditRoute,
