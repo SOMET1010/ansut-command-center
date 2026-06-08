@@ -95,8 +95,11 @@ export function eventToValues(e: {
     capacity: e.capacity?.toString() ?? "",
     cover_url: e.cover_url ?? "",
     status: e.status,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wifi_ssid: (e as any).wifi_ssid ?? "",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wifi_password: (e as any).wifi_password ?? "",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wifi_encryption: (e as any).wifi_encryption ?? "WPA",
   };
 }
@@ -136,6 +139,7 @@ export function EventForm({
     }
 
     setSaving(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: Record<string, any> = {
       organization_id: organizationId,
       name: v.name.trim(),
@@ -155,12 +159,14 @@ export function EventForm({
     const { error, data } = isEdit
       ? await supabase
           .from("events")
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .update(payload as any)
           .eq("id", v.id!)
           .select("id")
           .single()
       : await supabase
           .from("events")
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .insert(payload as any)
           .select("id")
           .single();
