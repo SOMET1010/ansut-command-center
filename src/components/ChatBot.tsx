@@ -23,10 +23,10 @@ interface ChatBotProps {
 }
 
 const GREETING: Record<string, string> = {
-  fr: "Bonjour ! Je suis Tata LOU, votre assistante pour cet événement. Comment puis-je vous aider ?",
-  en: "Hello! I'm Tata LOU, your assistant for this event. How can I help you?",
-  ar: "مرحبًا! أنا تاتا لو، مساعدتك لهذا الحدث. كيف يمكنني مساعدتك؟",
-  pt: "Olá! Eu sou Tata LOU, sua assistente para este evento. Como posso ajudá-lo?",
+  fr: "Bonjour ! Je suis SUTA, votre assistant pour cet événement. Comment puis-je vous aider ?",
+  en: "Hello! I'm SUTA, your assistant for this event. How can I help you?",
+  ar: "مرحبًا! أنا SUTA، مساعدك لهذا الحدث. كيف يمكنني مساعدتك؟",
+  pt: "Olá! Eu sou SUTA, seu assistente para este evento. Como posso ajudá-lo?",
 };
 
 const PLACEHOLDER: Record<string, string> = {
@@ -135,15 +135,15 @@ export function ChatBot({
                 <Bot className="h-4 w-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">Tata LOU</p>
+                <p className="text-sm font-semibold text-white">SUTA</p>
                 <p className="text-[10px] text-white/70">
                   {language === "fr"
-                    ? "Assistante IA"
+                    ? "Assistant IA — ANSUT"
                     : language === "en"
-                    ? "AI Assistant"
+                    ? "AI Assistant — ANSUT"
                     : language === "ar"
-                    ? "مساعدة ذكية"
-                    : "Assistente IA"}
+                    ? "مساعد ذكي — ANSUT"
+                    : "Assistente IA — ANSUT"}
                 </p>
               </div>
             </div>

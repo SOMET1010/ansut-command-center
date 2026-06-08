@@ -88,7 +88,7 @@ export const translations = {
     "poll.results": "Résultats en direct",
 
     // Chatbot
-    "bot.name": "Tata LOU",
+    "bot.name": "SUTA",
     "bot.subtitle": "Assistante IA",
     "bot.placeholder": "Posez votre question...",
     "bot.open": "Ouvrir l'assistant",
@@ -166,7 +166,7 @@ export const translations = {
     "poll.closed": "Poll closed",
     "poll.results": "Live results",
 
-    "bot.name": "Tata LOU",
+    "bot.name": "SUTA",
     "bot.subtitle": "AI Assistant",
     "bot.placeholder": "Ask your question...",
     "bot.open": "Open assistant",
@@ -243,7 +243,7 @@ export const translations = {
     "poll.closed": "انتهى الاستطلاع",
     "poll.results": "النتائج المباشرة",
 
-    "bot.name": "تاتا لو",
+    "bot.name": "SUTA",
     "bot.subtitle": "مساعدة ذكية",
     "bot.placeholder": "اطرح سؤالك...",
     "bot.open": "فتح المساعد",
@@ -320,7 +320,7 @@ export const translations = {
     "poll.closed": "Enquete encerrada",
     "poll.results": "Resultados ao vivo",
 
-    "bot.name": "Tata LOU",
+    "bot.name": "SUTA",
     "bot.subtitle": "Assistente IA",
     "bot.placeholder": "Faça sua pergunta...",
     "bot.open": "Abrir assistente",
