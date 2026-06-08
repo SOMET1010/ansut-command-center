@@ -78,7 +78,7 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   },
 };
 
-const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
+const PAGE_SIZE_OPTIONS = [25, 50, 100];
 
 function RegistrationsPage() {
   const { id } = Route.useParams();
