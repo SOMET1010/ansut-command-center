@@ -17,7 +17,6 @@ import {
 import { Wifi } from "lucide-react";
 import { type EventFormValues } from "./event-form-utils";
 
-export { emptyEventValues, eventToValues, type EventFormValues } from "./event-form-utils";
 
 function slugify(s: string) {
   return s
