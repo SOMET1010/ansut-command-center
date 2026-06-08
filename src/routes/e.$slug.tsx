@@ -286,8 +286,7 @@ function PublicEventPage() {
           </p>
         )}
         {/* WiFi QR Code */}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {(event as any).wifi_ssid && (
           <div className="mt-8">
             <WifiQrCode
