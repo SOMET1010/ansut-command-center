@@ -16,10 +16,15 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/polls")({
   head: () => ({ meta: [{ title: "Live Polling — ANSUT EVENT" }] }),
-  component: PollsPage,
+  component: () => (
+    <RequireSuperAdmin>
+      <PollsPage />
+    </RequireSuperAdmin>
+  ),
 });
 
 type Session = {

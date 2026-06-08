@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/admin/setup")({
 });
 
 function AdminSetup() {
-  const { user, roles } = useAuth();
+  const { user, roles, loading } = useAuth();
   const navigate = useNavigate();
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [claiming, setClaiming] = useState(false);
@@ -20,6 +20,16 @@ function AdminSetup() {
   useEffect(() => {
     supabase.rpc("super_admin_exists").then(({ data }) => setAdminExists(Boolean(data)));
   }, []);
+
+  // Guard : si un super_admin existe déjà et que l'utilisateur courant
+  // ne l'est pas, on renvoie vers /forbidden. Le bootstrap reste ouvert
+  // tant qu'aucun super_admin n'a été créé.
+  useEffect(() => {
+    if (loading || adminExists === null) return;
+    if (adminExists && !roles.includes("super_admin")) {
+      navigate({ to: "/forbidden", replace: true });
+    }
+  }, [loading, adminExists, roles, navigate]);
 
   async function claim() {
     setClaiming(true);

@@ -17,10 +17,15 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toCSVChunked, downloadCSV } from "@/lib/csv";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/exports")({
   head: () => ({ meta: [{ title: "Exports CSV — ANSUT EVENT" }] }),
-  component: ExportsPage,
+  component: () => (
+    <RequireSuperAdmin>
+      <ExportsPage />
+    </RequireSuperAdmin>
+  ),
 });
 
 type EventRow = {

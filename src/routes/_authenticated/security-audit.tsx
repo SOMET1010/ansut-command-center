@@ -6,10 +6,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/security-audit")({
   head: () => ({ meta: [{ title: "Audit de sécurité — ANSUT EVENT" }] }),
-  component: SecurityAuditPage,
+  component: () => (
+    <RequireSuperAdmin>
+      <SecurityAuditPage />
+    </RequireSuperAdmin>
+  ),
 });
 
 type AuditReport = {

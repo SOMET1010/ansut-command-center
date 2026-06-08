@@ -80,8 +80,13 @@ function AnnoncesPage() {
         .select("id, name, slug, starts_at, ends_at, location")
         .eq("slug", slug)
         .eq("status", "published")
-        .single();
-      if (data) setEvent(data);
+        .maybeSingle();
+      if (data) {
+        setEvent(data);
+      } else {
+        // Évite le spinner infini quand l'événement n'existe pas.
+        setLoading(false);
+      }
     }
     loadEvent();
   }, [slug]);

@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 /* ─── Types ─── */
 type Session = {
@@ -55,7 +56,11 @@ const SESSION_TYPES = [
 
 /* ─── Route ─── */
 export const Route = createFileRoute("/_authenticated/events/$id/sessions")({
-  component: SessionsManager,
+  component: () => (
+    <RequireSuperAdmin>
+      <SessionsManager />
+    </RequireSuperAdmin>
+  ),
 });
 
 function SessionsManager() {

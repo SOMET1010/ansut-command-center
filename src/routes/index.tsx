@@ -71,26 +71,29 @@ export const Route = createFileRoute("/")({
 });
 
 // Front-office uniquement — pas de lien vers le cockpit administrateur.
-const features = [
+type FeatureItem = {
+  icon: typeof Mic;
+  title: string;
+  items: string[];
+  cta: string;
+};
+const features: FeatureItem[] = [
   {
     icon: Mic,
     title: "Programme & conférences",
     items: ["Plénières et panels", "Intervenants & modérateurs", "Salles & sessions"],
-    href: "/events" as const,
     cta: "Voir le programme",
   },
   {
     icon: QrCode,
     title: "Inscription & badge",
     items: ["Inscription en ligne guidée", "Badge QR par email", "Accès aux espaces"],
-    href: "/signup" as const,
     cta: "S'inscrire au SUTEL 2026",
   },
   {
     icon: Building2,
     title: "Exposition & partenaires",
     items: ["Liste des exposants", "Stands & sponsors", "Plan du salon"],
-    href: "/events" as const,
     cta: "Découvrir le salon",
   },
 ];
@@ -109,17 +112,23 @@ function formatDates(startsAt: string | undefined, endsAt: string | undefined) {
   const start = new Date(startsAt);
   const end = new Date(endsAt);
   const tz = "Africa/Abidjan";
+  const fullFmt: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: tz,
+  };
+  const dayKey = (d: Date) => d.toLocaleDateString("fr-CA", { timeZone: tz });
+  // Single-day event → render one date, not a range.
+  if (dayKey(start) === dayKey(end)) {
+    return start.toLocaleDateString("fr-FR", fullFmt);
+  }
   const startStr = start.toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "long",
     timeZone: tz,
   });
-  const endStr = end.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: tz,
-  });
+  const endStr = end.toLocaleDateString("fr-FR", fullFmt);
   return `${startStr} – ${endStr}`;
 }
 
@@ -127,6 +136,29 @@ function Landing() {
   const { data } = useSuspenseQuery(landingQueryOptions);
   const ev = data.featuredEvent;
   const stats = data.stats;
+
+  // Pas de page /events publique : on route les liens "programme" vers
+  // /agenda/$slug si un événement est connu, sinon vers /signup.
+  function ProgrammeLink({
+    className,
+    children,
+  }: {
+    className?: string;
+    children: React.ReactNode;
+  }) {
+    if (ev?.slug) {
+      return (
+        <Link to="/agenda/$slug" params={{ slug: ev.slug }} className={className}>
+          {children}
+        </Link>
+      );
+    }
+    return (
+      <Link to="/signup" className={className}>
+        {children}
+      </Link>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-background">
@@ -165,24 +197,15 @@ function Landing() {
             <Link to="/" className="text-[13px] font-medium text-white">
               Accueil
             </Link>
-            <Link
-              to="/events"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
+            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
               Programme
-            </Link>
-            <Link
-              to="/events"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
+            </ProgrammeLink>
+            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
               Exposition
-            </Link>
-            <Link
-              to="/events"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
+            </ProgrammeLink>
+            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
               Partenaires
-            </Link>
+            </ProgrammeLink>
             <Link
               to="/signup"
               className="text-[13px] font-medium text-white/65 transition hover:text-white"
@@ -328,10 +351,10 @@ function Landing() {
                   variant="outline"
                   className="rounded-full border-white/25 bg-transparent px-8 py-6 text-[15px] font-semibold text-white backdrop-blur-sm hover:border-white/60 hover:bg-white/5 hover:text-white"
                 >
-                  <Link to="/events">
+                  <ProgrammeLink>
                     <PlayCircle className="mr-2 h-4 w-4" />
                     Découvrir le programme
-                  </Link>
+                  </ProgrammeLink>
                 </Button>
               </div>
             </div>
@@ -346,12 +369,9 @@ function Landing() {
                     </div>
                     <h2 className="mt-1 text-base font-semibold text-white">Programme du jour</h2>
                   </div>
-                  <Link
-                    to="/events"
-                    className="text-xs font-semibold text-secondary hover:underline"
-                  >
+                  <ProgrammeLink className="text-xs font-semibold text-secondary hover:underline">
                     Voir tout →
-                  </Link>
+                  </ProgrammeLink>
                 </div>
 
                 <ul className="space-y-2">
@@ -395,10 +415,10 @@ function Landing() {
                   variant="outline"
                   className="mt-5 w-full rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Link to="/events">
+                  <ProgrammeLink>
                     Programme complet
                     <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                  </Link>
+                  </ProgrammeLink>
                 </Button>
               </div>
 
@@ -438,32 +458,42 @@ function Landing() {
           </div>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="group relative flex flex-col rounded-3xl border border-border bg-muted p-8 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
-              >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-primary shadow-sm transition-transform group-hover:scale-110">
-                  <f.icon className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground">{f.title}</h3>
-                <ul className="mt-4 flex-1 space-y-2.5 text-sm text-muted-foreground">
-                  {f.items.map((it) => (
-                    <li key={it} className="flex items-start gap-3">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                      <span>{it}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to={f.href}
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all hover:gap-3"
+            {features.map((f, idx) => {
+              const ctaClass =
+                "mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all hover:gap-3";
+              const cta =
+                idx === 1 ? (
+                  <Link to="/signup" className={ctaClass}>
+                    {f.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                ) : (
+                  <ProgrammeLink className={ctaClass}>
+                    {f.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </ProgrammeLink>
+                );
+              return (
+                <div
+                  key={f.title}
+                  className="group relative flex flex-col rounded-3xl border border-border bg-muted p-8 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
                 >
-                  {f.cta}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            ))}
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-primary shadow-sm transition-transform group-hover:scale-110">
+                    <f.icon className="h-7 w-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">{f.title}</h3>
+                  <ul className="mt-4 flex-1 space-y-2.5 text-sm text-muted-foreground">
+                    {f.items.map((it) => (
+                      <li key={it} className="flex items-start gap-3">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {cta}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -566,13 +596,13 @@ function Landing() {
             </div>
           </div>
           <div className="flex gap-8 font-medium">
-            <a href="#" className="hover:text-white">
+            <Link to="/mentions-legales" className="hover:text-white">
               Mentions légales
-            </a>
-            <a href="#" className="hover:text-white">
+            </Link>
+            <Link to="/politique-confidentialite" className="hover:text-white">
               Confidentialité
-            </a>
-            <a href="#" className="hover:text-white">
+            </Link>
+            <a href="mailto:support@ansut.ci" className="hover:text-white">
               Support
             </a>
           </div>
