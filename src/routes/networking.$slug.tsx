@@ -69,28 +69,17 @@ function NetworkingDirectory() {
     },
   });
 
-  // Charger les participants visibles dans l'annuaire
+  // Charger les participants visibles dans l'annuaire via RPC sécurisée
+  // (Phase S/S1 — pas de lecture directe de event_registrations en anon)
   const { data: participants = [], isLoading: participantsLoading } = useQuery({
-    queryKey: ["directory-participants", event?.id, categoryFilter],
+    queryKey: ["directory-participants", slug, categoryFilter],
     queryFn: async () => {
-      if (!event?.id) return [];
-      let query = supabase
-        .from("event_registrations")
-        .select(
-          "id, full_name, organization, position, country, bio, photo_url, interests, participant_category, linkedin_url",
-        )
-        .eq("event_id", event.id)
-        .eq("is_visible_in_directory", true)
-        .eq("status", "confirmed")
-        .order("full_name", { ascending: true });
-
-      if (categoryFilter !== "all") {
-        query = query.eq("participant_category", categoryFilter);
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await supabase.rpc("list_event_networking", {
+        p_slug: slug,
+        p_category: categoryFilter === "all" ? null : categoryFilter,
+      });
       if (error) throw error;
-      return data as Participant[];
+      return (data ?? []) as Participant[];
     },
     enabled: !!event?.id,
   });
