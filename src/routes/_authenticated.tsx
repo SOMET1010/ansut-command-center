@@ -129,7 +129,11 @@ function AuthLayout() {
     );
   }
 
-  const currentLabel = getCockpitBreadcrumbLabel(pathname);
+  const crumbs = getCockpitBreadcrumbChain(pathname);
+  const parentTarget = getCockpitParentTarget(pathname);
+  // M-03: active state — exact match OR nested under the route ("/" boundary).
+  const isActive = (to: CockpitNavTo) =>
+    pathname === to || pathname.startsWith(`${to}/`);
 
   return (
     <div className="flex min-h-dvh w-full bg-background">
@@ -187,7 +191,7 @@ function AuthLayout() {
               )}
               <ul className="space-y-0.5">
                 {section.items.map((item) => {
-                  const active = pathname.startsWith(item.to);
+                  const active = isActive(item.to);
                   return (
                     <li key={item.to}>
                       <Link
