@@ -63,7 +63,7 @@ function PollsPage() {
         .from("event_sessions")
         .select("id, title, starts_at, event_id, event:events(title, slug)")
         .order("starts_at", { ascending: true });
-      if (data) setSessions(data as any);
+      if (data) setSessions(data as unknown as typeof sessions);
       setLoading(false);
     }
     loadSessions();
@@ -84,7 +84,7 @@ function PollsPage() {
 
       if (data) {
         const pollsWithVotes = await Promise.all(
-          data.map(async (p: any) => {
+          data.map(async (p: Record<string, unknown>) => {
             const { count } = await supabase
               .from("live_poll_votes")
               .select("*", { count: "exact", head: true })
@@ -137,7 +137,7 @@ function PollsPage() {
         .order("sort_order");
       if (data)
         setPolls(
-          data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
+          data.map((p: Record<string, unknown>) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
         );
     }
   }
@@ -168,7 +168,7 @@ function PollsPage() {
       .order("sort_order");
     if (data)
       setPolls(
-        data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
+        data.map((p: Record<string, unknown>) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
       );
   }
 
