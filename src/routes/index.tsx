@@ -458,32 +458,42 @@ function Landing() {
           </div>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="group relative flex flex-col rounded-3xl border border-border bg-muted p-8 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
-              >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-primary shadow-sm transition-transform group-hover:scale-110">
-                  <f.icon className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground">{f.title}</h3>
-                <ul className="mt-4 flex-1 space-y-2.5 text-sm text-muted-foreground">
-                  {f.items.map((it) => (
-                    <li key={it} className="flex items-start gap-3">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                      <span>{it}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to={f.href}
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all hover:gap-3"
+            {features.map((f, idx) => {
+              const ctaClass =
+                "mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all hover:gap-3";
+              const cta =
+                idx === 1 ? (
+                  <Link to="/signup" className={ctaClass}>
+                    {f.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                ) : (
+                  <ProgrammeLink className={ctaClass}>
+                    {f.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </ProgrammeLink>
+                );
+              return (
+                <div
+                  key={f.title}
+                  className="group relative flex flex-col rounded-3xl border border-border bg-muted p-8 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
                 >
-                  {f.cta}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            ))}
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-primary shadow-sm transition-transform group-hover:scale-110">
+                    <f.icon className="h-7 w-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">{f.title}</h3>
+                  <ul className="mt-4 flex-1 space-y-2.5 text-sm text-muted-foreground">
+                    {f.items.map((it) => (
+                      <li key={it} className="flex items-start gap-3">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {cta}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
