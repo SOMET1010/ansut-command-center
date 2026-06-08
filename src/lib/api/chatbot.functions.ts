@@ -127,6 +127,22 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { messages, eventContext, language } = data;
 
+    // Rate-limit par IP pour limiter l'abus de l'API OpenAI
+    const req = getRequest();
+    const ip =
+      req?.headers.get("cf-connecting-ip") ??
+      req?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    if (isRateLimited(ip)) {
+      return {
+        reply:
+          language === "fr"
+            ? "Vous envoyez trop de messages. Patientez une minute avant de réessayer."
+            : "Too many requests. Please wait a minute before trying again.",
+        error: true,
+      };
+    }
+
     const apiKey = process.env.OPENAI_API_KEY;
     const apiBase = process.env.OPENAI_API_BASE || "https://api.openai.com/v1";
 
