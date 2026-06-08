@@ -272,7 +272,7 @@ function Dashboard() {
           desc="Scan QR temps réel et contrôle d'accès."
         />
         <QuickAction
-          to="/events"
+          to="/exports"
           icon={Download}
           title="Exporter les données"
           desc="Accéder aux listes de participants et exports CSV."
