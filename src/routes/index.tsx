@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 import {
   Calendar,
   QrCode,
@@ -15,6 +17,24 @@ import { NewsletterForm } from "@/components/newsletter-form";
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
 import { AnsutLogo } from "@/components/ansut/Logo";
+
+function SampleBadgeQr() {
+  const [src, setSrc] = useState<string>("");
+  useEffect(() => {
+    QRCode.toDataURL("https://ansut-event.ci/sutel-2026/participant-demo", {
+      margin: 1,
+      width: 256,
+      errorCorrectionLevel: "M",
+      color: { dark: "#0E2440", light: "#ffffff" },
+    })
+      .then(setSrc)
+      .catch(() => setSrc(""));
+  }, []);
+  if (!src) {
+    return <div className="h-full w-full animate-pulse rounded-md bg-slate-100" />;
+  }
+  return <img src={src} alt="Exemple de QR code badge" className="h-full w-full rounded-md" />;
+}
 
 const landingQueryOptions = queryOptions({
   queryKey: ["landing-data"],
