@@ -110,7 +110,7 @@ function Landing() {
       <div className="fixed top-0 z-[60] w-full border-b border-white/10 bg-[#08172E]/95 backdrop-blur-md">
         <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 text-[10px] font-medium uppercase tracking-[0.18em] text-white/70 sm:px-6">
           <span className="hidden sm:inline">
-            République de Côte d'Ivoire · Ministère de la Communication & de l'Économie Numérique
+            République de Côte d'Ivoire · MTND IT
           </span>
           <span className="sm:hidden">RCI · ANSUT</span>
           <div className="flex items-center gap-4">
