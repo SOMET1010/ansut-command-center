@@ -498,6 +498,9 @@ export type Database = {
           starts_at: string
           status: string
           updated_at: string
+          wifi_encryption: string | null
+          wifi_password: string | null
+          wifi_ssid: string | null
         }
         Insert: {
           capacity?: number | null
@@ -514,6 +517,9 @@ export type Database = {
           starts_at: string
           status?: string
           updated_at?: string
+          wifi_encryption?: string | null
+          wifi_password?: string | null
+          wifi_ssid?: string | null
         }
         Update: {
           capacity?: number | null
@@ -530,6 +536,9 @@ export type Database = {
           starts_at?: string
           status?: string
           updated_at?: string
+          wifi_encryption?: string | null
+          wifi_password?: string | null
+          wifi_ssid?: string | null
         }
         Relationships: [
           {

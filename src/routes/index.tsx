@@ -87,9 +87,9 @@ function formatDates(startsAt: string | undefined, endsAt: string | undefined) {
   if (!startsAt || !endsAt) return "Dates à confirmer";
   const start = new Date(startsAt);
   const end = new Date(endsAt);
-  const opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
-  const startStr = start.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
-  const endStr = end.toLocaleDateString("fr-FR", opts);
+  const tz = "Africa/Abidjan";
+  const startStr = start.toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: tz });
+  const endStr = end.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: tz });
   return `${startStr} – ${endStr}`;
 }
 
