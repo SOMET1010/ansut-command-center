@@ -196,10 +196,19 @@ export function EventForm({
               id="ends_at"
               type="datetime-local"
               value={v.ends_at}
+              min={v.starts_at || undefined}
               onChange={(e) => update("ends_at", e.target.value)}
               required
+              aria-invalid={!!dateError}
+              aria-describedby={dateError ? "ends_at-error" : undefined}
             />
+            {dateError && (
+              <p id="ends_at-error" className="text-xs font-medium text-destructive">
+                {dateError}
+              </p>
+            )}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="location" className="text-sm font-semibold">
               Lieu
