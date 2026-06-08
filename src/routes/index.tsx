@@ -71,26 +71,29 @@ export const Route = createFileRoute("/")({
 });
 
 // Front-office uniquement — pas de lien vers le cockpit administrateur.
-const features = [
+type FeatureItem = {
+  icon: typeof Mic;
+  title: string;
+  items: string[];
+  cta: string;
+};
+const features: FeatureItem[] = [
   {
     icon: Mic,
     title: "Programme & conférences",
     items: ["Plénières et panels", "Intervenants & modérateurs", "Salles & sessions"],
-    href: "/events" as const,
     cta: "Voir le programme",
   },
   {
     icon: QrCode,
     title: "Inscription & badge",
     items: ["Inscription en ligne guidée", "Badge QR par email", "Accès aux espaces"],
-    href: "/signup" as const,
     cta: "S'inscrire au SUTEL 2026",
   },
   {
     icon: Building2,
     title: "Exposition & partenaires",
     items: ["Liste des exposants", "Stands & sponsors", "Plan du salon"],
-    href: "/events" as const,
     cta: "Découvrir le salon",
   },
 ];
