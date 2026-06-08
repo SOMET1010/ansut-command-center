@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { confirmDialog } from "@/components/ui/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { formatEventDate, displayOrDash } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import {
   Table,
