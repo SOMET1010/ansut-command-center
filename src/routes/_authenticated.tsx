@@ -129,8 +129,22 @@ function AuthLayout() {
     );
   }
 
-  const crumbs = getCockpitBreadcrumbChain(pathname);
-  const parentTarget = getCockpitParentTarget(pathname);
+  // Helper: can the current user navigate to a cockpit route?
+  const canAccess = (to: string): boolean => {
+    const allowed = NAV_ALLOWED_ROLES[to as CockpitNavTo];
+    if (allowed === undefined) return false; // unknown route → don't expose link
+    if (allowed === "all") return true;
+    return roles.some((r) => allowed.includes(r));
+  };
+  // M-01 + sécurité fil d'Ariane : on supprime le lien (mais on garde le label)
+  // pour toute section dont le rôle courant n'a pas l'accès.
+  const crumbs = getCockpitBreadcrumbChain(pathname).map((c) =>
+    c.to && !canAccess(c.to) ? { ...c, to: undefined } : c,
+  );
+  // M-02 + sécurité bouton Retour : si la route parente est interdite, on n'affiche
+  // pas le bouton (l'utilisateur sera redirigé sinon par le guard).
+  const rawParent = getCockpitParentTarget(pathname);
+  const parentTarget = rawParent && canAccess(rawParent) ? rawParent : null;
   // M-03: active state — exact match OR nested under the route ("/" boundary).
   const isActive = (to: CockpitNavTo) =>
     pathname === to || pathname.startsWith(`${to}/`);
