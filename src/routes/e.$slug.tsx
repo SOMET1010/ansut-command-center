@@ -147,10 +147,10 @@ function PublicEventPage() {
     if (!error && token) {
       await supabase.rpc("update_my_profile", {
         p_qr_token: token as string,
-        p_country: form.country || null,
+        p_country: form.country || undefined,
         p_participant_category: form.participant_category,
-        p_bio: form.bio || null,
-        p_linkedin_url: form.linkedin_url || null,
+        p_bio: form.bio || undefined,
+        p_linkedin_url: form.linkedin_url || undefined,
         p_is_visible_in_directory: form.is_visible_in_directory,
       });
     }
