@@ -70,3 +70,44 @@ export function RequireSuperAdmin({ children }: { children: ReactNode }) {
 
   return <>{children}</>;
 }
+
+/**
+ * Page guard — allows super_admin OR org_admin.
+ * Used for routes like /polls and /announcements that both admin roles need.
+ */
+export function RequireAdmin({ children }: { children: ReactNode }) {
+  const { status, data } = useMyRole();
+  const navigate = useNavigate();
+
+  const isAdmin = !!data && (data.isSuperAdmin || data.isOrgAdmin);
+
+  useEffect(() => {
+    if (status === "ready" && !isAdmin) {
+      navigate({ to: "/forbidden", replace: true });
+    } else if (status === "error") {
+      navigate({ to: "/forbidden", replace: true });
+    }
+  }, [status, isAdmin, navigate]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <p className="text-sm text-muted-foreground">Vérification des droits…</p>
+      </div>
+    );
+  }
+
+  if (status !== "ready" || !isAdmin) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center px-4">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <ShieldAlert className="h-5 w-5 text-destructive" />
+          Redirection vers la page « Accès refusé »…
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+
