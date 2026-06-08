@@ -258,7 +258,7 @@ function PublicEventPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-6 py-10">
+      <main id="main-content" className="mx-auto max-w-4xl px-6 py-10">
         {event.cover_url && (
           <img
             src={event.cover_url}

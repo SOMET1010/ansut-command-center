@@ -240,7 +240,7 @@ function AgendaPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-5">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 py-6 space-y-5">
         {/* Identification participant (pour bookmarks) */}
         {!myParticipant && (
           <div className="bg-white rounded-xl border p-4">

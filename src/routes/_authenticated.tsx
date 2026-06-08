@@ -359,7 +359,7 @@ function AuthLayout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto">
+        <main id="main-content" className="flex-1 overflow-auto">
           <div className="page-max-width content-padding py-4 md:py-5">
             <Outlet />
           </div>

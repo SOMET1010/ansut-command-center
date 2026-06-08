@@ -177,7 +177,7 @@ function AnnoncesPage() {
       </header>
 
       {/* Contenu */}
-      <main className="mx-auto max-w-2xl px-4 py-6">
+      <main id="main-content" className="mx-auto max-w-2xl px-4 py-6">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
