@@ -43,39 +43,64 @@ export const generateBadge = createServerFn({ method: "POST" })
     // Bande haute couleur ANSUT
     page.drawRectangle({ x: 0, y: H - 56, width: W, height: 56, color: rgb(0.114, 0.227, 0.541) });
     page.drawText("ANSUT EVENT", {
-      x: 20, y: H - 36, size: 18, font: fontBold, color: rgb(1, 1, 1),
+      x: 20,
+      y: H - 36,
+      size: 18,
+      font: fontBold,
+      color: rgb(1, 1, 1),
     });
     if (ev?.name) {
       page.drawText(truncate(ev.name, 38), {
-        x: 20, y: H - 50, size: 10, font, color: rgb(0.9, 0.9, 0.95),
+        x: 20,
+        y: H - 50,
+        size: 10,
+        font,
+        color: rgb(0.9, 0.9, 0.95),
       });
     }
 
     // Nom du participant
     page.drawText(truncate(reg.full_name, 28), {
-      x: 20, y: H - 100, size: 22, font: fontBold, color: rgb(0.08, 0.08, 0.12),
+      x: 20,
+      y: H - 100,
+      size: 22,
+      font: fontBold,
+      color: rgb(0.08, 0.08, 0.12),
     });
     if (reg.position || reg.organization) {
       const line = [reg.position, reg.organization].filter(Boolean).join(" • ");
       page.drawText(truncate(line, 48), {
-        x: 20, y: H - 122, size: 11, font, color: rgb(0.35, 0.35, 0.4),
+        x: 20,
+        y: H - 122,
+        size: 11,
+        font,
+        color: rgb(0.35, 0.35, 0.4),
       });
     }
 
     // Date / lieu
     if (ev?.starts_at) {
       const d = new Date(ev.starts_at).toLocaleString("fr-FR", {
-        dateStyle: "long", timeStyle: "short",
+        dateStyle: "long",
+        timeStyle: "short",
       });
       page.drawText(d, { x: 20, y: 60, size: 9, font, color: rgb(0.3, 0.3, 0.35) });
     }
     if (ev?.location) {
       page.drawText(truncate(ev.location, 60), {
-        x: 20, y: 46, size: 9, font, color: rgb(0.3, 0.3, 0.35),
+        x: 20,
+        y: 46,
+        size: 9,
+        font,
+        color: rgb(0.3, 0.3, 0.35),
       });
     }
     page.drawText(`ID: ${reg.id.slice(0, 8).toUpperCase()}`, {
-      x: 20, y: 24, size: 8, font, color: rgb(0.5, 0.5, 0.55),
+      x: 20,
+      y: 24,
+      size: 8,
+      font,
+      color: rgb(0.5, 0.5, 0.55),
     });
 
     // QR code
@@ -88,7 +113,11 @@ export const generateBadge = createServerFn({ method: "POST" })
     const qrSize = 130;
     page.drawImage(qrImg, { x: W - qrSize - 20, y: 30, width: qrSize, height: qrSize });
     page.drawText("Scannez à l'entrée", {
-      x: W - qrSize - 20, y: 16, size: 8, font, color: rgb(0.4, 0.4, 0.45),
+      x: W - qrSize - 20,
+      y: 16,
+      size: 8,
+      font,
+      color: rgb(0.4, 0.4, 0.45),
     });
 
     const bytes = await pdf.save();

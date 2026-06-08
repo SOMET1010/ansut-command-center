@@ -1,13 +1,14 @@
-export function toCSV(rows: Record<string, unknown>[], columns: { key: string; label: string }[]): string {
+export function toCSV(
+  rows: Record<string, unknown>[],
+  columns: { key: string; label: string }[],
+): string {
   const escape = (v: unknown) => {
     if (v == null) return "";
     const s = String(v).replace(/"/g, '""');
     return /[",\n;]/.test(s) ? `"${s}"` : s;
   };
   const header = columns.map((c) => c.label).join(",");
-  const body = rows
-    .map((r) => columns.map((c) => escape(r[c.key])).join(","))
-    .join("\n");
+  const body = rows.map((r) => columns.map((c) => escape(r[c.key])).join(",")).join("\n");
   return `${header}\n${body}`;
 }
 

@@ -21,7 +21,11 @@ const TEST_PASSWORD = process.env.E2E_LOGIN_PASSWORD ?? "correct-horse-battery-s
 
 type EnvName = "preview" | "production";
 
-const ENVS: Array<{ name: EnvName; baseURL: string | undefined; expectedHost: "same-origin" | "supabase" }> = [
+const ENVS: Array<{
+  name: EnvName;
+  baseURL: string | undefined;
+  expectedHost: "same-origin" | "supabase";
+}> = [
   { name: "preview", baseURL: PREVIEW_URL, expectedHost: "same-origin" },
   { name: "production", baseURL: PRODUCTION_URL, expectedHost: "supabase" },
 ];
@@ -31,7 +35,13 @@ const ENVS: Array<{ name: EnvName; baseURL: string | undefined; expectedHost: "s
 // pair; the intercepted user/session calls below complete the hydration.
 const FAKE_JWT =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-  Buffer.from(JSON.stringify({ sub: "00000000-0000-0000-0000-000000000001", role: "authenticated", exp: Math.floor(Date.now() / 1000) + 3600 })).toString("base64url") +
+  Buffer.from(
+    JSON.stringify({
+      sub: "00000000-0000-0000-0000-000000000001",
+      role: "authenticated",
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    }),
+  ).toString("base64url") +
   ".sig";
 
 const FAKE_USER = {
@@ -55,10 +65,15 @@ const FAKE_TOKEN_RESPONSE = {
 
 for (const env of ENVS) {
   test.describe(`Login — ${env.name}`, () => {
-    test.skip(!env.baseURL, `Set PLAYWRIGHT_${env.name.toUpperCase()}_URL to run ${env.name} tests`);
+    test.skip(
+      !env.baseURL,
+      `Set PLAYWRIGHT_${env.name.toUpperCase()}_URL to run ${env.name} tests`,
+    );
     test.use({ baseURL: env.baseURL });
 
-    test(`submits credentials via the correct endpoint and lands on /dashboard (${env.name})`, async ({ page }) => {
+    test(`submits credentials via the correct endpoint and lands on /dashboard (${env.name})`, async ({
+      page,
+    }) => {
       const calls: Array<{ url: string; method: string; body: string }> = [];
 
       // Same-origin proxy (preview path)
@@ -83,7 +98,11 @@ for (const env of ENVS) {
         });
       });
       await page.route("**/auth/v1/user**", (route) =>
-        route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FAKE_USER) }),
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(FAKE_USER),
+        }),
       );
 
       // Dashboard pulls data from Supabase REST on mount — stub everything so
@@ -115,11 +134,19 @@ for (const env of ENVS) {
       expect(tokenCall.body).toContain(TEST_PASSWORD);
 
       if (env.expectedHost === "same-origin") {
-        expect(tokenCall.url, "preview must route through same-origin proxy").toContain("/api/public/auth/token");
-        expect(tokenCall.url, "preview must NOT hit supabase.co directly").not.toContain("supabase.co");
+        expect(tokenCall.url, "preview must route through same-origin proxy").toContain(
+          "/api/public/auth/token",
+        );
+        expect(tokenCall.url, "preview must NOT hit supabase.co directly").not.toContain(
+          "supabase.co",
+        );
       } else {
-        expect(tokenCall.url, "production must hit Supabase auth directly").toMatch(/\/auth\/v1\/token/);
-        expect(tokenCall.url, "production must NOT use the same-origin proxy").not.toContain("/api/public/auth/token");
+        expect(tokenCall.url, "production must hit Supabase auth directly").toMatch(
+          /\/auth\/v1\/token/,
+        );
+        expect(tokenCall.url, "production must NOT use the same-origin proxy").not.toContain(
+          "/api/public/auth/token",
+        );
       }
     });
 
@@ -143,7 +170,9 @@ for (const env of ENVS) {
       await page.getByRole("button", { name: /se connecter/i }).click();
 
       // Toast surfaces error; URL must remain /login.
-      await expect(page.getByText(/invalid login credentials|connexion impossible/i).first()).toBeVisible({
+      await expect(
+        page.getByText(/invalid login credentials|connexion impossible/i).first(),
+      ).toBeVisible({
         timeout: 10_000,
       });
       expect(page.url()).toContain("/login");

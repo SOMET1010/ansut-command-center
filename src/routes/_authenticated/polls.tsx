@@ -94,7 +94,7 @@ function PollsPage() {
               options: Array.isArray(p.options) ? p.options : [],
               vote_count: count || 0,
             };
-          })
+          }),
         );
         setPolls(pollsWithVotes);
       }
@@ -135,7 +135,10 @@ function PollsPage() {
         .select("*")
         .eq("session_id", selectedSession)
         .order("sort_order");
-      if (data) setPolls(data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })));
+      if (data)
+        setPolls(
+          data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
+        );
     }
   }
 
@@ -163,7 +166,10 @@ function PollsPage() {
       .select("*")
       .eq("session_id", selectedSession)
       .order("sort_order");
-    if (data) setPolls(data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })));
+    if (data)
+      setPolls(
+        data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
+      );
   }
 
   async function toggleResults(poll: Poll) {
@@ -174,7 +180,7 @@ function PollsPage() {
 
     toast.success(poll.show_results ? "Résultats masqués" : "Résultats visibles pour les votants");
     setPolls((prev) =>
-      prev.map((p) => (p.id === poll.id ? { ...p, show_results: !p.show_results } : p))
+      prev.map((p) => (p.id === poll.id ? { ...p, show_results: !p.show_results } : p)),
     );
   }
 
@@ -265,7 +271,9 @@ function PollsPage() {
               <p className="text-2xl font-bold text-green-600">
                 {polls.filter((p) => p.is_active).length}
               </p>
-              <p className="text-xs text-muted-foreground">Actif{polls.filter((p) => p.is_active).length > 1 ? "s" : ""}</p>
+              <p className="text-xs text-muted-foreground">
+                Actif{polls.filter((p) => p.is_active).length > 1 ? "s" : ""}
+              </p>
             </div>
             <div className="rounded-xl border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-purple-600">
@@ -392,14 +400,20 @@ function PollsPage() {
                         </span>
                       )}
                       <span className="rounded bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
-                        {poll.poll_type === "single" ? "Choix unique" :
-                         poll.poll_type === "multi" ? "Choix multiple" : "Notation"}
+                        {poll.poll_type === "single"
+                          ? "Choix unique"
+                          : poll.poll_type === "multi"
+                            ? "Choix multiple"
+                            : "Notation"}
                       </span>
                     </div>
                     <h3 className="mt-2 font-semibold">{poll.question}</h3>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {poll.options.map((opt, idx) => (
-                        <span key={idx} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-muted-foreground">
+                        <span
+                          key={idx}
+                          className="rounded-full bg-slate-100 px-3 py-1 text-xs text-muted-foreground"
+                        >
                           {opt}
                         </span>
                       ))}
@@ -420,14 +434,22 @@ function PollsPage() {
                           : "bg-green-100 text-green-700 hover:bg-green-200"
                       }`}
                     >
-                      {poll.is_active ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                      {poll.is_active ? (
+                        <Square className="h-3 w-3" />
+                      ) : (
+                        <Play className="h-3 w-3" />
+                      )}
                       {poll.is_active ? "Fermer" : "Activer"}
                     </button>
                     <button
                       onClick={() => toggleResults(poll)}
                       className="flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-200"
                     >
-                      {poll.show_results ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                      {poll.show_results ? (
+                        <EyeOff className="h-3 w-3" />
+                      ) : (
+                        <Eye className="h-3 w-3" />
+                      )}
                       {poll.show_results ? "Masquer" : "Montrer"}
                     </button>
                     <button

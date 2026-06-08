@@ -47,9 +47,7 @@ export const getLandingData = createServerFn({ method: "GET" }).handler(
         .order("starts_at", { ascending: true })
         .limit(1)
         .maybeSingle(),
-      supabaseAdmin
-        .from("event_registrations")
-        .select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("event_registrations").select("id", { count: "exact", head: true }),
       supabaseAdmin
         .from("event_registrations")
         .select("id", { count: "exact", head: true })
@@ -58,9 +56,7 @@ export const getLandingData = createServerFn({ method: "GET" }).handler(
         .from("events")
         .select("id", { count: "exact", head: true })
         .eq("status", "published"),
-      supabaseAdmin
-        .from("organizations")
-        .select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("organizations").select("id", { count: "exact", head: true }),
       supabaseAdmin
         .from("event_registrations")
         .select("id", { count: "exact", head: true })

@@ -25,9 +25,7 @@ export function SutaPanel({
           </span>
           <h3 className="font-display text-sm font-semibold text-foreground">{title}</h3>
         </div>
-        {subtitle ? (
-          <span className="text-[11px] text-muted-foreground">{subtitle}</span>
-        ) : null}
+        {subtitle ? <span className="text-[11px] text-muted-foreground">{subtitle}</span> : null}
       </div>
       <div className="text-sm leading-relaxed text-foreground/85">{children}</div>
     </section>

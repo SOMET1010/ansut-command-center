@@ -32,7 +32,10 @@ export function TrafficLight({
     >
       <span
         aria-hidden
-        className={cn("inline-block h-2.5 w-2.5 rounded-full ring-2 ring-background", DOT_BG[level])}
+        className={cn(
+          "inline-block h-2.5 w-2.5 rounded-full ring-2 ring-background",
+          DOT_BG[level],
+        )}
       />
       <span className="sr-only">{label ?? LABELS[level]}</span>
     </span>

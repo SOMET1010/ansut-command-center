@@ -49,7 +49,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const matches = useMatches();
   const activeMatch = matches[matches.length - 1];
   const routeId = activeMatch?.routeId ?? "(unknown)";
-  const pathname = activeMatch?.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
+  const pathname =
+    activeMatch?.pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
   const isDebug =
     import.meta.env.DEV ||
     (typeof window !== "undefined" && window.location.search.includes("debug=1"));
@@ -115,7 +116,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               </pre>
             )}
             <p className="mt-3 text-[11px] text-muted-foreground">
-              Ajoutez <code className="font-mono">?debug=1</code> à l'URL pour afficher ce panneau en production.
+              Ajoutez <code className="font-mono">?debug=1</code> à l'URL pour afficher ce panneau
+              en production.
             </p>
           </details>
         )}
@@ -130,10 +132,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ANSUT EVENT — Plateforme événementielle officielle" },
-      { name: "description", content: "Plateforme de gestion événementielle de l'Agence Nationale du Service Universel des Télécommunications (ANSUT)." },
+      {
+        name: "description",
+        content:
+          "Plateforme de gestion événementielle de l'Agence Nationale du Service Universel des Télécommunications (ANSUT).",
+      },
       { name: "author", content: "ANSUT — DTDI" },
       { property: "og:title", content: "ANSUT EVENT — Plateforme événementielle officielle" },
-      { property: "og:description", content: "Gérez vos événements, inscriptions et check-ins avec la plateforme ANSUT EVENT." },
+      {
+        property: "og:description",
+        content: "Gérez vos événements, inscriptions et check-ins avec la plateforme ANSUT EVENT.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@ansut_ci" },

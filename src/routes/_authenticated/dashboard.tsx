@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Users, QrCode, Vote, ArrowRight, CalendarPlus, Download, Clock, UserCheck, AlertTriangle } from "lucide-react";
+import {
+  Calendar,
+  Users,
+  QrCode,
+  Vote,
+  ArrowRight,
+  CalendarPlus,
+  Download,
+  Clock,
+  UserCheck,
+  AlertTriangle,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ExecHero } from "@/components/ansut/ExecHero";
@@ -48,13 +59,21 @@ function computeMasteryIndex(params: {
   checkinsCount: number;
   hasRecentActivity: boolean;
 }): number {
-  const { eventsCount, publishedCount, registrationsCount, totalCapacity, checkinsCount, hasRecentActivity } = params;
+  const {
+    eventsCount,
+    publishedCount,
+    registrationsCount,
+    totalCapacity,
+    checkinsCount,
+    hasRecentActivity,
+  } = params;
 
   // Couverture événementielle (20%)
   const coverageScore = eventsCount > 0 ? (publishedCount / eventsCount) * 100 : 0;
 
   // Taux de remplissage (30%)
-  const fillRate = totalCapacity > 0 ? Math.min((registrationsCount / totalCapacity) * 100, 100) : 0;
+  const fillRate =
+    totalCapacity > 0 ? Math.min((registrationsCount / totalCapacity) * 100, 100) : 0;
 
   // Taux de check-in (30%)
   const checkinRate = registrationsCount > 0 ? (checkinsCount / registrationsCount) * 100 : 0;
@@ -62,7 +81,7 @@ function computeMasteryIndex(params: {
   // Fraîcheur des données (20%)
   const freshnessScore = hasRecentActivity ? 100 : 30;
 
-  const index = (coverageScore * 0.2) + (fillRate * 0.3) + (checkinRate * 0.3) + (freshnessScore * 0.2);
+  const index = coverageScore * 0.2 + fillRate * 0.3 + checkinRate * 0.3 + freshnessScore * 0.2;
   return Math.round(index * 10) / 10;
 }
 
@@ -135,10 +154,13 @@ function Dashboard() {
     const days = daysUntil(e.starts_at);
     if (days < 0 || days > 30) return false;
     const regsForEvent = registrations.filter((r) => r.event_id === e.id).length;
-    return (regsForEvent / e.capacity) >= 0.7;
+    return regsForEvent / e.capacity >= 0.7;
   });
   const alertFillPercent = alertEvent?.capacity
-    ? Math.round((registrations.filter((r) => r.event_id === alertEvent.id).length / alertEvent.capacity) * 100)
+    ? Math.round(
+        (registrations.filter((r) => r.event_id === alertEvent.id).length / alertEvent.capacity) *
+          100,
+      )
     : 0;
 
   // Timeline : 5 dernières activités
@@ -170,25 +192,34 @@ function Dashboard() {
             <Clock className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-foreground">
-              {nextEvent.name}
-            </p>
+            <p className="text-sm font-semibold text-foreground">{nextEvent.name}</p>
             <p className="text-xs text-muted-foreground">
-              {new Date(nextEvent.starts_at).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              {new Date(nextEvent.starts_at).toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </p>
           </div>
           <div className="text-right">
             <span className="text-2xl font-bold tabular-nums text-primary">J-{daysToNext}</span>
-            <p className="text-[11px] text-muted-foreground">{daysToNext <= 7 ? "Imminent" : "À venir"}</p>
+            <p className="text-[11px] text-muted-foreground">
+              {daysToNext <= 7 ? "Imminent" : "À venir"}
+            </p>
           </div>
         </div>
       )}
 
       {/* ZONE 2 — AlertBanner conditionnel */}
       {alertEvent && (
-        <AlertBanner level={alertFillPercent >= 90 ? "critical" : "warning"} title="Vigilance capacité">
-          <strong>{alertEvent.name}</strong> est rempli à {alertFillPercent} % de sa capacité
-          ({registrations.filter((r) => r.event_id === alertEvent.id).length}/{alertEvent.capacity} inscrits).
+        <AlertBanner
+          level={alertFillPercent >= 90 ? "critical" : "warning"}
+          title="Vigilance capacité"
+        >
+          <strong>{alertEvent.name}</strong> est rempli à {alertFillPercent} % de sa capacité (
+          {registrations.filter((r) => r.event_id === alertEvent.id).length}/{alertEvent.capacity}{" "}
+          inscrits).
           {alertFillPercent >= 90
             ? " Capacité quasi atteinte — arbitrage nécessaire."
             : " Anticiper l'arbitrage des accréditations si besoin."}
@@ -212,15 +243,14 @@ function Dashboard() {
         <KPICard
           label="Check-ins"
           value={checkinsCount}
-          hint={registrationsCount > 0 ? `${Math.round((checkinsCount / registrationsCount) * 100)} % de présence` : "Aucun scan"}
+          hint={
+            registrationsCount > 0
+              ? `${Math.round((checkinsCount / registrationsCount) * 100)} % de présence`
+              : "Aucun scan"
+          }
           icon={QrCode}
         />
-        <KPICard
-          label="Sondages"
-          value="—"
-          hint="Phase 2"
-          icon={Vote}
-        />
+        <KPICard label="Sondages" value="—" hint="Phase 2" icon={Vote} />
       </SectionGrid>
 
       {/* Actions rapides orientées tâche */}
@@ -229,7 +259,11 @@ function Dashboard() {
           to={eventsCount === 0 ? "/events/new" : "/events"}
           icon={eventsCount === 0 ? CalendarPlus : Calendar}
           title={eventsCount === 0 ? "Créer un événement" : "Gérer les événements"}
-          desc={eventsCount === 0 ? "Aucun événement — créez le premier." : `${publishedCount} événement${publishedCount > 1 ? "s" : ""} actif${publishedCount > 1 ? "s" : ""} au catalogue.`}
+          desc={
+            eventsCount === 0
+              ? "Aucun événement — créez le premier."
+              : `${publishedCount} événement${publishedCount > 1 ? "s" : ""} actif${publishedCount > 1 ? "s" : ""} au catalogue.`
+          }
         />
         <QuickAction
           to="/checkin"
@@ -249,7 +283,9 @@ function Dashboard() {
       {recentActivity.length > 0 && (
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-base font-semibold text-foreground">Activité récente</h2>
+            <h2 className="font-display text-base font-semibold text-foreground">
+              Activité récente
+            </h2>
             <Link to="/events" className="text-xs font-medium text-primary hover:underline">
               Voir tout
             </Link>
@@ -257,7 +293,9 @@ function Dashboard() {
           <div className="card-elevated divide-y divide-border rounded-xl border border-border bg-card">
             {recentActivity.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${r.checked_in_at ? "bg-signal-ok/10" : "bg-primary/10"}`}>
+                <div
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${r.checked_in_at ? "bg-signal-ok/10" : "bg-primary/10"}`}
+                >
                   {r.checked_in_at ? (
                     <UserCheck className="h-3.5 w-3.5 text-signal-ok" />
                   ) : (
@@ -267,10 +305,18 @@ function Dashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{r.full_name}</p>
                   <p className="text-[11px] text-muted-foreground">
-                    {r.checked_in_at ? "Check-in effectué" : "Inscription"} — {new Date(r.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                    {r.checked_in_at ? "Check-in effectué" : "Inscription"} —{" "}
+                    {new Date(r.created_at).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </div>
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${r.checked_in_at ? "bg-signal-ok/10 text-signal-ok" : "bg-primary/10 text-primary"}`}>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${r.checked_in_at ? "bg-signal-ok/10 text-signal-ok" : "bg-primary/10 text-primary"}`}
+                >
                   {r.checked_in_at ? "Présent" : "Inscrit"}
                 </span>
               </div>

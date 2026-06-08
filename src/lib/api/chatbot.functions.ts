@@ -18,12 +18,16 @@ const chatInputSchema = z.object({
   eventContext: z.object({
     eventName: z.string(),
     eventSlug: z.string(),
-    sessions: z.array(z.object({
-      title: z.string(),
-      speaker: z.string().optional(),
-      starts_at: z.string().optional(),
-      location: z.string().optional(),
-    })).optional(),
+    sessions: z
+      .array(
+        z.object({
+          title: z.string(),
+          speaker: z.string().optional(),
+          starts_at: z.string().optional(),
+          location: z.string().optional(),
+        }),
+      )
+      .optional(),
     wifiSsid: z.string().optional(),
     wifiPassword: z.string().optional(),
     venue: z.string().optional(),
@@ -91,13 +95,14 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
 
     if (!apiKey) {
       return {
-        reply: language === "fr"
-          ? "Le service d'assistant est temporairement indisponible. Veuillez réessayer plus tard."
-          : language === "en"
-          ? "The assistant service is temporarily unavailable. Please try again later."
-          : language === "ar"
-          ? "خدمة المساعد غير متاحة مؤقتًا. يرجى المحاولة مرة أخرى لاحقًا."
-          : "O serviço de assistente está temporariamente indisponível. Por favor, tente novamente mais tarde.",
+        reply:
+          language === "fr"
+            ? "Le service d'assistant est temporairement indisponible. Veuillez réessayer plus tard."
+            : language === "en"
+              ? "The assistant service is temporarily unavailable. Please try again later."
+              : language === "ar"
+                ? "خدمة المساعد غير متاحة مؤقتًا. يرجى المحاولة مرة أخرى لاحقًا."
+                : "O serviço de assistente está temporariamente indisponível. Por favor, tente novamente mais tarde.",
         error: true,
       };
     }
@@ -105,7 +110,8 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
     // Construire le contexte de l'événement
     let contextInfo = `\n\nContexte de l'événement actuel:\n- Nom: ${eventContext.eventName}`;
     if (eventContext.venue) contextInfo += `\n- Lieu: ${eventContext.venue}`;
-    if (eventContext.wifiSsid) contextInfo += `\n- WiFi: Réseau "${eventContext.wifiSsid}", Mot de passe: "${eventContext.wifiPassword}"`;
+    if (eventContext.wifiSsid)
+      contextInfo += `\n- WiFi: Réseau "${eventContext.wifiSsid}", Mot de passe: "${eventContext.wifiPassword}"`;
     if (eventContext.sessions && eventContext.sessions.length > 0) {
       contextInfo += `\n- Sessions au programme:`;
       for (const s of eventContext.sessions.slice(0, 10)) {
@@ -140,9 +146,10 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
         const errText = await response.text();
         console.error("OpenAI API error:", response.status, errText);
         return {
-          reply: language === "fr"
-            ? "Désolé, je rencontre un problème technique. Réessayez dans un instant."
-            : "Sorry, I'm experiencing a technical issue. Please try again in a moment.",
+          reply:
+            language === "fr"
+              ? "Désolé, je rencontre un problème technique. Réessayez dans un instant."
+              : "Sorry, I'm experiencing a technical issue. Please try again in a moment.",
           error: true,
         };
       }
@@ -154,9 +161,10 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
     } catch (err) {
       console.error("Chatbot error:", err);
       return {
-        reply: language === "fr"
-          ? "Désolé, une erreur est survenue. Veuillez réessayer."
-          : "Sorry, an error occurred. Please try again.",
+        reply:
+          language === "fr"
+            ? "Désolé, une erreur est survenue. Veuillez réessayer."
+            : "Sorry, an error occurred. Please try again.",
         error: true,
       };
     }

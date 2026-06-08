@@ -11,7 +11,9 @@ function PollVote() {
   const { pollId } = Route.useParams();
   const [poll, setPoll] = useState<any>(null);
   const [session, setSession] = useState<any>(null);
-  const [step, setStep] = useState<"identify" | "vote" | "success" | "closed" | "already" | "error">("identify");
+  const [step, setStep] = useState<
+    "identify" | "vote" | "success" | "closed" | "already" | "error"
+  >("identify");
   const [badgeCode, setBadgeCode] = useState("");
   const [participantId, setParticipantId] = useState("");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -92,11 +94,15 @@ function PollVote() {
       else if (result?.error === "poll_closed") setStep("closed");
       else setStep("error");
     } else {
-      const { data: votes } = await supabase.from("live_poll_votes").select("answer").eq("poll_id", pollId);
+      const { data: votes } = await supabase
+        .from("live_poll_votes")
+        .select("answer")
+        .eq("poll_id", pollId);
       if (votes) {
         const counts: Record<string, number> = {};
         votes.forEach((v: any) => {
-          const ans = typeof v.answer === "string" ? v.answer.replace(/^"|"$/g, "") : String(v.answer);
+          const ans =
+            typeof v.answer === "string" ? v.answer.replace(/^"|"$/g, "") : String(v.answer);
           counts[ans] = (counts[ans] || 0) + 1;
         });
         setResults(counts);
@@ -131,7 +137,9 @@ function PollVote() {
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
             <BarChart3 className="h-6 w-6 text-purple-600" />
           </div>
-          <p className="text-xs font-medium uppercase tracking-wider text-purple-600">Sondage en direct</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-purple-600">
+            Sondage en direct
+          </p>
           {session && <p className="mt-1 text-xs text-muted-foreground">{session.title}</p>}
         </div>
 
@@ -197,7 +205,7 @@ function PollVote() {
                       setSelectedOptions((prev) =>
                         prev.includes(option)
                           ? prev.filter((o) => o !== option)
-                          : [...prev, option]
+                          : [...prev, option],
                       );
                     }}
                     className={`w-full rounded-xl border-2 px-4 py-3 text-left font-medium transition ${
@@ -212,7 +220,9 @@ function PollVote() {
                     {option}
                   </button>
                 ))}
-                <p className="text-center text-xs text-muted-foreground">Plusieurs réponses possibles</p>
+                <p className="text-center text-xs text-muted-foreground">
+                  Plusieurs réponses possibles
+                </p>
               </div>
             )}
 
@@ -265,7 +275,9 @@ function PollVote() {
             {/* Résultats si disponibles */}
             {poll.show_results && Object.keys(results).length > 0 && (
               <div className="mt-6 space-y-3 text-left">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Résultats en direct</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Résultats en direct
+                </p>
                 {poll.options.map((option: string, idx: number) => {
                   const count = results[option] || 0;
                   const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
@@ -327,7 +339,10 @@ function PollVote() {
               Le code badge saisi ne correspond à aucun participant inscrit.
             </p>
             <button
-              onClick={() => { setStep("identify"); setBadgeCode(""); }}
+              onClick={() => {
+                setStep("identify");
+                setBadgeCode("");
+              }}
               className="mt-6 rounded-xl bg-slate-100 px-6 py-2 text-sm font-medium transition hover:bg-slate-200"
             >
               Réessayer

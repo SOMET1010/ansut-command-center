@@ -20,7 +20,9 @@ function MyRolePage() {
 
   async function load() {
     setState({ status: "loading" });
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       setState({ status: "anonymous" });
       return;
@@ -116,8 +118,8 @@ function MyRolePage() {
 
         {!isSuper && (
           <p className="mt-4 text-xs text-muted-foreground">
-            Si vous venez de vous inscrire avec un email présent dans la liste blanche
-            ANSUT et que le rôle n'apparaît pas, cliquez sur « Actualiser ».
+            Si vous venez de vous inscrire avec un email présent dans la liste blanche ANSUT et que
+            le rôle n'apparaît pas, cliquez sur « Actualiser ».
           </p>
         )}
 

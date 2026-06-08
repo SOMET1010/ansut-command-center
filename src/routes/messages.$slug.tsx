@@ -5,15 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AnsutLogo } from "@/components/ansut/Logo";
-import {
-  MessageCircle,
-  Send,
-  ArrowLeft,
-  Users,
-  Search,
-  Check,
-  CheckCheck,
-} from "lucide-react";
+import { MessageCircle, Send, ArrowLeft, Users, Search, Check, CheckCheck } from "lucide-react";
 
 /* ─── Types ─── */
 type Participant = {
@@ -76,11 +68,7 @@ function MessagesPage() {
     if (!me || !to) return;
     async function openConversation() {
       // Trouver l'événement
-      const { data: event } = await supabase
-        .from("events")
-        .select("id")
-        .eq("slug", slug)
-        .single();
+      const { data: event } = await supabase.from("events").select("id").eq("slug", slug).single();
       if (!event) return;
 
       // Créer ou récupérer la conversation
@@ -111,8 +99,8 @@ function MessagesPage() {
           <MessageCircle className="h-12 w-12 text-primary mb-4" />
           <h1 className="text-xl font-semibold text-slate-800 mb-2">Messagerie événement</h1>
           <p className="text-sm text-muted-foreground text-center max-w-md mb-6">
-            Pour accéder à vos messages, entrez le code unique qui figure sur votre badge
-            (sous le QR code).
+            Pour accéder à vos messages, entrez le code unique qui figure sur votre badge (sous le
+            QR code).
           </p>
           <form
             onSubmit={(e) => {
@@ -167,11 +155,7 @@ function MessagesPage() {
         </div>
 
         {/* Zone de chat */}
-        <div
-          className={`flex-1 flex flex-col ${
-            !activeConversation ? "hidden sm:flex" : "flex"
-          }`}
-        >
+        <div className={`flex-1 flex flex-col ${!activeConversation ? "hidden sm:flex" : "flex"}`}>
           {activeConversation && activePeer ? (
             <ChatView
               conversationId={activeConversation}
@@ -281,7 +265,8 @@ function ConversationList({
     ? conversations.filter(
         (c) =>
           c.other.full_name.toLowerCase().includes(search.toLowerCase()) ||
-          (c.other.organization && c.other.organization.toLowerCase().includes(search.toLowerCase()))
+          (c.other.organization &&
+            c.other.organization.toLowerCase().includes(search.toLowerCase())),
       )
     : conversations;
 
@@ -407,7 +392,7 @@ function ChatView({
         .update({ read_at: new Date().toISOString() })
         .in(
           "id",
-          unread.map((m) => m.id)
+          unread.map((m) => m.id),
         )
         .then(() => {
           queryClient.invalidateQueries({ queryKey: ["conversations", me.id] });
@@ -497,19 +482,20 @@ function ChatView({
                     isMine ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <span className={`text-[10px] ${isMine ? "text-white/70" : "text-muted-foreground"}`}>
+                  <span
+                    className={`text-[10px] ${isMine ? "text-white/70" : "text-muted-foreground"}`}
+                  >
                     {new Date(msg.created_at).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </span>
-                  {isMine && (
-                    msg.read_at ? (
+                  {isMine &&
+                    (msg.read_at ? (
                       <CheckCheck className="h-3 w-3 text-white/70" />
                     ) : (
                       <Check className="h-3 w-3 text-white/70" />
-                    )
-                  )}
+                    ))}
                 </div>
               </div>
             </div>

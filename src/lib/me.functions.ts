@@ -16,10 +16,7 @@ export const getMyRole = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<MyRoleResponse> => {
     const { supabase, userId, claims } = context;
 
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
+    const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
 
     if (error) {
       throw new Error(`Failed to fetch roles: ${error.message}`);

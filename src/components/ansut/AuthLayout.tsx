@@ -77,9 +77,7 @@ export function AuthLayout({
           {highlights ? <div className="mt-8">{highlights}</div> : null}
         </div>
 
-        <div className="relative text-xs text-white/60">
-          © 2026 ANSUT. Tous droits réservés.
-        </div>
+        <div className="relative text-xs text-white/60">© 2026 ANSUT. Tous droits réservés.</div>
       </div>
 
       {/* RIGHT — Form panel */}

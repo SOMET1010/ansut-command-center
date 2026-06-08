@@ -6,7 +6,16 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
-import { Search, Users, MapPin, Building2, Linkedin, User, MessageCircle, Sparkles } from "lucide-react";
+import {
+  Search,
+  Users,
+  MapPin,
+  Building2,
+  Linkedin,
+  User,
+  MessageCircle,
+  Sparkles,
+} from "lucide-react";
 
 /* ─── Types ─── */
 type Participant = {
@@ -68,7 +77,7 @@ function NetworkingDirectory() {
       let query = supabase
         .from("event_registrations")
         .select(
-          "id, full_name, organization, position, country, bio, photo_url, interests, participant_category, linkedin_url"
+          "id, full_name, organization, position, country, bio, photo_url, interests, participant_category, linkedin_url",
         )
         .eq("event_id", event.id)
         .eq("is_visible_in_directory", true)
@@ -95,7 +104,7 @@ function NetworkingDirectory() {
         p.full_name.toLowerCase().includes(q) ||
         (p.organization && p.organization.toLowerCase().includes(q)) ||
         (p.country && p.country.toLowerCase().includes(q)) ||
-        (p.position && p.position.toLowerCase().includes(q))
+        (p.position && p.position.toLowerCase().includes(q)),
     );
   }, [participants, search]);
 
@@ -113,9 +122,7 @@ function NetworkingDirectory() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center max-w-md mx-auto p-8">
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-slate-800 mb-2">
-            Annuaire indisponible
-          </h1>
+          <h1 className="text-xl font-semibold text-slate-800 mb-2">Annuaire indisponible</h1>
           <p className="text-muted-foreground">
             Cet événement n'existe pas ou n'est pas encore publié.
           </p>
@@ -135,12 +142,8 @@ function NetworkingDirectory() {
                 <Users className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-slate-800">
-                  Annuaire des participants
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {event.name}
-                </p>
+                <h1 className="text-lg font-semibold text-slate-800">Annuaire des participants</h1>
+                <p className="text-sm text-muted-foreground">{event.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -243,7 +246,8 @@ function NetworkingDirectory() {
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white mt-8">
         <div className="max-w-5xl mx-auto px-4 py-4 text-center text-xs text-muted-foreground">
-          Plateforme événementielle ANSUT — Données personnelles affichées avec le consentement des participants
+          Plateforme événementielle ANSUT — Données personnelles affichées avec le consentement des
+          participants
         </div>
       </footer>
 
@@ -292,20 +296,14 @@ function ParticipantCard({ participant: p, slug }: { participant: Participant; s
           />
         ) : (
           <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <span className="text-sm font-semibold text-primary">
-              {initials}
-            </span>
+            <span className="text-sm font-semibold text-primary">{initials}</span>
           </div>
         )}
         <div className="min-w-0">
           <h3 className="font-semibold text-slate-800 text-sm leading-tight truncate">
             {p.full_name}
           </h3>
-          {p.position && (
-            <p className="text-xs text-muted-foreground truncate">
-              {p.position}
-            </p>
-          )}
+          {p.position && <p className="text-xs text-muted-foreground truncate">{p.position}</p>}
         </div>
       </div>
 
@@ -326,11 +324,7 @@ function ParticipantCard({ participant: p, slug }: { participant: Participant; s
       )}
 
       {/* Bio courte */}
-      {p.bio && (
-        <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-          {p.bio}
-        </p>
-      )}
+      {p.bio && <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{p.bio}</p>}
 
       {/* Tags intérêts */}
       {p.interests && p.interests.length > 0 && (

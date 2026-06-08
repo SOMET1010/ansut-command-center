@@ -60,7 +60,9 @@ export function RequireSuperAdmin({ children }: { children: ReactNode }) {
         </div>
         <div className="sr-only">
           <Link to="/forbidden">Aller à la page Accès refusé</Link>
-          <Button asChild variant="ghost"><Link to="/dashboard">Tableau de bord</Link></Button>
+          <Button asChild variant="ghost">
+            <Link to="/dashboard">Tableau de bord</Link>
+          </Button>
         </div>
       </div>
     );

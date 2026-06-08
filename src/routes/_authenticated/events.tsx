@@ -1,11 +1,27 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Eye, Users, Calendar, Globe, FileText, Archive, Copy } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Users,
+  Calendar,
+  Globe,
+  FileText,
+  Archive,
+  Copy,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { IfSuperAdmin } from "@/components/auth/RoleGuard";
 
@@ -148,7 +164,6 @@ function EventsPage() {
         </IfSuperAdmin>
       </div>
 
-
       {/* Compteurs rapides */}
       {!loading && events.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
@@ -206,7 +221,9 @@ function EventsPage() {
                     </TableCell>
                     <TableCell>{ev.location ?? "—"}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.className}`}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.className}`}
+                      >
                         <StatusIcon className="h-3 w-3" />
                         {status.label}
                       </span>
@@ -231,13 +248,30 @@ function EventsPage() {
                               <Edit className="h-4 w-4" />
                             </Link>
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => togglePublishMut.mutate(ev)} disabled={togglePublishMut.isPending} title={ev.status === "published" ? "Dépublier" : "Publier"}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => togglePublishMut.mutate(ev)}
+                            disabled={togglePublishMut.isPending}
+                            title={ev.status === "published" ? "Dépublier" : "Publier"}
+                          >
                             {ev.status === "published" ? "Dépublier" : "Publier"}
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => duplicateMut.mutate(ev)} disabled={duplicateMut.isPending} title="Dupliquer">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => duplicateMut.mutate(ev)}
+                            disabled={duplicateMut.isPending}
+                            title="Dupliquer"
+                          >
                             <Copy className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => remove(ev)} title="Supprimer">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => remove(ev)}
+                            title="Supprimer"
+                          >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </IfSuperAdmin>
@@ -254,7 +288,15 @@ function EventsPage() {
   );
 }
 
-function CounterCard({ label, value, icon: Icon }: { label: string; value: number; icon: typeof Calendar }) {
+function CounterCard({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string;
+  value: number;
+  icon: typeof Calendar;
+}) {
   return (
     <div className="card-elevated flex items-center gap-3 rounded-xl border border-border bg-card p-4">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">

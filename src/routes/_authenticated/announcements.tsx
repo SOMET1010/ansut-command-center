@@ -145,7 +145,7 @@ function AnnouncementsPage() {
       .update({ is_pinned: !ann.is_pinned })
       .eq("id", ann.id);
     setAnnouncements((prev) =>
-      prev.map((a) => (a.id === ann.id ? { ...a, is_pinned: !a.is_pinned } : a))
+      prev.map((a) => (a.id === ann.id ? { ...a, is_pinned: !a.is_pinned } : a)),
     );
     toast.success(ann.is_pinned ? "Annonce désépinglée" : "Annonce épinglée en haut");
   }
@@ -282,9 +282,7 @@ function AnnouncementsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    Expire après (heures)
-                  </label>
+                  <label className="mb-1 block text-sm font-medium">Expire après (heures)</label>
                   <Input
                     type="number"
                     min="1"

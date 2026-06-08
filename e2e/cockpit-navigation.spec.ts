@@ -25,7 +25,10 @@ const COCKPIT_STEPS = [
 ] as const;
 
 test.describe("Cockpit — ANSUT logo & breadcrumb", () => {
-  test.skip(!EMAIL || !PASSWORD, "Set E2E_TEST_EMAIL and E2E_TEST_PASSWORD to run cockpit E2E tests");
+  test.skip(
+    !EMAIL || !PASSWORD,
+    "Set E2E_TEST_EMAIL and E2E_TEST_PASSWORD to run cockpit E2E tests",
+  );
 
   test.beforeEach(async ({ page }) => {
     await signIn(page, EMAIL!, PASSWORD!);

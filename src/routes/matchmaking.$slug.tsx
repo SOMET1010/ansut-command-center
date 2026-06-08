@@ -152,9 +152,7 @@ function MatchmakingPage() {
             </div>
             <form onSubmit={handleAuth} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium">
-                  Code badge
-                </label>
+                <label className="mb-1 block text-sm font-medium">Code badge</label>
                 <Input
                   value={token}
                   onChange={(e) => setToken(e.target.value)}
@@ -218,9 +216,7 @@ function MatchmakingPage() {
         {recommendations.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-border py-16 text-center">
             <Users className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-            <p className="font-medium text-muted-foreground">
-              Aucune recommandation disponible
-            </p>
+            <p className="font-medium text-muted-foreground">Aucune recommandation disponible</p>
             <p className="mt-1 text-sm text-muted-foreground/70">
               Complétez votre profil (intérêts, catégorie) pour recevoir des suggestions
             </p>
@@ -259,9 +255,7 @@ function MatchmakingPage() {
                     {/* Infos */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold text-foreground">
-                          {rec.full_name}
-                        </h3>
+                        <h3 className="font-semibold text-foreground">{rec.full_name}</h3>
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${scoreInfo.color}`}
                         >
@@ -286,9 +280,7 @@ function MatchmakingPage() {
                       )}
 
                       {rec.bio && (
-                        <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                          {rec.bio}
-                        </p>
+                        <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{rec.bio}</p>
                       )}
 
                       {/* Intérêts communs */}
@@ -357,9 +349,7 @@ function MatchmakingPage() {
       {showRequestModal && targetParticipant && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-bold">
-              Demander un RDV
-            </h2>
+            <h2 className="text-lg font-bold">Demander un RDV</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               avec <strong>{targetParticipant.full_name}</strong>
               {targetParticipant.organization && ` (${targetParticipant.organization})`}
@@ -367,9 +357,7 @@ function MatchmakingPage() {
 
             <form onSubmit={handleSendRequest} className="mt-4 space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium">
-                  Message (optionnel)
-                </label>
+                <label className="mb-1 block text-sm font-medium">Message (optionnel)</label>
                 <textarea
                   value={meetingMessage}
                   onChange={(e) => setMeetingMessage(e.target.value)}

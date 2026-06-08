@@ -16,8 +16,8 @@ function ForbiddenPage() {
         </div>
         <h1 className="mt-4 font-display text-2xl font-bold">403 — Accès refusé</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Cette page est réservée aux super administrateurs. Si vous pensez qu'il
-          s'agit d'une erreur, contactez l'administrateur du système.
+          Cette page est réservée aux super administrateurs. Si vous pensez qu'il s'agit d'une
+          erreur, contactez l'administrateur du système.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Button asChild>

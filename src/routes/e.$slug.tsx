@@ -56,12 +56,21 @@ const registrationSchema = z.object({
     .max(30, { message: "Numéro trop long." })
     .optional()
     .or(z.literal(""))
-    .refine(
-      (v) => !v || /^[+0-9 .()-]{6,}$/.test(v),
-      { message: "Numéro invalide. Utilisez le format international, ex : +225 07 00 00 00 00." },
-    ),
-  organization: z.string().trim().max(150, { message: "Nom trop long (150 max)." }).optional().or(z.literal("")),
-  position: z.string().trim().max(150, { message: "Intitulé trop long (150 max)." }).optional().or(z.literal("")),
+    .refine((v) => !v || /^[+0-9 .()-]{6,}$/.test(v), {
+      message: "Numéro invalide. Utilisez le format international, ex : +225 07 00 00 00 00.",
+    }),
+  organization: z
+    .string()
+    .trim()
+    .max(150, { message: "Nom trop long (150 max)." })
+    .optional()
+    .or(z.literal("")),
+  position: z
+    .string()
+    .trim()
+    .max(150, { message: "Intitulé trop long (150 max)." })
+    .optional()
+    .or(z.literal("")),
 });
 
 type FormErrors = Partial<Record<string, string>>;
@@ -78,8 +87,16 @@ function PublicEventPage() {
   const [registrationCount, setRegistrationCount] = useState<number>(0);
   const [isFull, setIsFull] = useState(false);
   const [form, setForm] = useState({
-    full_name: "", email: "", phone: "", organization: "", position: "",
-    country: "", participant_category: "other", bio: "", linkedin_url: "", is_visible_in_directory: true,
+    full_name: "",
+    email: "",
+    phone: "",
+    organization: "",
+    position: "",
+    country: "",
+    participant_category: "other",
+    bio: "",
+    linkedin_url: "",
+    is_visible_in_directory: true,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -189,7 +206,11 @@ function PublicEventPage() {
   }
 
   if (loading) {
-    return <div className="flex min-h-dvh items-center justify-center text-muted-foreground">Chargement...</div>;
+    return (
+      <div className="flex min-h-dvh items-center justify-center text-muted-foreground">
+        Chargement...
+      </div>
+    );
   }
   if (!event) {
     throw notFound();
@@ -211,13 +232,22 @@ function PublicEventPage() {
           </Link>
           <div className="flex items-center gap-3">
             <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
-            <Link to={`/annonces/${slug}`} className="text-xs font-medium text-muted-foreground hover:text-primary">
+            <Link
+              to={`/annonces/${slug}`}
+              className="text-xs font-medium text-muted-foreground hover:text-primary"
+            >
               {t("nav.announcements")}
             </Link>
-            <Link to={`/agenda/${slug}`} className="text-xs font-medium text-muted-foreground hover:text-primary">
+            <Link
+              to={`/agenda/${slug}`}
+              className="text-xs font-medium text-muted-foreground hover:text-primary"
+            >
               {t("nav.program")}
             </Link>
-            <Link to="/login" className="text-xs font-medium text-muted-foreground hover:text-primary">
+            <Link
+              to="/login"
+              className="text-xs font-medium text-muted-foreground hover:text-primary"
+            >
               {t("nav.admin")}
             </Link>
           </div>
@@ -226,7 +256,11 @@ function PublicEventPage() {
 
       <main className="mx-auto max-w-4xl px-6 py-10">
         {event.cover_url && (
-          <img src={event.cover_url} alt={event.name} className="mb-8 aspect-[3/1] w-full rounded-xl object-cover" />
+          <img
+            src={event.cover_url}
+            alt={event.name}
+            className="mb-8 aspect-[3/1] w-full rounded-xl object-cover"
+          />
         )}
 
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{event.name}</h1>
@@ -234,7 +268,11 @@ function PublicEventPage() {
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Calendar className="h-4 w-4 text-primary" />
-            {new Date(event.starts_at).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Abidjan" })}
+            {new Date(event.starts_at).toLocaleString("fr-FR", {
+              dateStyle: "long",
+              timeStyle: "short",
+              timeZone: "Africa/Abidjan",
+            })}
           </span>
           {event.location && (
             <span className="inline-flex items-center gap-1.5">
@@ -244,7 +282,9 @@ function PublicEventPage() {
         </div>
 
         {event.description && (
-          <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-foreground/90">{event.description}</p>
+          <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-foreground/90">
+            {event.description}
+          </p>
         )}
 
         {/* WiFi QR Code */}
@@ -267,8 +307,8 @@ function PublicEventPage() {
               </div>
               <h2 className="mt-5 text-2xl font-bold text-foreground">Inscriptions clôturées</h2>
               <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-                La capacité maximale de cet événement a été atteinte ({registrationCount}/{event?.capacity} places).
-                Les inscriptions sont automatiquement clôturées.
+                La capacité maximale de cet événement a été atteinte ({registrationCount}/
+                {event?.capacity} places). Les inscriptions sont automatiquement clôturées.
               </p>
               <p className="mt-4 text-sm text-muted-foreground">
                 Pour toute demande, contactez l’équipe organisatrice de l’ANSUT.
@@ -279,8 +319,8 @@ function PublicEventPage() {
               <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
               <h2 className="mt-4 text-2xl font-semibold">Inscription confirmée</h2>
               <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-                Merci ! Téléchargez votre badge ci-dessous et présentez-le à l'entrée de l'événement.
-                Une copie vous a également été envoyée par email.
+                Merci ! Téléchargez votre badge ci-dessous et présentez-le à l'entrée de
+                l'événement. Une copie vous a également été envoyée par email.
               </p>
               {qrToken && (
                 <div className="mt-8 flex flex-col items-center gap-4">
@@ -318,11 +358,13 @@ function PublicEventPage() {
                 <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
                   Étape 1 sur 1 · Inscription gratuite
                 </div>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight">Je m'inscris à cet événement</h2>
+                <h2 className="mt-2 text-2xl font-bold tracking-tight">
+                  Je m'inscris à cet événement
+                </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Remplissez les informations ci-dessous. Les champs marqués d'un{" "}
-                  <span className="font-semibold text-destructive">*</span> sont obligatoires.
-                  Vous recevrez votre badge QR par email.
+                  <span className="font-semibold text-destructive">*</span> sont obligatoires. Vous
+                  recevrez votre badge QR par email.
                 </p>
               </div>
 
@@ -398,7 +440,9 @@ function PublicEventPage() {
                   </summary>
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
-                      <Label htmlFor="participant_category" className="text-sm font-medium">Catégorie</Label>
+                      <Label htmlFor="participant_category" className="text-sm font-medium">
+                        Catégorie
+                      </Label>
                       <select
                         id="participant_category"
                         value={form.participant_category}
@@ -424,7 +468,9 @@ function PublicEventPage() {
                       placeholder="https://linkedin.com/in/votre-profil"
                     />
                     <div className="sm:col-span-2">
-                      <Label htmlFor="bio" className="text-sm font-medium">Courte présentation</Label>
+                      <Label htmlFor="bio" className="text-sm font-medium">
+                        Courte présentation
+                      </Label>
                       <textarea
                         id="bio"
                         value={form.bio}
@@ -441,7 +487,9 @@ function PublicEventPage() {
                         type="checkbox"
                         id="is_visible_in_directory"
                         checked={form.is_visible_in_directory}
-                        onChange={(e) => setForm((f) => ({ ...f, is_visible_in_directory: e.target.checked }))}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, is_visible_in_directory: e.target.checked }))
+                        }
                         className="h-4 w-4 rounded border-input text-primary focus:ring-primary"
                       />
                       <Label htmlFor="is_visible_in_directory" className="text-sm cursor-pointer">
@@ -462,8 +510,8 @@ function PublicEventPage() {
                     {submitting ? "Envoi en cours..." : "Confirmer mon inscription"}
                   </Button>
                   <p className="mt-3 text-xs text-muted-foreground">
-                    En confirmant, vous acceptez le traitement de vos données par l'ANSUT
-                    pour la gestion de cet événement.
+                    En confirmant, vous acceptez le traitement de vos données par l'ANSUT pour la
+                    gestion de cet événement.
                   </p>
                 </div>
               </form>
@@ -474,7 +522,8 @@ function PublicEventPage() {
 
       <footer className="border-t border-border bg-muted py-6">
         <div className="mx-auto max-w-4xl px-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} <span className="font-semibold text-foreground">ANSUT</span> — Agence Nationale du Service Universel des Télécommunications
+          © {new Date().getFullYear()} <span className="font-semibold text-foreground">ANSUT</span>{" "}
+          — Agence Nationale du Service Universel des Télécommunications
         </div>
       </footer>
 
@@ -541,7 +590,10 @@ function FormField({
         }`}
       />
       {error ? (
-        <p id={`${id}-error`} className="flex items-start gap-1.5 text-xs font-medium text-destructive">
+        <p
+          id={`${id}-error`}
+          className="flex items-start gap-1.5 text-xs font-medium text-destructive"
+        >
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           {error}
         </p>
