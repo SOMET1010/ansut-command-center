@@ -60,7 +60,10 @@ function AgendaPage() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [dayFilter, setDayFilter] = useState("all");
   const [myToken, setMyToken] = useState(
-    () => localStorage.getItem("ansut_participant_token") || "",
+    () =>
+      (typeof window !== "undefined" &&
+        window.localStorage.getItem("ansut_participant_token")) ||
+      "",
   );
   const [showMyAgenda, setShowMyAgenda] = useState(false);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
