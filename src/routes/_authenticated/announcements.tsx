@@ -17,16 +17,17 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
-import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
+import { RequireAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/announcements")({
   head: () => ({ meta: [{ title: "Annonces — ANSUT EVENT" }] }),
   component: () => (
-    <RequireSuperAdmin>
+    <RequireAdmin>
       <AnnouncementsPage />
-    </RequireSuperAdmin>
+    </RequireAdmin>
   ),
 });
+
 
 type Event = {
   id: string;
