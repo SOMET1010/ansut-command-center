@@ -137,6 +137,29 @@ function Landing() {
   const ev = data.featuredEvent;
   const stats = data.stats;
 
+  // Pas de page /events publique : on route les liens "programme" vers
+  // /agenda/$slug si un événement est connu, sinon vers /signup.
+  function ProgrammeLink({
+    className,
+    children,
+  }: {
+    className?: string;
+    children: React.ReactNode;
+  }) {
+    if (ev?.slug) {
+      return (
+        <Link to="/agenda/$slug" params={{ slug: ev.slug }} className={className}>
+          {children}
+        </Link>
+      );
+    }
+    return (
+      <Link to="/signup" className={className}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <div className="min-h-dvh bg-background">
       {/* TOP UTILITY BAR */}
