@@ -13,6 +13,7 @@ import {
   Copy,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ui/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -146,8 +147,14 @@ function EventsListPage() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  function remove(ev: EventRow) {
-    if (!confirm(`Supprimer "${ev.name}" ? Cette action est irréversible.`)) return;
+  async function remove(ev: EventRow) {
+    const ok = await confirmDialog({
+      title: `Supprimer "${ev.name}" ?`,
+      description: "Cette action est irréversible.",
+      confirmLabel: "Supprimer",
+      destructive: true,
+    });
+    if (!ok) return;
     removeMut.mutate(ev);
   }
 

@@ -17,6 +17,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
+import { ConfirmRoot } from "@/components/ui/confirm-dialog";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -191,6 +192,7 @@ function RootComponent() {
       </div>
       <CookieConsent />
       <Toaster richColors position="top-right" />
+      <ConfirmRoot />
     </QueryClientProvider>
   );
 }

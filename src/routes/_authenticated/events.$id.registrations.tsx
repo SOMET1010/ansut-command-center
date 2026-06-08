@@ -17,6 +17,7 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ui/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -382,12 +383,12 @@ function RegistrationsPage() {
                     className="flex-1 rounded-lg"
                     disabled={selectedChannels.length === 0 || sendingReminder}
                     onClick={async () => {
-                      if (
-                        !confirm(
-                          `Envoyer un rappel via ${selectedChannels.join(", ")} à ${stats.total} inscrit(s) ?`,
-                        )
-                      )
-                        return;
+                      const ok = await confirmDialog({
+                        title: "Envoyer le rappel ?",
+                        description: `Le rappel sera envoyé via ${selectedChannels.join(", ")} à ${stats.total} inscrit(s).`,
+                        confirmLabel: "Envoyer",
+                      });
+                      if (!ok) return;
                       setShowChannelPicker(false);
                       setSendingReminder(true);
                       try {
