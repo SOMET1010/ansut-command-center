@@ -27,6 +27,7 @@ import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AttendanceSessionIdRouteImport } from './routes/attendance.$sessionId'
 import { Route as AnnoncesSlugRouteImport } from './routes/annonces.$slug'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
+import { Route as AuthenticatedSecurityAuditRouteImport } from './routes/_authenticated/security-audit'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
@@ -130,6 +131,12 @@ const AgendaSlugRoute = AgendaSlugRouteImport.update({
   path: '/agenda/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSecurityAuditRoute =
+  AuthenticatedSecurityAuditRouteImport.update({
+    id: '/security-audit',
+    path: '/security-audit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedPollsRoute = AuthenticatedPollsRouteImport.update({
   id: '/polls',
   path: '/polls',
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
@@ -246,6 +254,7 @@ export interface FileRoutesByTo {
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
@@ -280,6 +289,7 @@ export interface FileRoutesById {
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
+  '/_authenticated/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
@@ -314,6 +324,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/participants'
     | '/polls'
+    | '/security-audit'
     | '/agenda/$slug'
     | '/annonces/$slug'
     | '/attendance/$sessionId'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/participants'
     | '/polls'
+    | '/security-audit'
     | '/agenda/$slug'
     | '/annonces/$slug'
     | '/attendance/$sessionId'
@@ -379,6 +391,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
+    | '/_authenticated/security-audit'
     | '/agenda/$slug'
     | '/annonces/$slug'
     | '/attendance/$sessionId'
@@ -550,6 +563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/security-audit': {
+      id: '/_authenticated/security-audit'
+      path: '/security-audit'
+      fullPath: '/security-audit'
+      preLoaderRoute: typeof AuthenticatedSecurityAuditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/polls': {
       id: '/_authenticated/polls'
       path: '/polls'
@@ -669,6 +689,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
   AuthenticatedParticipantsRoute: typeof AuthenticatedParticipantsRoute
   AuthenticatedPollsRoute: typeof AuthenticatedPollsRoute
+  AuthenticatedSecurityAuditRoute: typeof AuthenticatedSecurityAuditRoute
   AuthenticatedAdminSetupRoute: typeof AuthenticatedAdminSetupRoute
 }
 
@@ -679,6 +700,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
   AuthenticatedParticipantsRoute: AuthenticatedParticipantsRoute,
   AuthenticatedPollsRoute: AuthenticatedPollsRoute,
+  AuthenticatedSecurityAuditRoute: AuthenticatedSecurityAuditRoute,
   AuthenticatedAdminSetupRoute: AuthenticatedAdminSetupRoute,
 }
 
