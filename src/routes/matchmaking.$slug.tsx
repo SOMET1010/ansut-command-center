@@ -77,8 +77,7 @@ function MatchmakingPage() {
     setAuthenticated(true);
 
     const { data: recs } = await supabase.rpc("get_match_recommendations", {
-      p_registration_id: reg.id,
-      p_event_id: reg.event_id,
+      p_qr_token: token.trim(),
       p_limit: 15,
     });
     if (recs) setRecommendations(recs);
