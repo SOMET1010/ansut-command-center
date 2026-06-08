@@ -67,6 +67,7 @@ function ExportsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [selectedEventIds, setSelectedEventIds] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>("starts_at_desc");
 
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["exports", "events"],
