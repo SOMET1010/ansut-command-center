@@ -299,6 +299,27 @@ function ExportsPage() {
                 </div>
               </PopoverContent>
             </Popover>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                title="Tout sélectionner"
+                onClick={() => setSelectedEventIds(events.map((e) => e.id))}
+                disabled={events.length === 0}
+              >
+                ✓
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                title="Aucun"
+                onClick={() => setSelectedEventIds([])}
+                disabled={selectedEventIds.length === 0}
+              >
+                ✕
+              </Button>
+            </div>
           </div>
           <div className="space-y-1">
             <Label htmlFor="date-from" className="text-xs text-muted-foreground">
