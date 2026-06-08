@@ -264,7 +264,7 @@ function RdvPage() {
       </header>
 
       {/* Liste */}
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main id="main-content" className="mx-auto max-w-3xl px-4 py-6">
         {currentList.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-border py-16 text-center">
             {tab === "received" ? (

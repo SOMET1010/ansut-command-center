@@ -296,7 +296,7 @@ function SessionsManager() {
             </div>
           ) : sessions.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl border">
-              <Calendar className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <Calendar className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-gray-500">Aucune session. Créez la première.</p>
             </div>
           ) : (
@@ -310,7 +310,7 @@ function SessionsManager() {
                     <p className="text-xs font-bold text-primary">
                       {formatDateTime(session.starts_at)}
                     </p>
-                    <p className="text-[10px] text-gray-400">{formatDateTime(session.ends_at)}</p>
+                    <p className="text-[10px] text-muted-foreground">{formatDateTime(session.ends_at)}</p>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -319,20 +319,20 @@ function SessionsManager() {
                           session.session_type}
                       </span>
                       {session.track && (
-                        <span className="text-[10px] text-gray-400">{session.track}</span>
+                        <span className="text-[10px] text-muted-foreground">{session.track}</span>
                       )}
                     </div>
                     <p className="text-sm font-medium text-gray-900 truncate mt-0.5">
                       {session.title}
                     </p>
                     {session.location && (
-                      <p className="text-[11px] text-gray-400">{session.location}</p>
+                      <p className="text-[11px] text-muted-foreground">{session.location}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => setEditingSession(session)}
-                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors"
+                      className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded transition-colors"
                     >
                       <Edit2 className="h-3.5 w-3.5" />
                     </button>
@@ -346,7 +346,7 @@ function SessionsManager() {
                         });
                         if (ok) deleteSession.mutate(session.id);
                       }}
-                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                      className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -392,7 +392,7 @@ function SessionsManager() {
             </div>
           ) : speakers.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl border">
-              <Mic2 className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <Mic2 className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-gray-500">Aucun intervenant. Ajoutez le premier.</p>
             </div>
           ) : (
@@ -413,13 +413,13 @@ function SessionsManager() {
                       <p className="text-sm font-semibold text-gray-900">{speaker.full_name}</p>
                       {speaker.title && <p className="text-xs text-gray-500">{speaker.title}</p>}
                       {speaker.organization && (
-                        <p className="text-xs text-gray-400">{speaker.organization}</p>
+                        <p className="text-xs text-muted-foreground">{speaker.organization}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => setEditingSpeaker(speaker)}
-                        className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors"
+                        className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded transition-colors"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
                       </button>
@@ -433,7 +433,7 @@ function SessionsManager() {
                           });
                           if (ok) deleteSpeaker.mutate(speaker.id);
                         }}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -498,7 +498,7 @@ function SessionForm({
         <h3 className="text-sm font-semibold text-gray-900">
           {initial ? "Modifier la session" : "Nouvelle session"}
         </h3>
-        <button type="button" onClick={onCancel} className="p-1 text-gray-400 hover:text-gray-600">
+        <button type="button" onClick={onCancel} className="p-1 text-muted-foreground hover:text-gray-600">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -627,7 +627,7 @@ function SpeakerForm({
         <h3 className="text-sm font-semibold text-gray-900">
           {initial ? "Modifier l'intervenant" : "Nouvel intervenant"}
         </h3>
-        <button type="button" onClick={onCancel} className="p-1 text-gray-400 hover:text-gray-600">
+        <button type="button" onClick={onCancel} className="p-1 text-muted-foreground hover:text-gray-600">
           <X className="h-4 w-4" />
         </button>
       </div>

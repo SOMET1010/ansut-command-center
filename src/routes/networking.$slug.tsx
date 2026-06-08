@@ -167,7 +167,7 @@ function NetworkingDirectory() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 py-6">
         {/* Barre de recherche */}
         <div className="mb-4">
           <div className="relative">

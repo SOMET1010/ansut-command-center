@@ -153,23 +153,42 @@ function PollsPage() {
   }
 
   async function toggleActive(poll: Poll) {
-    if (!poll.is_active) {
-      // Désactiver tous les autres sondages de cette session
-      await supabase
+    // M-18 — optimistic update (bascule UI non critique, réversible)
+    const snapshot = polls;
+    setPolls((prev) =>
+      prev.map((p) =>
+        p.id === poll.id
+          ? { ...p, is_active: !poll.is_active }
+          : !poll.is_active
+            ? { ...p, is_active: false } // ferme les autres si on active celui-ci
+            : p,
+      ),
+    );
+
+    try {
+      if (!poll.is_active) {
+        await supabase
+          .from("live_polls")
+          .update({ is_active: false })
+          .eq("session_id", selectedSession);
+      }
+
+      const { error } = await supabase
         .from("live_polls")
-        .update({ is_active: false })
-        .eq("session_id", selectedSession);
+        .update({
+          is_active: !poll.is_active,
+          closed_at: poll.is_active ? new Date().toISOString() : null,
+        })
+        .eq("id", poll.id);
+      if (error) throw error;
+
+      toast.success(poll.is_active ? "Sondage fermé" : "Sondage activé — visible sur l'écran");
+    } catch (err) {
+      // rollback
+      setPolls(snapshot);
+      toast.error(err instanceof Error ? err.message : "Erreur lors de la mise à jour");
+      return;
     }
-
-    await supabase
-      .from("live_polls")
-      .update({
-        is_active: !poll.is_active,
-        closed_at: poll.is_active ? new Date().toISOString() : null,
-      })
-      .eq("id", poll.id);
-
-    toast.success(poll.is_active ? "Sondage fermé" : "Sondage activé — visible sur l'écran");
     // Refresh
     const { data } = await supabase
       .from("live_polls")

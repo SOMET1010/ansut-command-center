@@ -214,7 +214,7 @@ function MatchmakingPage() {
       </header>
 
       {/* Contenu */}
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main id="main-content" className="mx-auto max-w-3xl px-4 py-6">
         {recommendations.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-border py-16 text-center">
             <Users className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />

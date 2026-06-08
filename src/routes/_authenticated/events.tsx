@@ -93,12 +93,27 @@ function EventsListPage() {
       if (error) throw error;
       return next;
     },
+    // M-18 — optimistic update (opération non critique, réversible)
+    onMutate: async (ev) => {
+      await queryClient.cancelQueries({ queryKey: EVENTS_KEY });
+      const previous = queryClient.getQueryData<EventRow[]>(EVENTS_KEY);
+      const next = ev.status === "published" ? "draft" : "published";
+      queryClient.setQueryData<EventRow[]>(EVENTS_KEY, (old) =>
+        (old ?? []).map((e) => (e.id === ev.id ? { ...e, status: next } : e)),
+      );
+      return { previous };
+    },
+    onError: (err: Error, _ev, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(EVENTS_KEY, ctx.previous);
+      toast.error(err.message);
+    },
     onSuccess: (next) => {
       toast.success(next === "published" ? "Événement publié" : "Événement dépublié");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
       queryClient.invalidateQueries({ queryKey: ["dashboard", "events-count"] });
     },
-    onError: (err: Error) => toast.error(err.message),
   });
 
   const removeMut = useMutation({

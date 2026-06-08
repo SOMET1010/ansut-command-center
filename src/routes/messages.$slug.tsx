@@ -532,6 +532,7 @@ function ChatView({
           <Button
             type="submit"
             size="icon"
+            aria-label="Envoyer le message"
             disabled={!newMessage.trim() || sendMutation.isPending}
             className="h-11 w-11 rounded-full flex-shrink-0"
           >

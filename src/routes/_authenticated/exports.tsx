@@ -346,6 +346,7 @@ function ExportsPage() {
                 type="button"
                 variant="outline"
                 size="icon"
+                aria-label="Sélectionner tous les événements"
                 title="Tout sélectionner"
                 onClick={() => setSelectedEventIds(events.map((e) => e.id))}
                 disabled={events.length === 0}
@@ -356,6 +357,7 @@ function ExportsPage() {
                 type="button"
                 variant="outline"
                 size="icon"
+                aria-label="Désélectionner tous les événements"
                 title="Aucun"
                 onClick={() => setSelectedEventIds([])}
                 disabled={selectedEventIds.length === 0}
