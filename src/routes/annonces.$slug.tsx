@@ -235,7 +235,11 @@ function AnnoncesPage() {
               <Link to="/agenda/$slug" params={{ slug }} className="text-primary hover:underline">
                 Programme
               </Link>
-              <Link to="/networking/$slug" params={{ slug }} className="text-primary hover:underline">
+              <Link
+                to="/networking/$slug"
+                params={{ slug }}
+                className="text-primary hover:underline"
+              >
                 Annuaire
               </Link>
               <Link to="/e/$slug" params={{ slug }} className="text-primary hover:underline">

@@ -506,14 +506,16 @@ function AgendaPage() {
         {/* Liens utiles */}
         <div className="flex flex-wrap gap-3 pt-4">
           <Link
-            to="/networking/$slug" params={{ slug }}
+            to="/networking/$slug"
+            params={{ slug }}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
           >
             <Users className="h-4 w-4" />
             Annuaire participants
           </Link>
           <Link
-            to="/e/$slug" params={{ slug }}
+            to="/e/$slug"
+            params={{ slug }}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
           >
             Inscription

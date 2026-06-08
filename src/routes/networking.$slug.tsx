@@ -149,13 +149,15 @@ function NetworkingDirectory() {
             <div className="flex items-center gap-3">
               <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
               <Link
-                to="/annonces/$slug" params={{ slug }}
+                to="/annonces/$slug"
+                params={{ slug }}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
                 {t("nav.announcements")}
               </Link>
               <Link
-                to="/agenda/$slug" params={{ slug }}
+                to="/agenda/$slug"
+                params={{ slug }}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
                 {t("nav.program")}
@@ -366,7 +368,9 @@ function ParticipantCard({ participant: p, slug }: { participant: Participant; s
           </a>
         )}
         <Link
-          to="/messages/$slug" params={{ slug }} search={{ to: p.id }}
+          to="/messages/$slug"
+          params={{ slug }}
+          search={{ to: p.id }}
           className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-colors"
         >
           <MessageCircle className="h-3.5 w-3.5" />
