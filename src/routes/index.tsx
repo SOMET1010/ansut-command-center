@@ -351,10 +351,10 @@ function Landing() {
                   variant="outline"
                   className="rounded-full border-white/25 bg-transparent px-8 py-6 text-[15px] font-semibold text-white backdrop-blur-sm hover:border-white/60 hover:bg-white/5 hover:text-white"
                 >
-                  <Link to="/events">
+                  <ProgrammeLink>
                     <PlayCircle className="mr-2 h-4 w-4" />
                     Découvrir le programme
-                  </Link>
+                  </ProgrammeLink>
                 </Button>
               </div>
             </div>
