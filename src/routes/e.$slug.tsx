@@ -104,7 +104,9 @@ function PublicEventPage() {
     async function loadEvent() {
       const { data } = await supabase
         .from("events")
-        .select("*")
+        .select(
+          "id, organization_id, name, slug, description, location, starts_at, ends_at, capacity, cover_url, status, created_by, created_at, updated_at",
+        )
         .eq("slug", slug)
         .eq("status", "published")
         .maybeSingle();

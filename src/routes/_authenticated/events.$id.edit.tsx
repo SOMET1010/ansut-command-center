@@ -22,9 +22,23 @@ function EditEvent() {
   const { data } = useQuery({
     queryKey: ["events", "detail", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("events").select("*").eq("id", id).single();
+      const { data, error } = await supabase
+        .from("events")
+        .select(
+          "id, organization_id, name, slug, description, location, starts_at, ends_at, capacity, cover_url, status, created_by, created_at, updated_at",
+        )
+        .eq("id", id)
+        .single();
       if (error) throw error;
-      return data;
+      // WiFi credentials are admin-only and fetched via a SECURITY DEFINER RPC.
+      const { data: wifi } = await supabase.rpc("get_event_wifi", { p_event_id: id });
+      const w = Array.isArray(wifi) ? wifi[0] : wifi;
+      return {
+        ...data,
+        wifi_ssid: w?.wifi_ssid ?? null,
+        wifi_password: w?.wifi_password ?? null,
+        wifi_encryption: w?.wifi_encryption ?? null,
+      };
     },
   });
 
