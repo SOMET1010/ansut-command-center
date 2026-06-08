@@ -121,11 +121,20 @@ test.describe("Events — création", () => {
       return route.fulfill({ status: 200, contentType: "application/json", body: "[]" });
     });
 
-    // --- Sign in ----------------------------------------------------------
-    await page.goto("/login");
-    await page.getByLabel(/e-?mail/i).fill(TEST_EMAIL);
-    await page.getByLabel(/mot de passe/i).fill(TEST_PASSWORD);
-    await page.getByRole("button", { name: /se connecter/i }).click();
+    // --- Sign in (robust : pré-injection de la session Supabase) ---------
+    const projectRef = process.env.VITE_SUPABASE_PROJECT_ID ?? "zypsxcypzicrdhbxefbb";
+    const storageKey = `sb-${projectRef}-auth-token`;
+    await page.addInitScript(
+      ({ key, value }) => {
+        try {
+          window.localStorage.setItem(key, value);
+        } catch {
+          // ignore
+        }
+      },
+      { key: storageKey, value: JSON.stringify(FAKE_TOKEN_RESPONSE) },
+    );
+    await page.goto("/dashboard");
     await page.waitForURL("**/dashboard", { timeout: 15_000 });
 
     // --- Go to /events/new and fill the form ------------------------------
