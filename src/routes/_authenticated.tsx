@@ -77,7 +77,7 @@ const ALL_NAV_SECTIONS: NavSection[] = COCKPIT_VISIBLE_NAV_SECTIONS.map((s) => (
 }));
 
 function AuthLayout() {
-  const { isAuthenticated, loading, user, signOut } = useAuth();
+  const { isAuthenticated, loading, user, signOut, roles } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -85,6 +85,18 @@ function AuthLayout() {
     return window.localStorage.getItem("ansut-sidebar-collapsed") === "1";
   });
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Filtre la sidebar selon les rôles de l'utilisateur courant.
+  const NAV_SECTIONS = useMemo<NavSection[]>(() => {
+    return ALL_NAV_SECTIONS.map((s) => ({
+      label: s.label,
+      items: s.items.filter((i) => {
+        const allowed = NAV_ALLOWED_ROLES[i.to];
+        if (allowed === "all") return true;
+        return roles.some((r) => allowed.includes(r));
+      }),
+    })).filter((s) => s.items.length > 0);
+  }, [roles]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
