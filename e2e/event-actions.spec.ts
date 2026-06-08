@@ -168,11 +168,34 @@ async function setupAuthAndRest(
   });
 }
 
+const SUPABASE_PROJECT_REF =
+  process.env.VITE_SUPABASE_PROJECT_ID ?? "zypsxcypzicrdhbxefbb";
+const SUPABASE_STORAGE_KEY = `sb-${SUPABASE_PROJECT_REF}-auth-token`;
+
+/**
+ * Robust sign-in helper.
+ *
+ * Plutôt que de dépendre du parcours UI /login (fragile sur localhost car le
+ * client supabase-js peut ne pas hydrater le localStorage à temps avec les
+ * intercepts), on pré-injecte directement la session Supabase dans le
+ * localStorage via addInitScript. Le routeur `_authenticated` lit alors la
+ * session au démarrage et laisse passer l'utilisateur.
+ *
+ * Fonctionne de la même manière en local et en preview, sans dépendre
+ * d'aucun proxy fetch tiers.
+ */
 async function signIn(page: import("@playwright/test").Page) {
-  await page.goto("/login");
-  await page.getByLabel(/e-?mail/i).fill(TEST_EMAIL);
-  await page.getByLabel(/mot de passe/i).fill(TEST_PASSWORD);
-  await page.getByRole("button", { name: /se connecter/i }).click();
+  await page.addInitScript(
+    ({ key, value }) => {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        // ignore — environnements sans localStorage
+      }
+    },
+    { key: SUPABASE_STORAGE_KEY, value: JSON.stringify(FAKE_TOKEN_RESPONSE) },
+  );
+  await page.goto("/dashboard");
   await page.waitForURL("**/dashboard", { timeout: 15_000 });
 }
 
