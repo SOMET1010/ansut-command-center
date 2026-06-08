@@ -29,8 +29,31 @@ type AuditReport = {
   };
 };
 
+type AuditRun = {
+  id: string;
+  generated_at: string;
+  total_issues: number;
+  trigger_source: "manual" | "ddl" | "cron";
+  ddl_commands: string[] | null;
+  report: AuditReport;
+};
+
 function SecurityAuditPage() {
   const [report, setReport] = useState<AuditReport | null>(null);
+  const qc = useQueryClient();
+
+  const history = useQuery({
+    queryKey: ["security-audit-history"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("security_audit_runs")
+        .select("id, generated_at, total_issues, trigger_source, ddl_commands, report")
+        .order("generated_at", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      return (data ?? []) as unknown as AuditRun[];
+    },
+  });
 
   const audit = useMutation({
     mutationFn: async () => {
@@ -40,6 +63,7 @@ function SecurityAuditPage() {
     },
     onSuccess: (data) => {
       setReport(data);
+      qc.invalidateQueries({ queryKey: ["security-audit-history"] });
       toast.success(
         data.total_issues === 0
           ? "Aucune vulnérabilité détectée 🎉"
@@ -48,6 +72,9 @@ function SecurityAuditPage() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  // Fall back to the latest persisted run if the user hasn't clicked "run" yet.
+  const displayed = report ?? history.data?.[0]?.report ?? null;
 
   return (
     <div className="container mx-auto max-w-5xl space-y-6 p-6">
