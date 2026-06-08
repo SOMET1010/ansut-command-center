@@ -65,17 +65,12 @@ function MessagesPage() {
 
   // Si un destinataire est spécifié (depuis l'annuaire), ouvrir/créer la conversation
   useEffect(() => {
-    if (!me || !to) return;
+    if (!me || !to || !myToken) return;
     async function openConversation() {
-      // Trouver l'événement
-      const { data: event } = await supabase.from("events").select("id").eq("slug", slug).single();
-      if (!event) return;
-
-      // Créer ou récupérer la conversation
-      const { data: convId } = await supabase.rpc("get_or_create_conversation", {
-        p_event_id: event.id,
-        p_participant_a: me!.id,
-        p_participant_b: to,
+      // Créer ou récupérer la conversation via la RPC sécurisée (contrôle qr_token côté serveur)
+      const { data: convId } = await supabase.rpc("start_conversation", {
+        p_qr_token: myToken!,
+        p_other_participant_id: to!,
       });
       if (convId) {
         setActiveConversation(convId as string);
@@ -83,13 +78,13 @@ function MessagesPage() {
         const { data: peer } = await supabase
           .from("event_registrations")
           .select("id, full_name, organization, participant_category")
-          .eq("id", to)
+          .eq("id", to!)
           .single();
         if (peer) setActivePeer(peer as Participant);
       }
     }
     openConversation();
-  }, [me, to, slug]);
+  }, [me, to, slug, myToken]);
 
   // Écran d'identification par token
   if (!myToken) {
