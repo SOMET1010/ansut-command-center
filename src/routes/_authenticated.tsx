@@ -21,6 +21,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  ArrowLeft,
 } from "lucide-react";
 import { useAuth, type AppRole } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,8 @@ import { AnsutLogo } from "@/components/ansut/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import {
   COCKPIT_VISIBLE_NAV_SECTIONS,
-  getCockpitBreadcrumbLabel,
+  getCockpitBreadcrumbChain,
+  getCockpitParentTarget,
   type CockpitNavTo,
 } from "@/lib/cockpit-nav";
 
