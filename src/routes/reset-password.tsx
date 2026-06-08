@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/ansut/AuthLayout";
+import { RequiredMark } from "@/components/ansut/RequiredMark";
+import { resetPasswordSchema, zodFieldErrors } from "@/lib/auth-schemas";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "Nouveau mot de passe — ANSUT EVENT" }] }),
@@ -121,12 +123,11 @@ function ResetPasswordPage() {
     e.preventDefault();
     setFormError(null);
 
-    if (password.length < 6) {
-      setFormError("Le mot de passe doit contenir au moins 6 caractères.");
-      return;
-    }
-    if (password !== confirm) {
-      setFormError("Les deux mots de passe ne correspondent pas.");
+    // M-12 Validation Zod (mot de passe + confirmation)
+    const parsed = resetPasswordSchema.safeParse({ password, confirm });
+    if (!parsed.success) {
+      const fieldErrors = zodFieldErrors(parsed.error);
+      setFormError(fieldErrors.password || fieldErrors.confirm || "Formulaire invalide.");
       return;
     }
 
@@ -209,11 +210,15 @@ function ResetPasswordPage() {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="password">Nouveau mot de passe</Label>
+            <Label htmlFor="password">
+              Nouveau mot de passe
+              <RequiredMark />
+            </Label>
             <Input
               id="password"
               type="password"
               required
+              autoFocus
               minLength={6}
               placeholder="6 caractères minimum"
               value={password}
@@ -224,7 +229,10 @@ function ResetPasswordPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm">Confirmer le mot de passe</Label>
+            <Label htmlFor="confirm">
+              Confirmer le mot de passe
+              <RequiredMark />
+            </Label>
             <Input
               id="confirm"
               type="password"
