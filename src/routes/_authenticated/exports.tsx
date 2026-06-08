@@ -46,6 +46,7 @@ function ExportsPage() {
   const [dateTo, setDateTo] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [eventFilter, setEventFilter] = useState<string>("all");
 
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["exports", "events"],
@@ -77,8 +78,17 @@ function ExportsPage() {
     },
   });
 
+  const filteredEvents = useMemo(
+    () => (eventFilter === "all" ? events : events.filter((e) => e.id === eventFilter)),
+    [events, eventFilter],
+  );
+
   const filterSummary = useMemo(() => {
     const bits: string[] = [];
+    if (eventFilter !== "all") {
+      const ev = events.find((e) => e.id === eventFilter);
+      if (ev) bits.push(`événement : ${ev.name}`);
+    }
     if (dateFrom) bits.push(`depuis ${dateFrom}`);
     if (dateTo) bits.push(`jusqu'au ${dateTo}`);
     if (statusFilter !== "all") {
@@ -86,13 +96,14 @@ function ExportsPage() {
     }
     if (categoryFilter !== "all") bits.push(`rôle : ${categoryFilter}`);
     return bits.length ? bits.join(" · ") : "aucun filtre actif";
-  }, [dateFrom, dateTo, statusFilter, categoryFilter]);
+  }, [eventFilter, events, dateFrom, dateTo, statusFilter, categoryFilter]);
 
   function resetFilters() {
     setDateFrom("");
     setDateTo("");
     setStatusFilter("all");
     setCategoryFilter("all");
+    setEventFilter("all");
   }
 
   function applyServerFilters<T extends ReturnType<typeof supabase.from>>(
@@ -217,7 +228,23 @@ function ExportsPage() {
             Réinitialiser
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="space-y-1 lg:col-span-1">
+            <Label className="text-xs text-muted-foreground">Événement</Label>
+            <Select value={eventFilter} onValueChange={setEventFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Tous les événements" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les événements</SelectItem>
+                {events.map((e) => (
+                  <SelectItem key={e.id} value={e.id}>
+                    {e.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-1">
             <Label htmlFor="date-from" className="text-xs text-muted-foreground">
               Inscrits à partir du
@@ -283,9 +310,13 @@ function ExportsPage() {
         <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
           Aucun événement disponible.
         </div>
+      ) : filteredEvents.length === 0 ? (
+        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+          Aucun événement ne correspond au filtre sélectionné.
+        </div>
       ) : (
         <div className="space-y-3">
-          {events.map((ev) => (
+          {filteredEvents.map((ev) => (
             <div
               key={ev.id}
               className="card-elevated flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
