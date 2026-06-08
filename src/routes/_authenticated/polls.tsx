@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ui/confirm-dialog";
 import { RequireAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/polls")({
@@ -195,7 +196,13 @@ function PollsPage() {
   }
 
   async function deletePoll(pollId: string) {
-    if (!confirm("Supprimer ce sondage et tous ses votes ?")) return;
+    const ok = await confirmDialog({
+      title: "Supprimer ce sondage ?",
+      description: "Tous les votes seront définitivement supprimés.",
+      confirmLabel: "Supprimer",
+      destructive: true,
+    });
+    if (!ok) return;
     await supabase.from("live_polls").delete().eq("id", pollId);
     setPolls((prev) => prev.filter((p) => p.id !== pollId));
     toast.success("Sondage supprimé");

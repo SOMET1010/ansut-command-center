@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ui/confirm-dialog";
 import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 /* ─── Types ─── */
@@ -336,8 +337,14 @@ function SessionsManager() {
                       <Edit2 className="h-3.5 w-3.5" />
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm("Supprimer cette session ?")) deleteSession.mutate(session.id);
+                      onClick={async () => {
+                        const ok = await confirmDialog({
+                          title: "Supprimer cette session ?",
+                          description: "Cette action est irréversible.",
+                          confirmLabel: "Supprimer",
+                          destructive: true,
+                        });
+                        if (ok) deleteSession.mutate(session.id);
                       }}
                       className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                     >

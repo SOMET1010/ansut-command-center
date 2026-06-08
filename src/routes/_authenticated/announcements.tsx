@@ -17,6 +17,7 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ui/confirm-dialog";
 import { RequireAdmin } from "@/components/auth/RoleGuard";
 
 export const Route = createFileRoute("/_authenticated/announcements")({
@@ -157,7 +158,13 @@ function AnnouncementsPage() {
   }
 
   async function deleteAnnouncement(id: string) {
-    if (!confirm("Supprimer cette annonce ?")) return;
+    const ok = await confirmDialog({
+      title: "Supprimer cette annonce ?",
+      description: "L'annonce ne sera plus visible par les participants.",
+      confirmLabel: "Supprimer",
+      destructive: true,
+    });
+    if (!ok) return;
     await supabase.from("event_announcements").delete().eq("id", id);
     setAnnouncements((prev) => prev.filter((a) => a.id !== id));
     toast.success("Annonce supprimée");
