@@ -281,7 +281,7 @@ function AuthLayout() {
             {/* M-02 Contextual back button — only when we are deep under a primary route */}
             {parentTarget && (
               <Link
-                to={parentTarget}
+                to={parentTarget as CockpitNavTo}
                 className="hidden h-7 items-center gap-1 rounded-md border border-border bg-background px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:inline-flex"
                 aria-label="Retour"
               >
@@ -316,7 +316,7 @@ function AuthLayout() {
                     )}
                     {c.to && !isLast ? (
                       <Link
-                        to={c.to}
+                        to={c.to as CockpitNavTo}
                         className="truncate font-semibold text-muted-foreground transition-colors hover:text-foreground"
                       >
                         {c.label}
