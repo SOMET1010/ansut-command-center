@@ -78,7 +78,7 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   },
 };
 
-const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
+const PAGE_SIZE_OPTIONS = [25, 50, 100];
 
 function RegistrationsPage() {
   const { id } = Route.useParams();
@@ -564,7 +564,7 @@ function RegistrationsPage() {
           <div className="flex items-center gap-2 text-muted-foreground">
             <span className="tabular-nums">
               {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalCount)} sur{" "}
-              {totalCount}
+              {totalCount} participant{totalCount > 1 ? "s" : ""}
             </span>
             <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
               <SelectTrigger className="h-8 w-[100px]">
