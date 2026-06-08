@@ -65,13 +65,8 @@ function MatchmakingPage() {
     if (!token.trim()) return;
     setLoading(true);
 
-    // Trouver l'inscription via le qr_token
-    const { data: reg } = await supabase
-      .from("event_registrations")
-      .select("id, full_name, event_id, events!inner(slug)")
-      .eq("qr_token", token.trim())
-      .single();
-
+    const { data: regData } = await supabase.rpc("me_registration", { p_qr_token: token.trim() });
+    const reg = Array.isArray(regData) && regData[0] ? regData[0] : null;
     if (!reg) {
       toast.error("Code badge invalide. Vérifiez votre badge.");
       setLoading(false);
@@ -81,24 +76,17 @@ function MatchmakingPage() {
     setMyReg({ id: reg.id, full_name: reg.full_name, event_id: reg.event_id });
     setAuthenticated(true);
 
-    // Charger les recommandations via la RPC
     const { data: recs } = await supabase.rpc("get_match_recommendations", {
       p_registration_id: reg.id,
       p_event_id: reg.event_id,
       p_limit: 15,
     });
-
     if (recs) setRecommendations(recs);
 
-    // Charger les demandes déjà envoyées
-    const { data: existing } = await supabase
-      .from("event_meetings")
-      .select("recipient_id")
-      .eq("requester_id", reg.id);
-
-    if (existing) {
-      setSentRequests(new Set(existing.map((m) => m.recipient_id)));
-    }
+    const { data: existing } = await supabase.rpc("list_my_sent_meeting_recipients", {
+      p_qr_token: token.trim(),
+    });
+    if (existing) setSentRequests(new Set((existing as any[]).map((m) => m.recipient_id)));
 
     setLoading(false);
   }
@@ -108,19 +96,18 @@ function MatchmakingPage() {
     if (!myReg || !targetParticipant) return;
     setSendingTo(targetParticipant.id);
 
-    const { error } = await supabase.from("event_meetings").insert({
-      event_id: myReg.event_id,
-      requester_id: myReg.id,
-      recipient_id: targetParticipant.id,
-      message: meetingMessage.trim() || null,
-      proposed_time: proposedTime || null,
-      proposed_location: proposedLocation.trim() || null,
+    const { error } = await supabase.rpc("create_meeting_request", {
+      p_qr_token: token.trim(),
+      p_recipient_id: targetParticipant.id,
+      p_message: meetingMessage.trim() || null,
+      p_proposed_time: proposedTime || null,
+      p_proposed_location: proposedLocation.trim() || null,
     });
 
     setSendingTo(null);
 
     if (error) {
-      if (error.code === "23505") {
+      if (error.message?.includes("duplicate") || (error as any).code === "23505") {
         toast.error("Vous avez déjà envoyé une demande à ce participant.");
       } else {
         toast.error("Erreur lors de l'envoi de la demande.");

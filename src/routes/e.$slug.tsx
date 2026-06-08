@@ -145,20 +145,14 @@ function PublicEventPage() {
 
     // Mise à jour des champs profil networking (best-effort, après inscription)
     if (!error && token) {
-      const { data: reg } = await supabase
-        .from("event_registrations")
-        .select("id")
-        .eq("qr_token", token as string)
-        .single();
-      if (reg) {
-        await supabase.from("event_registrations").update({
-          country: form.country || null,
-          participant_category: form.participant_category,
-          bio: form.bio || null,
-          linkedin_url: form.linkedin_url || null,
-          is_visible_in_directory: form.is_visible_in_directory,
-        }).eq("id", reg.id);
-      }
+      await supabase.rpc("update_my_profile", {
+        p_qr_token: token as string,
+        p_country: form.country || null,
+        p_participant_category: form.participant_category,
+        p_bio: form.bio || null,
+        p_linkedin_url: form.linkedin_url || null,
+        p_is_visible_in_directory: form.is_visible_in_directory,
+      });
     }
     setSubmitting(false);
     if (error) {

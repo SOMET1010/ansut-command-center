@@ -929,6 +929,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _reg_from_token: { Args: { p_qr_token: string }; Returns: string }
+      cancel_my_meeting: {
+        Args: { p_meeting_id: string; p_qr_token: string }
+        Returns: undefined
+      }
+      cast_poll_vote: {
+        Args: { p_answer: Json; p_poll_id: string; p_qr_token: string }
+        Returns: Json
+      }
       check_in_registration: {
         Args: { p_qr_token: string }
         Returns: {
@@ -945,6 +954,16 @@ export type Database = {
         }[]
       }
       claim_first_admin: { Args: never; Returns: boolean }
+      create_meeting_request: {
+        Args: {
+          p_message?: string
+          p_proposed_location?: string
+          p_proposed_time?: string
+          p_qr_token: string
+          p_recipient_id: string
+        }
+        Returns: string
+      }
       current_user_org: { Args: never; Returns: string }
       event_org: { Args: { _event_id: string }; Returns: string }
       get_match_recommendations: {
@@ -976,12 +995,104 @@ export type Database = {
         }
         Returns: string
       }
+      get_participant_public: {
+        Args: { p_id: string }
+        Returns: {
+          full_name: string
+          id: string
+          organization: string
+          participant_category: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      list_conversation_messages: {
+        Args: { p_conversation_id: string; p_qr_token: string }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          read_at: string
+          sender_id: string
+        }[]
+      }
+      list_my_bookmarks: {
+        Args: { p_event_id: string; p_qr_token: string }
+        Returns: {
+          session_id: string
+        }[]
+      }
+      list_my_conversations: {
+        Args: { p_qr_token: string }
+        Returns: {
+          conversation_id: string
+          last_at: string
+          last_message: string
+          other_category: string
+          other_id: string
+          other_name: string
+          other_organization: string
+          unread_count: number
+        }[]
+      }
+      list_my_meetings: {
+        Args: { p_qr_token: string }
+        Returns: {
+          created_at: string
+          event_id: string
+          id: string
+          message: string
+          proposed_location: string
+          proposed_time: string
+          recipient_id: string
+          recipient_name: string
+          recipient_org: string
+          requester_id: string
+          requester_name: string
+          requester_org: string
+          responded_at: string
+          response_message: string
+          status: string
+        }[]
+      }
+      list_my_sent_meeting_recipients: {
+        Args: { p_qr_token: string }
+        Returns: {
+          recipient_id: string
+        }[]
+      }
+      mark_conversation_read: {
+        Args: { p_conversation_id: string; p_qr_token: string }
+        Returns: undefined
+      }
+      me_registration: {
+        Args: { p_qr_token: string }
+        Returns: {
+          bio: string
+          country: string
+          email: string
+          event_id: string
+          full_name: string
+          id: string
+          interests: string[]
+          is_visible_in_directory: boolean
+          job_position: string
+          linkedin_url: string
+          organization: string
+          participant_category: string
+          phone: string
+          photo_url: string
+          status: string
+        }[]
+      }
+      record_session_attendance: {
+        Args: { p_qr_token: string; p_session_id: string }
+        Returns: Json
       }
       register_for_event: {
         Args: {
@@ -994,7 +1105,45 @@ export type Database = {
         }
         Returns: string
       }
+      respond_to_meeting: {
+        Args: {
+          p_meeting_id: string
+          p_qr_token: string
+          p_response_message?: string
+          p_status: string
+        }
+        Returns: undefined
+      }
+      send_conversation_message: {
+        Args: {
+          p_content: string
+          p_conversation_id: string
+          p_qr_token: string
+        }
+        Returns: string
+      }
+      start_conversation: {
+        Args: { p_other_participant_id: string; p_qr_token: string }
+        Returns: string
+      }
       super_admin_exists: { Args: never; Returns: boolean }
+      toggle_my_bookmark: {
+        Args: { p_add: boolean; p_qr_token: string; p_session_id: string }
+        Returns: undefined
+      }
+      update_my_profile: {
+        Args: {
+          p_bio?: string
+          p_country?: string
+          p_interests?: string[]
+          p_is_visible_in_directory?: boolean
+          p_linkedin_url?: string
+          p_participant_category?: string
+          p_photo_url?: string
+          p_qr_token: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:

@@ -118,43 +118,33 @@ function AgendaPage() {
     queryKey: ["my-participant-agenda", myToken, event?.id],
     enabled: !!myToken && !!event?.id,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("event_registrations")
-        .select("id")
-        .eq("event_id", event!.id)
-        .eq("qr_token", myToken)
-        .single();
-      return data;
+      const { data } = await supabase.rpc("me_registration", { p_qr_token: myToken });
+      const me = Array.isArray(data) && data[0] ? data[0] : null;
+      if (!me || me.event_id !== event!.id) return null;
+      return { id: me.id };
     },
   });
 
   const { data: bookmarks = [], refetch: refetchBookmarks } = useQuery({
-    queryKey: ["my-bookmarks", myParticipant?.id],
-    enabled: !!myParticipant?.id,
+    queryKey: ["my-bookmarks", myParticipant?.id, event?.id],
+    enabled: !!myParticipant?.id && !!event?.id,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("session_bookmarks")
-        .select("session_id")
-        .eq("participant_id", myParticipant!.id);
-      return data?.map((b) => b.session_id) || [];
+      const { data } = await supabase.rpc("list_my_bookmarks", {
+        p_qr_token: myToken,
+        p_event_id: event!.id,
+      });
+      return (data ?? []).map((b: any) => b.session_id) as string[];
     },
   });
 
-  // Toggle bookmark
   const toggleBookmark = async (sessionId: string) => {
     if (!myParticipant?.id) return;
     const isBookmarked = bookmarks.includes(sessionId);
-    if (isBookmarked) {
-      await supabase
-        .from("session_bookmarks")
-        .delete()
-        .eq("session_id", sessionId)
-        .eq("participant_id", myParticipant.id);
-    } else {
-      await supabase
-        .from("session_bookmarks")
-        .insert({ session_id: sessionId, participant_id: myParticipant.id });
-    }
+    await supabase.rpc("toggle_my_bookmark", {
+      p_qr_token: myToken,
+      p_session_id: sessionId,
+      p_add: !isBookmarked,
+    });
     refetchBookmarks();
   };
 
