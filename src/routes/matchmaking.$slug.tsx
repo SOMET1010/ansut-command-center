@@ -189,7 +189,7 @@ function MatchmakingPage() {
 
   // Page de recommandations
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-white/95 backdrop-blur-sm">
         <div className="mx-auto max-w-3xl px-4 py-4">
