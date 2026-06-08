@@ -226,6 +226,7 @@ function ResetPasswordPage() {
               className="h-11"
               autoComplete="new-password"
               aria-invalid={!!formError}
+              aria-describedby={formError ? "reset-error" : undefined}
             />
           </div>
           <div className="space-y-2">
