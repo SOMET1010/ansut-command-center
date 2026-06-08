@@ -39,6 +39,7 @@ import {
 import { toCSVChunked, downloadCSV } from "@/lib/csv";
 import { sendEventReminder } from "@/lib/reminders.functions";
 import { downloadBadge } from "@/lib/badges";
+import { formatEventDate, displayOrDash } from "@/lib/formatters";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
   head: () => ({ meta: [{ title: "Participants — ANSUT EVENT" }] }),
