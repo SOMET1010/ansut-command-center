@@ -56,7 +56,11 @@ const SESSION_TYPES = [
 
 /* ─── Route ─── */
 export const Route = createFileRoute("/_authenticated/events/$id/sessions")({
-  component: SessionsManager,
+  component: () => (
+    <RequireSuperAdmin>
+      <SessionsManager />
+    </RequireSuperAdmin>
+  ),
 });
 
 function SessionsManager() {
