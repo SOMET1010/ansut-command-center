@@ -1,13 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { isLovablePreview } from "@/lib/auth-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/ansut/AuthLayout";
+import { RequiredMark } from "@/components/ansut/RequiredMark";
+import { loginSchema, zodFieldErrors } from "@/lib/auth-schemas";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Connexion — ANSUT EVENT" }] }),
@@ -19,17 +21,27 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setErrors({});
+
+    // M-12 Validation Zod
+    const parsed = loginSchema.safeParse({ email, password });
+    if (!parsed.success) {
+      setErrors(zodFieldErrors(parsed.error));
+      return;
+    }
+    const data = parsed.data;
+
     setLoading(true);
     try {
       if (isLovablePreview()) {
-        // Bypass preview proxy: get tokens via same-origin route, then hydrate session.
         const res = await fetch("/api/public/auth/token", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email: data.email, password: data.password }),
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error_description || json.msg || "Connexion impossible");
@@ -39,7 +51,10 @@ function LoginPage() {
         });
         if (error) throw error;
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
         if (error) throw error;
       }
     } catch (err) {
@@ -86,22 +101,38 @@ function LoginPage() {
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="email">E-mail</Label>
+          <Label htmlFor="email">
+            E-mail
+            <RequiredMark />
+          </Label>
           <Input
             id="email"
             type="email"
             required
+            autoFocus
+            autoComplete="email"
             placeholder="vous@ansut.ci"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="h-11"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
+          {errors.email && (
+            <p id="email-error" role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.email}
+            </p>
+          )}
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">
+              Mot de passe
+              <RequiredMark />
+            </Label>
             <Link
               to="/forgot-password"
               className="text-xs font-semibold text-primary hover:underline"
@@ -113,11 +144,20 @@ function LoginPage() {
             id="password"
             type="password"
             required
+            autoComplete="current-password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="h-11"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
           />
+          {errors.password && (
+            <p id="password-error" role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.password}
+            </p>
+          )}
         </div>
         <Button
           type="submit"

@@ -1,12 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { AlertCircle, ArrowRight, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/ansut/AuthLayout";
+import { RequiredMark } from "@/components/ansut/RequiredMark";
+import { signupSchema, zodFieldErrors } from "@/lib/auth-schemas";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Créer un compte — ANSUT EVENT" }] }),
@@ -26,16 +28,27 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setErrors({});
+
+    // M-12 Validation Zod
+    const parsed = signupSchema.safeParse({ fullName, email, password });
+    if (!parsed.success) {
+      setErrors(zodFieldErrors(parsed.error));
+      return;
+    }
+    const data = parsed.data;
+
     setLoading(true);
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: data.email,
+      password: data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/me/role`,
-        data: { full_name: fullName },
+        data: { full_name: data.fullName },
       },
     });
     setLoading(false);
@@ -79,42 +92,79 @@ function SignupPage() {
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="fullName">Nom complet</Label>
+          <Label htmlFor="fullName">
+            Nom complet
+            <RequiredMark />
+          </Label>
           <Input
             id="fullName"
             required
+            autoFocus
+            autoComplete="name"
             placeholder="Jean Dupont"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="h-11"
+            aria-invalid={!!errors.fullName}
+            aria-describedby={errors.fullName ? "fullName-error" : undefined}
           />
+          {errors.fullName && (
+            <p id="fullName-error" role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.fullName}
+            </p>
+          )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">E-mail</Label>
+          <Label htmlFor="email">
+            E-mail
+            <RequiredMark />
+          </Label>
           <Input
             id="email"
             type="email"
             required
+            autoComplete="email"
             placeholder="vous@ansut.ci"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="h-11"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
+          {errors.email && (
+            <p id="email-error" role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.email}
+            </p>
+          )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Mot de passe</Label>
+          <Label htmlFor="password">
+            Mot de passe
+            <RequiredMark />
+          </Label>
           <Input
             id="password"
             type="password"
             required
             minLength={6}
+            autoComplete="new-password"
             placeholder="6 caractères minimum"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="h-11"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
           />
+          {errors.password && (
+            <p id="password-error" role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.password}
+            </p>
+          )}
         </div>
         <Button
           type="submit"
