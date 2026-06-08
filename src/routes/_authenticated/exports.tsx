@@ -78,8 +78,17 @@ function ExportsPage() {
     },
   });
 
+  const filteredEvents = useMemo(
+    () => (eventFilter === "all" ? events : events.filter((e) => e.id === eventFilter)),
+    [events, eventFilter],
+  );
+
   const filterSummary = useMemo(() => {
     const bits: string[] = [];
+    if (eventFilter !== "all") {
+      const ev = events.find((e) => e.id === eventFilter);
+      if (ev) bits.push(`événement : ${ev.name}`);
+    }
     if (dateFrom) bits.push(`depuis ${dateFrom}`);
     if (dateTo) bits.push(`jusqu'au ${dateTo}`);
     if (statusFilter !== "all") {
@@ -87,13 +96,14 @@ function ExportsPage() {
     }
     if (categoryFilter !== "all") bits.push(`rôle : ${categoryFilter}`);
     return bits.length ? bits.join(" · ") : "aucun filtre actif";
-  }, [dateFrom, dateTo, statusFilter, categoryFilter]);
+  }, [eventFilter, events, dateFrom, dateTo, statusFilter, categoryFilter]);
 
   function resetFilters() {
     setDateFrom("");
     setDateTo("");
     setStatusFilter("all");
     setCategoryFilter("all");
+    setEventFilter("all");
   }
 
   function applyServerFilters<T extends ReturnType<typeof supabase.from>>(
