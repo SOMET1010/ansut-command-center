@@ -281,7 +281,7 @@ function ExportsPage() {
             Réinitialiser
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <div className="space-y-1 lg:col-span-1">
             <Label className="text-xs text-muted-foreground">Événements</Label>
             <div className="flex gap-1">
