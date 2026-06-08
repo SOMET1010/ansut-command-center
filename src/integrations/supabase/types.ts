@@ -1071,6 +1071,21 @@ export type Database = {
           position: string
         }[]
       }
+      list_event_networking: {
+        Args: { p_category?: string; p_slug: string }
+        Returns: {
+          bio: string
+          country: string
+          full_name: string
+          id: string
+          interests: string[]
+          linkedin_url: string
+          organization: string
+          participant_category: string
+          photo_url: string
+          position: string
+        }[]
+      }
       list_my_bookmarks: {
         Args: { p_event_id: string; p_qr_token: string }
         Returns: {
