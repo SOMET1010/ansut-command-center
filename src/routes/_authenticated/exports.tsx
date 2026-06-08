@@ -28,7 +28,25 @@ type EventRow = {
   name: string;
   starts_at: string;
   status: string;
+  created_at: string;
 };
+
+type SortOption =
+  | "starts_at_desc"
+  | "starts_at_asc"
+  | "name_asc"
+  | "name_desc"
+  | "created_at_desc"
+  | "created_at_asc";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "starts_at_desc", label: "Date (plus récent)" },
+  { value: "starts_at_asc", label: "Date (plus ancien)" },
+  { value: "name_asc", label: "Nom (A → Z)" },
+  { value: "name_desc", label: "Nom (Z → A)" },
+  { value: "created_at_desc", label: "Création (récent)" },
+  { value: "created_at_asc", label: "Création (ancien)" },
+];
 
 type StatusFilter = "all" | "confirmed" | "pending" | "checked_in" | "cancelled";
 
