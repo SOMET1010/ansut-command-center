@@ -109,17 +109,23 @@ function formatDates(startsAt: string | undefined, endsAt: string | undefined) {
   const start = new Date(startsAt);
   const end = new Date(endsAt);
   const tz = "Africa/Abidjan";
+  const fullFmt: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: tz,
+  };
+  const dayKey = (d: Date) => d.toLocaleDateString("fr-CA", { timeZone: tz });
+  // Single-day event → render one date, not a range.
+  if (dayKey(start) === dayKey(end)) {
+    return start.toLocaleDateString("fr-FR", fullFmt);
+  }
   const startStr = start.toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "long",
     timeZone: tz,
   });
-  const endStr = end.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: tz,
-  });
+  const endStr = end.toLocaleDateString("fr-FR", fullFmt);
   return `${startStr} – ${endStr}`;
 }
 
