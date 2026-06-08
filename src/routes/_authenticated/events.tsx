@@ -201,93 +201,96 @@ function EventsListPage() {
             </IfSuperAdmin>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Lieu</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {events.map((ev) => {
-                const status = STATUS_CONFIG[ev.status] ?? STATUS_CONFIG.draft;
-                const StatusIcon = status.icon;
-                return (
-                  <TableRow key={ev.id} className="group">
-                    <TableCell className="font-medium">{ev.name}</TableCell>
-                    <TableCell className="tabular-nums">
-                      {new Date(ev.starts_at).toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </TableCell>
-                    <TableCell>{ev.location ?? "—"}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.className}`}
-                      >
-                        <StatusIcon className="h-3 w-3" />
-                        {status.label}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1 opacity-70 transition-opacity group-hover:opacity-100">
-                        {ev.status === "published" && (
-                          <Button variant="ghost" size="sm" asChild title="Voir page publique">
-                            <a href={`/e/${ev.slug}`} target="_blank" rel="noreferrer">
-                              <Eye className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                        <Button variant="ghost" size="sm" asChild title="Participants">
-                          <Link to="/events/$id/registrations" params={{ id: ev.id }}>
-                            <Users className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <IfSuperAdmin>
-                          <Button variant="ghost" size="sm" asChild title="Éditer">
-                            <Link to="/events/$id/edit" params={{ id: ev.id }}>
-                              <Edit className="h-4 w-4" />
+          <div className="overflow-x-auto">
+            <Table className="min-w-[640px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Lieu</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {events.map((ev) => {
+                  const status = STATUS_CONFIG[ev.status] ?? STATUS_CONFIG.draft;
+                  const StatusIcon = status.icon;
+                  return (
+                    <TableRow key={ev.id} className="group">
+                      <TableCell className="font-medium">{ev.name}</TableCell>
+                      <TableCell className="tabular-nums">
+                        {new Date(ev.starts_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell>{ev.location ?? "—"}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.className}`}
+                        >
+                          <StatusIcon className="h-3 w-3" />
+                          {status.label}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1 opacity-70 transition-opacity group-hover:opacity-100">
+                          {ev.status === "published" && (
+                            <Button variant="ghost" size="sm" asChild title="Voir page publique">
+                              <a href={`/e/${ev.slug}`} target="_blank" rel="noreferrer">
+                                <Eye className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="sm" asChild title="Participants">
+                            <Link to="/events/$id/registrations" params={{ id: ev.id }}>
+                              <Users className="h-4 w-4" />
                             </Link>
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => togglePublishMut.mutate(ev)}
-                            disabled={togglePublishMut.isPending}
-                            title={ev.status === "published" ? "Dépublier" : "Publier"}
-                          >
-                            {ev.status === "published" ? "Dépublier" : "Publier"}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => duplicateMut.mutate(ev)}
-                            disabled={duplicateMut.isPending}
-                            title="Dupliquer"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => remove(ev)}
-                            title="Supprimer"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </IfSuperAdmin>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                          <IfSuperAdmin>
+                            <Button variant="ghost" size="sm" asChild title="Éditer">
+                              <Link to="/events/$id/edit" params={{ id: ev.id }}>
+                                <Edit className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => togglePublishMut.mutate(ev)}
+                              disabled={togglePublishMut.isPending}
+                              title={ev.status === "published" ? "Dépublier" : "Publier"}
+                            >
+                              {ev.status === "published" ? "Dépublier" : "Publier"}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => duplicateMut.mutate(ev)}
+                              disabled={duplicateMut.isPending}
+                              title="Dupliquer"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => remove(ev)}
+                              disabled={removeMut.isPending}
+                              title="Supprimer"
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </IfSuperAdmin>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
     </div>

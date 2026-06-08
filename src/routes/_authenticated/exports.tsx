@@ -437,16 +437,49 @@ function ExportsPage() {
       </div>
 
       {isLoading ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          Chargement…
+        <div className="flex items-center justify-center rounded-xl border border-border bg-card p-10">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <p className="text-sm text-muted-foreground">Chargement des événements…</p>
+          </div>
         </div>
       ) : events.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          Aucun événement disponible.
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-10 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+            <FileText className="h-7 w-7 text-primary" />
+          </div>
+          <h2 className="mt-4 text-lg font-semibold">Aucun événement à exporter</h2>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            Créez un événement pour commencer à générer des exports CSV de participants et de présences.
+          </p>
+          <Button asChild className="mt-4 rounded-xl">
+            <Link to="/events">Aller aux événements</Link>
+          </Button>
         </div>
       ) : filteredEvents.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          Aucun événement ne correspond au filtre sélectionné.
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-10 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+            <Filter className="h-7 w-7 text-muted-foreground" />
+          </div>
+          <h2 className="mt-4 text-lg font-semibold">Aucun résultat</h2>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            Aucun événement ne correspond aux filtres sélectionnés. Réinitialisez pour tout afficher.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-4 rounded-xl"
+            onClick={() => {
+              setDateFrom("");
+              setDateTo("");
+              setStatusFilter("all");
+              setCategoryFilter("all");
+              setSelectedEventIds([]);
+              setSortBy("starts_at_desc");
+            }}
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Réinitialiser les filtres
+          </Button>
         </div>
       ) : (
         <div className="space-y-3">
