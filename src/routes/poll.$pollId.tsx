@@ -42,39 +42,23 @@ function PollVote() {
     load();
   }, [pollId]);
 
+  const [tokenSaved, setTokenSaved] = useState("");
+
   async function handleIdentify(e: React.FormEvent) {
     e.preventDefault();
     if (!badgeCode.trim()) return;
     setLoading(true);
 
     try {
-      const { data: reg } = await supabase
-        .from("event_registrations")
-        .select("id, event_id")
-        .eq("qr_token", badgeCode.trim())
-        .single();
-
-      if (!reg || (session && reg.event_id !== session.event_id)) {
+      const { data: reg } = await supabase.rpc("me_registration", { p_qr_token: badgeCode.trim() });
+      const me = Array.isArray(reg) && reg[0] ? reg[0] : null;
+      if (!me || (session && me.event_id !== session.event_id)) {
         setStep("error");
         setLoading(false);
         return;
       }
-
-      // Vérifier si déjà voté
-      const { data: existing } = await supabase
-        .from("live_poll_votes")
-        .select("id")
-        .eq("poll_id", pollId)
-        .eq("participant_id", reg.id)
-        .single();
-
-      if (existing) {
-        setStep("already");
-        setLoading(false);
-        return;
-      }
-
-      setParticipantId(reg.id);
+      setParticipantId(me.id);
+      setTokenSaved(badgeCode.trim());
       setStep("vote");
     } catch {
       setStep("error");
@@ -83,45 +67,32 @@ function PollVote() {
   }
 
   async function handleVote() {
-    if (!participantId) return;
+    if (!tokenSaved) return;
     setLoading(true);
 
     let answer: any;
-    if (poll.poll_type === "single") {
-      answer = selectedOption;
-    } else if (poll.poll_type === "multi") {
-      answer = selectedOptions;
-    } else if (poll.poll_type === "rating") {
-      answer = rating;
-    } else {
-      answer = selectedOption;
-    }
+    if (poll.poll_type === "single") answer = selectedOption;
+    else if (poll.poll_type === "multi") answer = selectedOptions;
+    else if (poll.poll_type === "rating") answer = rating;
+    else answer = selectedOption;
 
     if (!answer || (Array.isArray(answer) && answer.length === 0)) {
       setLoading(false);
       return;
     }
 
-    const { error } = await supabase
-      .from("live_poll_votes")
-      .insert({
-        poll_id: pollId,
-        participant_id: participantId,
-        answer: JSON.stringify(answer),
-      });
-
-    if (error) {
-      if (error.code === "23505") {
-        setStep("already");
-      } else {
-        setStep("error");
-      }
+    const { data, error } = await supabase.rpc("cast_poll_vote", {
+      p_qr_token: tokenSaved,
+      p_poll_id: pollId,
+      p_answer: answer,
+    });
+    const result = data as { ok: boolean; error?: string } | null;
+    if (error || !result?.ok) {
+      if (result?.error === "already_voted") setStep("already");
+      else if (result?.error === "poll_closed") setStep("closed");
+      else setStep("error");
     } else {
-      // Charger les résultats
-      const { data: votes } = await supabase
-        .from("live_poll_votes")
-        .select("answer")
-        .eq("poll_id", pollId);
+      const { data: votes } = await supabase.from("live_poll_votes").select("answer").eq("poll_id", pollId);
       if (votes) {
         const counts: Record<string, number> = {};
         votes.forEach((v: any) => {

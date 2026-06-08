@@ -60,12 +60,8 @@ function RdvPage() {
     if (!token.trim()) return;
     setLoading(true);
 
-    const { data: reg } = await supabase
-      .from("event_registrations")
-      .select("id, full_name, event_id")
-      .eq("qr_token", token.trim())
-      .single();
-
+    const { data: regData } = await supabase.rpc("me_registration", { p_qr_token: token.trim() });
+    const reg = Array.isArray(regData) && regData[0] ? regData[0] : null;
     if (!reg) {
       toast.error("Code badge invalide.");
       setLoading(false);
@@ -75,78 +71,47 @@ function RdvPage() {
     setMyRegId(reg.id);
     setMyName(reg.full_name);
     setAuthenticated(true);
-    await loadMeetings(reg.id);
+    await loadMeetings();
     setLoading(false);
   }
 
-  async function loadMeetings(regId: string) {
-    // Charger les RDV où je suis requester ou recipient
-    const { data } = await supabase
-      .from("event_meetings")
-      .select("*")
-      .or(`requester_id.eq.${regId},recipient_id.eq.${regId}`)
-      .order("created_at", { ascending: false });
-
+  async function loadMeetings() {
+    const { data } = await supabase.rpc("list_my_meetings", { p_qr_token: token.trim() });
     if (!data) return;
-
-    // Enrichir avec les noms des participants
-    const participantIds = new Set<string>();
-    data.forEach((m) => {
-      participantIds.add(m.requester_id);
-      participantIds.add(m.recipient_id);
-    });
-
-    const { data: participants } = await supabase
-      .from("event_registrations")
-      .select("id, full_name, organization")
-      .in("id", Array.from(participantIds));
-
-    const pMap = new Map(participants?.map((p) => [p.id, p]) || []);
-
-    const enriched: Meeting[] = data.map((m) => ({
-      ...m,
-      requester_name: pMap.get(m.requester_id)?.full_name || "Inconnu",
-      requester_org: pMap.get(m.requester_id)?.organization || "",
-      recipient_name: pMap.get(m.recipient_id)?.full_name || "Inconnu",
-      recipient_org: pMap.get(m.recipient_id)?.organization || "",
+    const enriched: Meeting[] = (data as any[]).map((m) => ({
+      id: m.id, event_id: m.event_id, requester_id: m.requester_id, recipient_id: m.recipient_id,
+      status: m.status, proposed_time: m.proposed_time, proposed_location: m.proposed_location,
+      message: m.message, response_message: m.response_message, created_at: m.created_at,
+      responded_at: m.responded_at,
+      requester_name: m.requester_name || "Inconnu", requester_org: m.requester_org || "",
+      recipient_name: m.recipient_name || "Inconnu", recipient_org: m.recipient_org || "",
     }));
-
     setMeetings(enriched);
   }
 
   async function handleRespond(meetingId: string, status: "accepted" | "declined") {
     setRespondingTo(meetingId);
-
-    const { error } = await supabase
-      .from("event_meetings")
-      .update({ status, responded_at: new Date().toISOString() })
-      .eq("id", meetingId);
-
+    const { error } = await supabase.rpc("respond_to_meeting", {
+      p_qr_token: token.trim(), p_meeting_id: meetingId, p_status: status, p_response_message: null,
+    });
     setRespondingTo(null);
-
-    if (error) {
-      toast.error("Erreur lors de la réponse.");
-    } else {
+    if (error) toast.error("Erreur lors de la réponse.");
+    else {
       toast.success(status === "accepted" ? "RDV accepté !" : "RDV décliné.");
-      await loadMeetings(myRegId);
+      await loadMeetings();
     }
   }
 
   async function handleCancel(meetingId: string) {
     setRespondingTo(meetingId);
-
-    const { error } = await supabase
-      .from("event_meetings")
-      .update({ status: "cancelled" })
-      .eq("id", meetingId);
-
+    const { error } = await supabase.rpc("cancel_my_meeting", {
+      p_qr_token: token.trim(), p_meeting_id: meetingId,
+    });
     setRespondingTo(null);
-
-    if (error) {
-      toast.error("Erreur lors de l'annulation.");
-    } else {
+    if (error) toast.error("Erreur lors de l'annulation.");
+    else {
       toast.success("Demande annulée.");
-      await loadMeetings(myRegId);
+      await loadMeetings();
     }
   }
 

@@ -43,43 +43,26 @@ function SessionAttendance() {
     setLoading(true);
 
     try {
-      // Trouver le participant par son qr_token
-      const { data: reg } = await supabase
-        .from("event_registrations")
-        .select("id, full_name, event_id")
-        .eq("qr_token", badgeCode.trim())
-        .single();
-
-      if (!reg) {
+      const { data, error } = await supabase.rpc("record_session_attendance", {
+        p_qr_token: badgeCode.trim(),
+        p_session_id: sessionId,
+      });
+      if (error || !data) {
         setStep("error");
         setLoading(false);
         return;
       }
-
-      // Vérifier que le participant est bien inscrit à l'événement de cette session
-      if (session && reg.event_id !== session.event_id) {
+      const result = data as { ok: boolean; error?: string; already?: boolean; full_name?: string };
+      if (!result.ok) {
         setStep("error");
-        setLoading(false);
-        return;
-      }
-
-      // Enregistrer la présence
-      const { error } = await supabase
-        .from("session_attendance")
-        .insert({ session_id: sessionId, participant_id: reg.id });
-
-      if (error) {
-        if (error.code === "23505") {
-          // Contrainte unique violée = déjà enregistré
-          setParticipantName(reg.full_name);
+      } else {
+        setParticipantName(result.full_name ?? "");
+        if (result.already) {
           setStep("already");
         } else {
-          setStep("error");
+          setAttendanceCount((c) => c + 1);
+          setStep("success");
         }
-      } else {
-        setParticipantName(reg.full_name);
-        setAttendanceCount((c) => c + 1);
-        setStep("success");
       }
     } catch {
       setStep("error");
