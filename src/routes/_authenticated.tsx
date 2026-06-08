@@ -1,5 +1,12 @@
-import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState, type ComponentType } from "react";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   LayoutDashboard,
   Calendar,
@@ -15,10 +22,11 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, type AppRole } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnsutLogo } from "@/components/ansut/Logo";
+import { supabase } from "@/integrations/supabase/client";
 import {
   COCKPIT_VISIBLE_NAV_SECTIONS,
   getCockpitBreadcrumbLabel,
@@ -26,6 +34,15 @@ import {
 } from "@/lib/cockpit-nav";
 
 export const Route = createFileRoute("/_authenticated")({
+  // Supabase session vit dans localStorage : on désactive le SSR pour ce
+  // sous-arbre et on gate avec un beforeLoad côté client.
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw redirect({ to: "/login" });
+    }
+  },
   component: AuthLayout,
 });
 
@@ -43,7 +60,18 @@ const ICONS: Record<CockpitNavTo, IconCmp> = {
   "/admin/setup": ShieldCheck,
 };
 
-const NAV_SECTIONS: NavSection[] = COCKPIT_VISIBLE_NAV_SECTIONS.map((s) => ({
+// Matrice rôle → entrées visibles dans la sidebar.
+const NAV_ALLOWED_ROLES: Record<CockpitNavTo, AppRole[] | "all"> = {
+  "/dashboard": "all",
+  "/events": ["super_admin", "org_admin", "staff"],
+  "/participants": ["super_admin", "org_admin", "staff"],
+  "/polls": ["super_admin", "org_admin"],
+  "/announcements": ["super_admin", "org_admin"],
+  "/checkin": ["super_admin", "org_admin", "staff"],
+  "/admin/setup": ["super_admin"],
+};
+
+const ALL_NAV_SECTIONS: NavSection[] = COCKPIT_VISIBLE_NAV_SECTIONS.map((s) => ({
   label: s.label,
   items: s.items.map((i) => ({ to: i.to, label: i.label, icon: ICONS[i.to] })),
 }));
