@@ -147,8 +147,8 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
     };
 
     const { error, data } = isEdit
-      ? await supabase.from("events").update(payload).eq("id", v.id!).select("id").single()
-      : await supabase.from("events").insert(payload).select("id").single();
+      ? await supabase.from("events").update(payload as any).eq("id", v.id!).select("id").single()
+      : await supabase.from("events").insert(payload as any).select("id").single();
 
     setSaving(false);
     if (error) {
