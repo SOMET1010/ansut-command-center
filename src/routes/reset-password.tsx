@@ -210,11 +210,15 @@ function ResetPasswordPage() {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="password">Nouveau mot de passe</Label>
+            <Label htmlFor="password">
+              Nouveau mot de passe
+              <RequiredMark />
+            </Label>
             <Input
               id="password"
               type="password"
               required
+              autoFocus
               minLength={6}
               placeholder="6 caractères minimum"
               value={password}
@@ -225,7 +229,10 @@ function ResetPasswordPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm">Confirmer le mot de passe</Label>
+            <Label htmlFor="confirm">
+              Confirmer le mot de passe
+              <RequiredMark />
+            </Label>
             <Input
               id="confirm"
               type="password"
