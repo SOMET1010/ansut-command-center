@@ -596,13 +596,13 @@ function Landing() {
             </div>
           </div>
           <div className="flex gap-8 font-medium">
-            <a href="#" className="hover:text-white">
+            <Link to="/mentions-legales" className="hover:text-white">
               Mentions légales
-            </a>
-            <a href="#" className="hover:text-white">
+            </Link>
+            <Link to="/politique-confidentialite" className="hover:text-white">
               Confidentialité
-            </a>
-            <a href="#" className="hover:text-white">
+            </Link>
+            <a href="mailto:support@ansut.ci" className="hover:text-white">
               Support
             </a>
           </div>
