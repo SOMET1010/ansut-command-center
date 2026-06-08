@@ -278,6 +278,17 @@ function AuthLayout() {
             >
               <Menu className="h-5 w-5" />
             </button>
+            {/* M-02 Contextual back button — only when we are deep under a primary route */}
+            {parentTarget && (
+              <Link
+                to={parentTarget}
+                className="hidden h-7 items-center gap-1 rounded-md border border-border bg-background px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:inline-flex"
+                aria-label="Retour"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Retour
+              </Link>
+            )}
             <Link
               to="/dashboard"
               className="hidden shrink-0 md:block"
@@ -289,14 +300,39 @@ function AuthLayout() {
               ANSUT EVENT
             </span>
             <span className="hidden text-muted-foreground/30 sm:inline">·</span>
-            <Link
-              to="/dashboard"
-              className="hidden font-semibold text-muted-foreground transition-colors hover:text-foreground sm:inline"
+            {/* M-01 Breadcrumb chain — supports deep nested routes */}
+            <nav
+              aria-label="Fil d'Ariane"
+              className="flex min-w-0 items-center gap-1 overflow-hidden"
             >
-              Console
-            </Link>
-            <span className="hidden text-muted-foreground/40 sm:inline">/</span>
-            <span className="truncate font-semibold text-foreground">{currentLabel}</span>
+              {crumbs.map((c, i) => {
+                const isLast = i === crumbs.length - 1;
+                return (
+                  <span key={`${c.label}-${i}`} className="flex min-w-0 items-center gap-1">
+                    {i > 0 && (
+                      <span className="text-muted-foreground/40" aria-hidden="true">
+                        /
+                      </span>
+                    )}
+                    {c.to && !isLast ? (
+                      <Link
+                        to={c.to}
+                        className="truncate font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {c.label}
+                      </Link>
+                    ) : (
+                      <span
+                        className="truncate font-semibold text-foreground"
+                        aria-current={isLast ? "page" : undefined}
+                      >
+                        {c.label}
+                      </span>
+                    )}
+                  </span>
+                );
+              })}
+            </nav>
           </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="relative h-8 w-8">
