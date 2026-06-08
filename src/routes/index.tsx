@@ -197,24 +197,15 @@ function Landing() {
             <Link to="/" className="text-[13px] font-medium text-white">
               Accueil
             </Link>
-            <Link
-              to="/events"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
+            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
               Programme
-            </Link>
-            <Link
-              to="/events"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
+            </ProgrammeLink>
+            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
               Exposition
-            </Link>
-            <Link
-              to="/events"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
+            </ProgrammeLink>
+            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
               Partenaires
-            </Link>
+            </ProgrammeLink>
             <Link
               to="/signup"
               className="text-[13px] font-medium text-white/65 transition hover:text-white"
