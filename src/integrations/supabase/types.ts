@@ -802,6 +802,33 @@ export type Database = {
           },
         ]
       }
+      security_audit_runs: {
+        Row: {
+          ddl_commands: string[] | null
+          generated_at: string
+          id: string
+          report: Json
+          total_issues: number
+          trigger_source: string
+        }
+        Insert: {
+          ddl_commands?: string[] | null
+          generated_at?: string
+          id?: string
+          report: Json
+          total_issues: number
+          trigger_source?: string
+        }
+        Update: {
+          ddl_commands?: string[] | null
+          generated_at?: string
+          id?: string
+          report?: Json
+          total_issues?: number
+          trigger_source?: string
+        }
+        Relationships: []
+      }
       session_attendance: {
         Row: {
           created_at: string
@@ -930,6 +957,7 @@ export type Database = {
     }
     Functions: {
       _reg_from_token: { Args: { p_qr_token: string }; Returns: string }
+      _security_audit_compute: { Args: never; Returns: Json }
       cancel_my_meeting: {
         Args: { p_meeting_id: string; p_qr_token: string }
         Returns: undefined
