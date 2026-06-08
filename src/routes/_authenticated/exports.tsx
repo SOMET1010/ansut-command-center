@@ -74,7 +74,7 @@ function ExportsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("events")
-        .select("id, name, starts_at, status")
+        .select("id, name, starts_at, status, created_at")
         .order("starts_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as EventRow[];
