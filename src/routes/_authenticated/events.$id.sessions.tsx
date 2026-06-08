@@ -424,9 +424,14 @@ function SessionsManager() {
                         <Edit2 className="h-3.5 w-3.5" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm("Supprimer cet intervenant ?"))
-                            deleteSpeaker.mutate(speaker.id);
+                        onClick={async () => {
+                          const ok = await confirmDialog({
+                            title: "Supprimer cet intervenant ?",
+                            description: "Cette action est irréversible.",
+                            confirmLabel: "Supprimer",
+                            destructive: true,
+                          });
+                          if (ok) deleteSpeaker.mutate(speaker.id);
                         }}
                         className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       >
