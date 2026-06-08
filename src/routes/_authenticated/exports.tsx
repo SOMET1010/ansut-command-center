@@ -28,7 +28,25 @@ type EventRow = {
   name: string;
   starts_at: string;
   status: string;
+  created_at: string;
 };
+
+type SortOption =
+  | "starts_at_desc"
+  | "starts_at_asc"
+  | "name_asc"
+  | "name_desc"
+  | "created_at_desc"
+  | "created_at_asc";
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "starts_at_desc", label: "Date (plus récent)" },
+  { value: "starts_at_asc", label: "Date (plus ancien)" },
+  { value: "name_asc", label: "Nom (A → Z)" },
+  { value: "name_desc", label: "Nom (Z → A)" },
+  { value: "created_at_desc", label: "Création (récent)" },
+  { value: "created_at_asc", label: "Création (ancien)" },
+];
 
 type StatusFilter = "all" | "confirmed" | "pending" | "checked_in" | "cancelled";
 
@@ -49,13 +67,14 @@ function ExportsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [selectedEventIds, setSelectedEventIds] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>("starts_at_desc");
 
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["exports", "events"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("events")
-        .select("id, name, starts_at, status")
+        .select("id, name, starts_at, status, created_at")
         .order("starts_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as EventRow[];
@@ -80,13 +99,32 @@ function ExportsPage() {
     },
   });
 
-  const filteredEvents = useMemo(
-    () =>
+  const filteredEvents = useMemo(() => {
+    const base =
       selectedEventIds.length === 0
         ? events
-        : events.filter((e) => selectedEventIds.includes(e.id)),
-    [events, selectedEventIds],
-  );
+        : events.filter((e) => selectedEventIds.includes(e.id));
+    const sorted = [...base];
+    sorted.sort((a, b) => {
+      switch (sortBy) {
+        case "starts_at_asc":
+          return a.starts_at.localeCompare(b.starts_at);
+        case "starts_at_desc":
+          return b.starts_at.localeCompare(a.starts_at);
+        case "name_asc":
+          return a.name.localeCompare(b.name, "fr", { sensitivity: "base" });
+        case "name_desc":
+          return b.name.localeCompare(a.name, "fr", { sensitivity: "base" });
+        case "created_at_asc":
+          return (a.created_at ?? "").localeCompare(b.created_at ?? "");
+        case "created_at_desc":
+          return (b.created_at ?? "").localeCompare(a.created_at ?? "");
+        default:
+          return 0;
+      }
+    });
+    return sorted;
+  }, [events, selectedEventIds, sortBy]);
 
   const filterSummary = useMemo(() => {
     const bits: string[] = [];
@@ -243,7 +281,7 @@ function ExportsPage() {
             Réinitialiser
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <div className="space-y-1 lg:col-span-1">
             <Label className="text-xs text-muted-foreground">Événements</Label>
             <div className="flex gap-1">
@@ -369,6 +407,21 @@ function ExportsPage() {
                 {categories.map((c) => (
                   <SelectItem key={c} value={c}>
                     {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Trier par</Label>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
                   </SelectItem>
                 ))}
               </SelectContent>
