@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useChildMatches } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
@@ -64,6 +64,12 @@ const STATUS_CONFIG: Record<string, { label: string; className: string; icon: ty
 const EVENTS_KEY = ["events", "list"] as const;
 
 function EventsPage() {
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
+  return <EventsListPage />;
+}
+
+function EventsListPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
