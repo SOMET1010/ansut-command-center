@@ -78,13 +78,23 @@ function RdvPage() {
   async function loadMeetings() {
     const { data } = await supabase.rpc("list_my_meetings", { p_qr_token: token.trim() });
     if (!data) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const enriched: Meeting[] = (data as any[]).map((m) => ({
-      id: m.id, event_id: m.event_id, requester_id: m.requester_id, recipient_id: m.recipient_id,
-      status: m.status, proposed_time: m.proposed_time, proposed_location: m.proposed_location,
-      message: m.message, response_message: m.response_message, created_at: m.created_at,
+      id: m.id,
+      event_id: m.event_id,
+      requester_id: m.requester_id,
+      recipient_id: m.recipient_id,
+      status: m.status,
+      proposed_time: m.proposed_time,
+      proposed_location: m.proposed_location,
+      message: m.message,
+      response_message: m.response_message,
+      created_at: m.created_at,
       responded_at: m.responded_at,
-      requester_name: m.requester_name || "Inconnu", requester_org: m.requester_org || "",
-      recipient_name: m.recipient_name || "Inconnu", recipient_org: m.recipient_org || "",
+      requester_name: m.requester_name || "Inconnu",
+      requester_org: m.requester_org || "",
+      recipient_name: m.recipient_name || "Inconnu",
+      recipient_org: m.recipient_org || "",
     }));
     setMeetings(enriched);
   }
@@ -92,7 +102,10 @@ function RdvPage() {
   async function handleRespond(meetingId: string, status: "accepted" | "declined") {
     setRespondingTo(meetingId);
     const { error } = await supabase.rpc("respond_to_meeting", {
-      p_qr_token: token.trim(), p_meeting_id: meetingId, p_status: status, p_response_message: undefined,
+      p_qr_token: token.trim(),
+      p_meeting_id: meetingId,
+      p_status: status,
+      p_response_message: undefined,
     });
     setRespondingTo(null);
     if (error) toast.error("Erreur lors de la réponse.");
@@ -105,7 +118,8 @@ function RdvPage() {
   async function handleCancel(meetingId: string) {
     setRespondingTo(meetingId);
     const { error } = await supabase.rpc("cancel_my_meeting", {
-      p_qr_token: token.trim(), p_meeting_id: meetingId,
+      p_qr_token: token.trim(),
+      p_meeting_id: meetingId,
     });
     setRespondingTo(null);
     if (error) toast.error("Erreur lors de l'annulation.");
@@ -256,9 +270,7 @@ function RdvPage() {
             {tab === "received" ? (
               <>
                 <Inbox className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-                <p className="font-medium text-muted-foreground">
-                  Aucune demande reçue
-                </p>
+                <p className="font-medium text-muted-foreground">Aucune demande reçue</p>
                 <p className="mt-1 text-sm text-muted-foreground/70">
                   Les demandes de RDV des autres participants apparaîtront ici
                 </p>
@@ -266,9 +278,7 @@ function RdvPage() {
             ) : (
               <>
                 <Send className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-                <p className="font-medium text-muted-foreground">
-                  Aucune demande envoyée
-                </p>
+                <p className="font-medium text-muted-foreground">Aucune demande envoyée</p>
                 <Link
                   to="/matchmaking/$slug"
                   params={{ slug }}
@@ -284,18 +294,11 @@ function RdvPage() {
             {currentList.map((meeting) => {
               const badge = getStatusBadge(meeting.status);
               const isReceived = tab === "received";
-              const otherName = isReceived
-                ? meeting.requester_name
-                : meeting.recipient_name;
-              const otherOrg = isReceived
-                ? meeting.requester_org
-                : meeting.recipient_org;
+              const otherName = isReceived ? meeting.requester_name : meeting.recipient_name;
+              const otherOrg = isReceived ? meeting.requester_org : meeting.recipient_org;
 
               return (
-                <div
-                  key={meeting.id}
-                  className="rounded-xl border bg-white p-5"
-                >
+                <div key={meeting.id} className="rounded-xl border bg-white p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -307,17 +310,13 @@ function RdvPage() {
                         </span>
                       </div>
                       {otherOrg && (
-                        <p className="mt-0.5 text-sm text-muted-foreground">
-                          {otherOrg}
-                        </p>
+                        <p className="mt-0.5 text-sm text-muted-foreground">{otherOrg}</p>
                       )}
 
                       {meeting.message && (
                         <div className="mt-2 flex items-start gap-2 rounded-lg bg-slate-50 p-3">
                           <MessageCircle className="mt-0.5 h-3 w-3 flex-shrink-0 text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                            {meeting.message}
-                          </p>
+                          <p className="text-sm text-muted-foreground">{meeting.message}</p>
                         </div>
                       )}
 
@@ -390,7 +389,11 @@ function RdvPage() {
         {/* Footer */}
         <footer className="mt-8 border-t pt-4 text-center text-xs text-muted-foreground">
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/matchmaking/$slug" params={{ slug }} className="text-primary hover:underline">
+            <Link
+              to="/matchmaking/$slug"
+              params={{ slug }}
+              className="text-primary hover:underline"
+            >
               Matchmaking
             </Link>
             <Link to="/networking/$slug" params={{ slug }} className="text-primary hover:underline">

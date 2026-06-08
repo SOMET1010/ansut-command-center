@@ -4,15 +4,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Bell,
-  AlertTriangle,
-  Info,
-  Clock,
-  MapPin,
-  Pin,
-  RefreshCw,
-} from "lucide-react";
+import { Bell, AlertTriangle, Info, Clock, MapPin, Pin, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/annonces/$slug")({
   head: () => ({ meta: [{ title: "Annonces — ANSUT EVENT" }] }),
@@ -38,41 +30,39 @@ type Event = {
   location: string | null;
 };
 
-const TYPE_CONFIG: Record<
-  string,
-  { icon: typeof Info; label: string; color: string; bg: string }
-> = {
-  info: {
-    icon: Info,
-    label: "Information",
-    color: "text-blue-700",
-    bg: "bg-blue-50 border-blue-200",
-  },
-  warning: {
-    icon: AlertTriangle,
-    label: "Attention",
-    color: "text-amber-700",
-    bg: "bg-amber-50 border-amber-200",
-  },
-  urgent: {
-    icon: Bell,
-    label: "Urgent",
-    color: "text-red-700",
-    bg: "bg-red-50 border-red-200",
-  },
-  schedule_change: {
-    icon: Clock,
-    label: "Changement horaire",
-    color: "text-purple-700",
-    bg: "bg-purple-50 border-purple-200",
-  },
-  logistics: {
-    icon: MapPin,
-    label: "Logistique",
-    color: "text-green-700",
-    bg: "bg-green-50 border-green-200",
-  },
-};
+const TYPE_CONFIG: Record<string, { icon: typeof Info; label: string; color: string; bg: string }> =
+  {
+    info: {
+      icon: Info,
+      label: "Information",
+      color: "text-blue-700",
+      bg: "bg-blue-50 border-blue-200",
+    },
+    warning: {
+      icon: AlertTriangle,
+      label: "Attention",
+      color: "text-amber-700",
+      bg: "bg-amber-50 border-amber-200",
+    },
+    urgent: {
+      icon: Bell,
+      label: "Urgent",
+      color: "text-red-700",
+      bg: "bg-red-50 border-red-200",
+    },
+    schedule_change: {
+      icon: Clock,
+      label: "Changement horaire",
+      color: "text-purple-700",
+      bg: "bg-purple-50 border-purple-200",
+    },
+    logistics: {
+      icon: MapPin,
+      label: "Logistique",
+      color: "text-green-700",
+      bg: "bg-green-50 border-green-200",
+    },
+  };
 
 function AnnoncesPage() {
   const { slug } = Route.useParams();
@@ -112,9 +102,7 @@ function AnnoncesPage() {
 
       if (data) {
         // Filtrer les annonces expirées côté client
-        const active = data.filter(
-          (a) => !a.expires_at || new Date(a.expires_at) > new Date()
-        );
+        const active = data.filter((a) => !a.expires_at || new Date(a.expires_at) > new Date());
         setAnnouncements(active);
       }
       setLoading(false);
@@ -166,12 +154,8 @@ function AnnoncesPage() {
         <div className="mx-auto max-w-2xl px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-bold text-foreground">
-                Annonces
-              </h1>
-              {event && (
-                <p className="text-sm text-muted-foreground">{event.name}</p>
-              )}
+              <h1 className="text-lg font-bold text-foreground">Annonces</h1>
+              {event && <p className="text-sm text-muted-foreground">{event.name}</p>}
             </div>
             <div className="flex items-center gap-3">
               <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
@@ -196,9 +180,7 @@ function AnnoncesPage() {
         ) : announcements.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-border py-16 text-center">
             <Bell className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-            <p className="font-medium text-muted-foreground">
-              Aucune annonce pour le moment
-            </p>
+            <p className="font-medium text-muted-foreground">Aucune annonce pour le moment</p>
             <p className="mt-1 text-sm text-muted-foreground/70">
               Les annonces de l'organisateur apparaîtront ici en temps réel
             </p>
@@ -223,14 +205,10 @@ function AnnoncesPage() {
                         <Icon className="h-4 w-4" />
                       </div>
                       <div>
-                        <span
-                          className={`text-xs font-medium ${config.color}`}
-                        >
+                        <span className={`text-xs font-medium ${config.color}`}>
                           {config.label}
                         </span>
-                        {ann.is_pinned && (
-                          <Pin className="ml-1 inline h-3 w-3 text-primary" />
-                        )}
+                        {ann.is_pinned && <Pin className="ml-1 inline h-3 w-3 text-primary" />}
                       </div>
                     </div>
                     <time className="text-xs text-muted-foreground whitespace-nowrap">
@@ -239,9 +217,7 @@ function AnnoncesPage() {
                   </div>
 
                   {/* Contenu */}
-                  <h2 className="mt-3 font-semibold text-foreground">
-                    {ann.title}
-                  </h2>
+                  <h2 className="mt-3 font-semibold text-foreground">{ann.title}</h2>
                   <p className="mt-1.5 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
                     {ann.content}
                   </p>
@@ -256,22 +232,17 @@ function AnnoncesPage() {
           <p>Mise à jour automatique toutes les 10 secondes</p>
           {event && (
             <div className="mt-2 flex flex-wrap justify-center gap-4">
-              <Link
-                to={`/agenda/${slug}`}
-                className="text-primary hover:underline"
-              >
+              <Link to="/agenda/$slug" params={{ slug }} className="text-primary hover:underline">
                 Programme
               </Link>
               <Link
-                to={`/networking/${slug}`}
+                to="/networking/$slug"
+                params={{ slug }}
                 className="text-primary hover:underline"
               >
                 Annuaire
               </Link>
-              <Link
-                to={`/e/${slug}`}
-                className="text-primary hover:underline"
-              >
+              <Link to="/e/$slug" params={{ slug }} className="text-primary hover:underline">
                 Inscription
               </Link>
             </div>
@@ -280,13 +251,7 @@ function AnnoncesPage() {
       </main>
 
       {/* Chatbot IA flottant */}
-      {event && (
-        <ChatBot
-          eventName={event.name}
-          eventSlug={slug}
-          language={language}
-        />
-      )}
+      {event && <ChatBot eventName={event.name} eventSlug={slug} language={language} />}
     </div>
   );
 }

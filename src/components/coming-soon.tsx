@@ -7,7 +7,9 @@ export function ComingSoon({ title, phase }: { title: string; phase: string }) {
     <div className="section-gap">
       <div>
         <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">{title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Ce module est en cours de développement.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Ce module est en cours de développement.
+        </p>
       </div>
 
       <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-card/50 px-8 py-16 text-center">

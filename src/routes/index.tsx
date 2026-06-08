@@ -41,9 +41,7 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(landingQueryOptions),
   component: Landing,
   errorComponent: ({ error }) => (
-    <div className="p-8 text-center text-destructive">
-      Erreur de chargement : {error.message}
-    </div>
+    <div className="p-8 text-center text-destructive">Erreur de chargement : {error.message}</div>
   ),
   notFoundComponent: () => <div className="p-8 text-center">Page introuvable.</div>,
 });
@@ -78,8 +76,7 @@ const partners = ["ANSUT", "RÉPUBLIQUE", "ITU", "GIZ", "Francophonie", "BANQUE 
 function formatRange(startsAt: string, endsAt: string) {
   const start = new Date(startsAt);
   const end = new Date(endsAt);
-  const fmt = (d: Date) =>
-    d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  const fmt = (d: Date) => d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   return { start: fmt(start), end: fmt(end) };
 }
 
@@ -88,8 +85,17 @@ function formatDates(startsAt: string | undefined, endsAt: string | undefined) {
   const start = new Date(startsAt);
   const end = new Date(endsAt);
   const tz = "Africa/Abidjan";
-  const startStr = start.toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: tz });
-  const endStr = end.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: tz });
+  const startStr = start.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    timeZone: tz,
+  });
+  const endStr = end.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: tz,
+  });
   return `${startStr} – ${endStr}`;
 }
 
@@ -103,7 +109,9 @@ function Landing() {
       {/* TOP UTILITY BAR */}
       <div className="fixed top-0 z-[60] w-full border-b border-white/10 bg-[#08172E]/95 backdrop-blur-md">
         <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 text-[10px] font-medium uppercase tracking-[0.18em] text-white/70 sm:px-6">
-          <span className="hidden sm:inline">République de Côte d'Ivoire · Ministère de la Communication & de l'Économie Numérique</span>
+          <span className="hidden sm:inline">
+            République de Côte d'Ivoire · Ministère de la Communication & de l'Économie Numérique
+          </span>
           <span className="sm:hidden">RCI · ANSUT</span>
           <div className="flex items-center gap-4">
             <span className="hidden md:inline">FR</span>
@@ -120,7 +128,9 @@ function Landing() {
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <AnsutLogo size="md" className="shrink-0" />
             <div className="min-w-0 leading-tight">
-              <div className="truncate font-display text-[15px] font-semibold tracking-[0.02em] text-white">ANSUT Event</div>
+              <div className="truncate font-display text-[15px] font-semibold tracking-[0.02em] text-white">
+                ANSUT Event
+              </div>
               <div className="hidden text-[9px] uppercase tracking-[0.25em] text-white/55 md:block">
                 SUTEL 2026 — Plateforme officielle
               </div>
@@ -128,18 +138,50 @@ function Landing() {
           </Link>
 
           <div className="hidden items-center gap-8 lg:flex">
-            <Link to="/" className="text-[13px] font-medium text-white">Accueil</Link>
-            <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Programme</Link>
-            <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Exposition</Link>
-            <Link to="/events" className="text-[13px] font-medium text-white/65 transition hover:text-white">Partenaires</Link>
-            <Link to="/signup" className="text-[13px] font-medium text-white/65 transition hover:text-white">S'inscrire</Link>
+            <Link to="/" className="text-[13px] font-medium text-white">
+              Accueil
+            </Link>
+            <Link
+              to="/events"
+              className="text-[13px] font-medium text-white/65 transition hover:text-white"
+            >
+              Programme
+            </Link>
+            <Link
+              to="/events"
+              className="text-[13px] font-medium text-white/65 transition hover:text-white"
+            >
+              Exposition
+            </Link>
+            <Link
+              to="/events"
+              className="text-[13px] font-medium text-white/65 transition hover:text-white"
+            >
+              Partenaires
+            </Link>
+            <Link
+              to="/signup"
+              className="text-[13px] font-medium text-white/65 transition hover:text-white"
+            >
+              S'inscrire
+            </Link>
           </div>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-            <Button asChild variant="ghost" size="sm" className="text-white/80 hover:bg-white/10 hover:text-white">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-white/80 hover:bg-white/10 hover:text-white"
+            >
               <Link to="/login">Connexion</Link>
             </Button>
-            <Button asChild variant="ansut-orange" size="sm" className="rounded-full px-4 shadow-sm">
+            <Button
+              asChild
+              variant="ansut-orange"
+              size="sm"
+              className="rounded-full px-4 shadow-sm"
+            >
               <Link to="/signup">
                 <span className="sm:hidden">S'inscrire</span>
                 <span className="hidden sm:inline">Créer un compte</span>
@@ -187,25 +229,38 @@ function Landing() {
 
               {/* Headline — editorial */}
               <h1 className="mt-6 font-display text-[44px] font-bold leading-[0.98] tracking-[-0.025em] sm:text-6xl lg:text-[88px]">
-                SUTEL <span style={{ fontFamily: "'Instrument Serif', serif" }} className="italic font-normal text-white/90">2026</span>
+                SUTEL{" "}
+                <span
+                  style={{ fontFamily: "'Instrument Serif', serif" }}
+                  className="italic font-normal text-white/90"
+                >
+                  2026
+                </span>
                 <br />
                 <span className="text-white/85">Bâtir l'avenir</span>
                 <br />
-                <span style={{ fontFamily: "'Instrument Serif', serif" }} className="italic font-normal text-secondary">numérique</span>
+                <span
+                  style={{ fontFamily: "'Instrument Serif', serif" }}
+                  className="italic font-normal text-secondary"
+                >
+                  numérique
+                </span>
                 <span className="text-white/85"> ivoirien.</span>
               </h1>
 
               <p className="mt-8 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
-                Le rendez-vous institutionnel des décideurs, opérateurs et partenaires
-                du service universel des télécommunications. Plateforme officielle
-                d'inscription, d'accréditation, de programme et d'analytics temps réel.
+                Le rendez-vous institutionnel des décideurs, opérateurs et partenaires du service
+                universel des télécommunications. Plateforme officielle d'inscription,
+                d'accréditation, de programme et d'analytics temps réel.
               </p>
 
               {/* Meta line */}
               <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-white/10 py-5 text-sm">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Dates</div>
-                  <div className="mt-1 font-semibold text-white">{formatDates(ev?.starts_at, ev?.ends_at)}</div>
+                  <div className="mt-1 font-semibold text-white">
+                    {formatDates(ev?.starts_at, ev?.ends_at)}
+                  </div>
                 </div>
                 {ev?.location && (
                   <div>
@@ -217,7 +272,9 @@ function Landing() {
                   </div>
                 )}
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Édition</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                    Édition
+                  </div>
                   <div className="mt-1 font-semibold text-white">III · Officielle</div>
                 </div>
               </div>
@@ -260,10 +317,15 @@ function Landing() {
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
                 <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
                   <div>
-                    <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">À l'agenda</div>
+                    <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
+                      À l'agenda
+                    </div>
                     <h2 className="mt-1 text-base font-semibold text-white">Programme du jour</h2>
                   </div>
-                  <Link to="/events" className="text-xs font-semibold text-secondary hover:underline">
+                  <Link
+                    to="/events"
+                    className="text-xs font-semibold text-secondary hover:underline"
+                  >
                     Voir tout →
                   </Link>
                 </div>
@@ -304,7 +366,11 @@ function Landing() {
                   })}
                 </ul>
 
-                <Button asChild variant="outline" className="mt-5 w-full rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="mt-5 w-full rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                >
                   <Link to="/events">
                     Programme complet
                     <ArrowRight className="ml-2 h-3.5 w-3.5" />
@@ -328,7 +394,6 @@ function Landing() {
           </div>
         </div>
       </section>
-
 
       {/* FEATURES */}
       <section className="bg-background py-24">
@@ -391,9 +456,21 @@ function Landing() {
                 </p>
 
                 <div className="mt-12 space-y-8">
-                  <BadgeStep num="1" title="Inscription" desc="Créez votre compte en quelques clics." />
-                  <BadgeStep num="2" title="Validation" desc="Votre demande est examinée et validée." />
-                  <BadgeStep num="3" title="Accès" desc="Recevez votre badge QR personnel par email." />
+                  <BadgeStep
+                    num="1"
+                    title="Inscription"
+                    desc="Créez votre compte en quelques clics."
+                  />
+                  <BadgeStep
+                    num="2"
+                    title="Validation"
+                    desc="Votre demande est examinée et validée."
+                  />
+                  <BadgeStep
+                    num="3"
+                    title="Accès"
+                    desc="Recevez votre badge QR personnel par email."
+                  />
                 </div>
               </div>
 
@@ -433,7 +510,8 @@ function Landing() {
             Restez informé
           </h3>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Recevez les dernières actualités, mises à jour et annonces du SUTEL directement par email.
+            Recevez les dernières actualités, mises à jour et annonces du SUTEL directement par
+            email.
           </p>
           <div className="mx-auto mt-10 max-w-xl">
             <NewsletterForm />
@@ -466,13 +544,20 @@ function Landing() {
           <div className="flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-4">
             <AnsutLogo size="md" />
             <div className="text-center md:text-left">
-              © {new Date().getFullYear()} <span className="font-bold text-white">ANSUT</span> — Agence Nationale du Service Universel des Télécommunications
+              © {new Date().getFullYear()} <span className="font-bold text-white">ANSUT</span> —
+              Agence Nationale du Service Universel des Télécommunications
             </div>
           </div>
           <div className="flex gap-8 font-medium">
-            <a href="#" className="hover:text-white">Mentions légales</a>
-            <a href="#" className="hover:text-white">Confidentialité</a>
-            <a href="#" className="hover:text-white">Support</a>
+            <a href="#" className="hover:text-white">
+              Mentions légales
+            </a>
+            <a href="#" className="hover:text-white">
+              Confidentialité
+            </a>
+            <a href="#" className="hover:text-white">
+              Support
+            </a>
           </div>
         </div>
       </footer>
@@ -480,12 +565,13 @@ function Landing() {
   );
 }
 
-
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-sm">
       <div className="text-lg font-bold tabular-nums leading-none text-white">{value}</div>
-      <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">{label}</div>
+      <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">
+        {label}
+      </div>
     </div>
   );
 }

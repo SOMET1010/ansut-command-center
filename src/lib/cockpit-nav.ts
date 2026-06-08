@@ -48,16 +48,13 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
 ];
 
 /** Full registry (including hidden) — used by the breadcrumb resolver. */
-export const COCKPIT_NAV_ITEMS: CockpitNavItem[] = COCKPIT_NAV_SECTIONS.flatMap(
-  (s) => s.items,
-);
+export const COCKPIT_NAV_ITEMS: CockpitNavItem[] = COCKPIT_NAV_SECTIONS.flatMap((s) => s.items);
 
 /** Sections filtered for the sidebar — drops `hidden` items and empty groups. */
-export const COCKPIT_VISIBLE_NAV_SECTIONS: CockpitNavSection[] =
-  COCKPIT_NAV_SECTIONS.map((s) => ({
-    label: s.label,
-    items: s.items.filter((i) => !i.hidden),
-  })).filter((s) => s.items.length > 0);
+export const COCKPIT_VISIBLE_NAV_SECTIONS: CockpitNavSection[] = COCKPIT_NAV_SECTIONS.map((s) => ({
+  label: s.label,
+  items: s.items.filter((i) => !i.hidden),
+})).filter((s) => s.items.length > 0);
 
 /**
  * Returns the breadcrumb label for a cockpit pathname.
@@ -65,8 +62,8 @@ export const COCKPIT_VISIBLE_NAV_SECTIONS: CockpitNavSection[] =
  * Falls back to "Console" for unknown routes.
  */
 export function getCockpitBreadcrumbLabel(pathname: string): string {
-  const match = COCKPIT_NAV_ITEMS
-    .filter((i) => pathname === i.to || pathname.startsWith(`${i.to}/`))
-    .sort((a, b) => b.to.length - a.to.length)[0];
+  const match = COCKPIT_NAV_ITEMS.filter(
+    (i) => pathname === i.to || pathname.startsWith(`${i.to}/`),
+  ).sort((a, b) => b.to.length - a.to.length)[0];
   return match?.label ?? "Console";
 }

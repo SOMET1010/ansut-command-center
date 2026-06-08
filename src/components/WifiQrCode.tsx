@@ -14,7 +14,12 @@ interface WifiQrCodeProps {
  * Le participant scanne le QR code avec son téléphone pour se connecter automatiquement.
  * Format: WIFI:T:<encryption>;S:<ssid>;P:<password>;;
  */
-export function WifiQrCode({ ssid, password, encryption = "WPA", compact = false }: WifiQrCodeProps) {
+export function WifiQrCode({
+  ssid,
+  password,
+  encryption = "WPA",
+  compact = false,
+}: WifiQrCodeProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
 
   useEffect(() => {
@@ -31,7 +36,9 @@ export function WifiQrCode({ ssid, password, encryption = "WPA", compact = false
         light: "#ffffff",
       },
       errorCorrectionLevel: "M",
-    }).then(setQrDataUrl).catch(console.error);
+    })
+      .then(setQrDataUrl)
+      .catch(console.error);
   }, [ssid, password, encryption, compact]);
 
   if (!ssid || !qrDataUrl) return null;

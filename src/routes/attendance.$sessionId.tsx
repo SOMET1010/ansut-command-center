@@ -9,6 +9,7 @@ export const Route = createFileRoute("/attendance/$sessionId")({
 
 function SessionAttendance() {
   const { sessionId } = Route.useParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [session, setSession] = useState<any>(null);
   const [step, setStep] = useState<"identify" | "success" | "already" | "error">("identify");
   const [badgeCode, setBadgeCode] = useState("");
@@ -93,9 +94,15 @@ function SessionAttendance() {
         <div className="mb-8 text-center">
           <h1 className="text-xl font-bold text-foreground">{session.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {new Date(session.starts_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+            {new Date(session.starts_at).toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
             {" — "}
-            {new Date(session.ends_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+            {new Date(session.ends_at).toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
             {session.location && ` · ${session.location}`}
           </p>
           <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
@@ -137,10 +144,12 @@ function SessionAttendance() {
             </div>
             <h2 className="text-xl font-bold text-green-700">Présence confirmée !</h2>
             <p className="mt-2 text-muted-foreground">
-              Merci <span className="font-semibold text-foreground">{participantName}</span>, votre participation à cette session est enregistrée.
+              Merci <span className="font-semibold text-foreground">{participantName}</span>, votre
+              participation à cette session est enregistrée.
             </p>
             <div className="mt-6 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
-              <Clock className="mb-1 inline h-4 w-4" /> Enregistré à {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+              <Clock className="mb-1 inline h-4 w-4" /> Enregistré à{" "}
+              {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
             </div>
           </div>
         )}
@@ -153,7 +162,8 @@ function SessionAttendance() {
             </div>
             <h2 className="text-xl font-bold text-blue-700">Déjà enregistré</h2>
             <p className="mt-2 text-muted-foreground">
-              <span className="font-semibold text-foreground">{participantName}</span>, votre présence à cette session est déjà confirmée. Bonne session !
+              <span className="font-semibold text-foreground">{participantName}</span>, votre
+              présence à cette session est déjà confirmée. Bonne session !
             </p>
           </div>
         )}
@@ -169,7 +179,10 @@ function SessionAttendance() {
               Le code badge saisi ne correspond à aucun participant inscrit à cet événement.
             </p>
             <button
-              onClick={() => { setStep("identify"); setBadgeCode(""); }}
+              onClick={() => {
+                setStep("identify");
+                setBadgeCode("");
+              }}
               className="mt-6 rounded-xl bg-slate-100 px-6 py-2 text-sm font-medium text-foreground transition hover:bg-slate-200"
             >
               Réessayer

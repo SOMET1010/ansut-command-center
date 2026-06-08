@@ -113,7 +113,9 @@ function SessionsManager() {
   // Mutations sessions
   const createSession = useMutation({
     mutationFn: async (session: Omit<Session, "id">) => {
-      const { error } = await supabase.from("event_sessions").insert({ ...session, event_id: eventId });
+      const { error } = await supabase
+        .from("event_sessions")
+        .insert({ ...session, event_id: eventId });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -152,7 +154,9 @@ function SessionsManager() {
   // Mutations speakers
   const createSpeaker = useMutation({
     mutationFn: async (speaker: Omit<Speaker, "id">) => {
-      const { error } = await supabase.from("event_speakers").insert({ ...speaker, event_id: eventId });
+      const { error } = await supabase
+        .from("event_speakers")
+        .insert({ ...speaker, event_id: eventId });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -231,7 +235,9 @@ function SessionsManager() {
         <button
           onClick={() => setActiveTab("sessions")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            activeTab === "sessions" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+            activeTab === "sessions"
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           <Calendar className="h-4 w-4 inline mr-1.5" />
@@ -240,7 +246,9 @@ function SessionsManager() {
         <button
           onClick={() => setActiveTab("speakers")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-            activeTab === "speakers" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+            activeTab === "speakers"
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           <Mic2 className="h-4 w-4 inline mr-1.5" />
@@ -288,21 +296,29 @@ function SessionsManager() {
           ) : (
             <div className="space-y-2">
               {sessions.map((session) => (
-                <div key={session.id} className="bg-white rounded-lg border p-4 flex items-center gap-4">
+                <div
+                  key={session.id}
+                  className="bg-white rounded-lg border p-4 flex items-center gap-4"
+                >
                   <div className="flex-shrink-0 text-center min-w-[70px]">
-                    <p className="text-xs font-bold text-primary">{formatDateTime(session.starts_at)}</p>
+                    <p className="text-xs font-bold text-primary">
+                      {formatDateTime(session.starts_at)}
+                    </p>
                     <p className="text-[10px] text-gray-400">{formatDateTime(session.ends_at)}</p>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] px-2 py-0.5 bg-gray-100 rounded-full font-medium text-gray-600">
-                        {SESSION_TYPES.find((t) => t.value === session.session_type)?.label || session.session_type}
+                        {SESSION_TYPES.find((t) => t.value === session.session_type)?.label ||
+                          session.session_type}
                       </span>
                       {session.track && (
                         <span className="text-[10px] text-gray-400">{session.track}</span>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-900 truncate mt-0.5">{session.title}</p>
+                    <p className="text-sm font-medium text-gray-900 truncate mt-0.5">
+                      {session.title}
+                    </p>
                     {session.location && (
                       <p className="text-[11px] text-gray-400">{session.location}</p>
                     )}
@@ -374,7 +390,11 @@ function SessionsManager() {
                   <div className="flex items-start gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <span className="text-sm font-bold text-primary">
-                        {speaker.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                        {speaker.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -393,7 +413,8 @@ function SessionsManager() {
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm("Supprimer cet intervenant ?")) deleteSpeaker.mutate(speaker.id);
+                          if (confirm("Supprimer cet intervenant ?"))
+                            deleteSpeaker.mutate(speaker.id);
                         }}
                         className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       >
@@ -428,7 +449,9 @@ function SessionForm({
   const [sessionType, setSessionType] = useState(initial?.session_type || "panel");
   const [track, setTrack] = useState(initial?.track || "");
   const [location, setLocation] = useState(initial?.location || "");
-  const [startsAt, setStartsAt] = useState(initial?.starts_at ? initial.starts_at.slice(0, 16) : "");
+  const [startsAt, setStartsAt] = useState(
+    initial?.starts_at ? initial.starts_at.slice(0, 16) : "",
+  );
   const [endsAt, setEndsAt] = useState(initial?.ends_at ? initial.ends_at.slice(0, 16) : "");
   const [capacity, setCapacity] = useState(initial?.capacity?.toString() || "");
   const [sortOrder, setSortOrder] = useState(initial?.sort_order?.toString() || "0");
@@ -466,7 +489,11 @@ function SessionForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label className="text-xs font-medium text-gray-600 mb-1 block">Titre *</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Titre de la session" />
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Titre de la session"
+          />
         </div>
         <div className="sm:col-span-2">
           <label className="text-xs font-medium text-gray-600 mb-1 block">Description</label>
@@ -485,17 +512,27 @@ function SessionForm({
             className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           >
             {SESSION_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>{t.label}</option>
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
             ))}
           </select>
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Track / Salle</label>
-          <Input value={track} onChange={(e) => setTrack(e.target.value)} placeholder="Ex: Salle Plénière" />
+          <Input
+            value={track}
+            onChange={(e) => setTrack(e.target.value)}
+            placeholder="Ex: Salle Plénière"
+          />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Début *</label>
-          <Input type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+          <Input
+            type="datetime-local"
+            value={startsAt}
+            onChange={(e) => setStartsAt(e.target.value)}
+          />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Fin *</label>
@@ -503,11 +540,20 @@ function SessionForm({
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Lieu</label>
-          <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ex: Sofitel Ivoire" />
+          <Input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Ex: Sofitel Ivoire"
+          />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Capacité</label>
-          <Input type="number" value={capacity} onChange={(e) => setCapacity(e.target.value)} placeholder="200" />
+          <Input
+            type="number"
+            value={capacity}
+            onChange={(e) => setCapacity(e.target.value)}
+            placeholder="200"
+          />
         </div>
       </div>
 
@@ -572,19 +618,35 @@ function SpeakerForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Nom complet *</label>
-          <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Prénom Nom" />
+          <Input
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Prénom Nom"
+          />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Titre / Fonction</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Directeur Général" />
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ex: Directeur Général"
+          />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Organisation</label>
-          <Input value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="Ex: ANSUT" />
+          <Input
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            placeholder="Ex: ANSUT"
+          />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">LinkedIn</label>
-          <Input value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/..." />
+          <Input
+            value={linkedinUrl}
+            onChange={(e) => setLinkedinUrl(e.target.value)}
+            placeholder="https://linkedin.com/in/..."
+          />
         </div>
         <div className="sm:col-span-2">
           <label className="text-xs font-medium text-gray-600 mb-1 block">Biographie</label>

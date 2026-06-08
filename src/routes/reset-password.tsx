@@ -23,7 +23,10 @@ type LinkState =
  * to clear French messages. Single-use is enforced server-side: once a
  * recovery token has been consumed, Supabase returns access_denied / otp_expired.
  */
-function describeAuthError(code: string | null, description: string | null): {
+function describeAuthError(
+  code: string | null,
+  description: string | null,
+): {
   title: string;
   message: string;
 } {
@@ -47,8 +50,7 @@ function describeAuthError(code: string | null, description: string | null): {
   if (c === "same_password" || d.includes("should be different")) {
     return {
       title: "Mot de passe identique",
-      message:
-        "Le nouveau mot de passe doit être différent de l'ancien. Choisissez-en un autre.",
+      message: "Le nouveau mot de passe doit être différent de l'ancien. Choisissez-en un autre.",
     };
   }
   if (c === "weak_password" || d.includes("weak") || d.includes("pwned")) {
@@ -61,8 +63,7 @@ function describeAuthError(code: string | null, description: string | null): {
   return {
     title: "Lien invalide",
     message:
-      description ||
-      "Le lien de réinitialisation n'est pas valide. Veuillez redemander un e-mail.",
+      description || "Le lien de réinitialisation n'est pas valide. Veuillez redemander un e-mail.",
   };
 }
 
@@ -94,11 +95,11 @@ function ResetPasswordPage() {
     const hasToken = params.has("access_token") || params.has("token");
 
     // Subscribe to PASSWORD_RECOVERY (fires once Supabase consumes the token)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event) => {
-        if (event === "PASSWORD_RECOVERY") setLink({ status: "ready" });
-      },
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setLink({ status: "ready" });
+    });
 
     if (type === "recovery" || hasToken) {
       // Token present — let Supabase parse it. We unlock the form optimistically.
@@ -253,7 +254,11 @@ function ResetPasswordPage() {
             className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
             disabled={loading || checking}
           >
-            {loading ? "Mise à jour..." : checking ? "Vérification du lien..." : (
+            {loading ? (
+              "Mise à jour..."
+            ) : checking ? (
+              "Vérification du lien..."
+            ) : (
               <>
                 Mettre à jour le mot de passe
                 <ArrowRight className="ml-2 h-4 w-4" />

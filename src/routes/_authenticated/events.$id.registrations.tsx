@@ -1,16 +1,39 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Search, IdCard, Users, CheckCircle2, Clock, Mail, MessageSquare, Phone, Send } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Search,
+  IdCard,
+  Users,
+  CheckCircle2,
+  Clock,
+  Mail,
+  MessageSquare,
+  Phone,
+  Send,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { toCSVChunked, downloadCSV } from "@/lib/csv";
 import { sendEventReminder } from "@/lib/reminders.functions";
@@ -36,10 +59,22 @@ type Reg = {
 };
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-  confirmed: { label: "Confirmé", className: "bg-signal-ok/10 text-signal-ok border border-signal-ok/20" },
-  pending: { label: "En attente", className: "bg-signal-warning/10 text-signal-warning border border-signal-warning/20" },
-  checked_in: { label: "Présent", className: "bg-primary/10 text-primary border border-primary/20" },
-  cancelled: { label: "Annulé", className: "bg-signal-critical/10 text-signal-critical border border-signal-critical/20" },
+  confirmed: {
+    label: "Confirmé",
+    className: "bg-signal-ok/10 text-signal-ok border border-signal-ok/20",
+  },
+  pending: {
+    label: "En attente",
+    className: "bg-signal-warning/10 text-signal-warning border border-signal-warning/20",
+  },
+  checked_in: {
+    label: "Présent",
+    className: "bg-primary/10 text-primary border border-primary/20",
+  },
+  cancelled: {
+    label: "Annulé",
+    className: "bg-signal-critical/10 text-signal-critical border border-signal-critical/20",
+  },
 };
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100, 200];
@@ -64,7 +99,9 @@ function RegistrationsPage() {
   }, [search]);
 
   // Reset page quand les filtres changent
-  useEffect(() => { setPage(1); }, [debouncedSearch, statusFilter, pageSize]);
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, statusFilter, pageSize]);
 
   // Requête : nom de l'événement
   const { data: eventName = "" } = useQuery({
@@ -118,7 +155,7 @@ function RegistrationsPage() {
       // Recherche côté serveur (ilike sur nom, email, organisation)
       if (debouncedSearch) {
         query = query.or(
-          `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,organization.ilike.%${debouncedSearch}%`
+          `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,organization.ilike.%${debouncedSearch}%`,
         );
       }
 
@@ -151,7 +188,7 @@ function RegistrationsPage() {
     }
     if (debouncedSearch) {
       query = query.or(
-        `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,organization.ilike.%${debouncedSearch}%`
+        `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,organization.ilike.%${debouncedSearch}%`,
       );
     }
 
@@ -246,10 +283,8 @@ function RegistrationsPage() {
       full_name: r.full_name,
       email: r.email,
       status: r.status,
-      checked_in_at: r.checked_in_at
-        ? new Date(r.checked_in_at).toLocaleString("fr-FR")
-        : "",
-      scanner: r.checked_in_by ? scannerMap.get(r.checked_in_by) ?? r.checked_in_by : "",
+      checked_in_at: r.checked_in_at ? new Date(r.checked_in_at).toLocaleString("fr-FR") : "",
+      scanner: r.checked_in_by ? (scannerMap.get(r.checked_in_by) ?? r.checked_in_by) : "",
     }));
 
     void runBackgroundCSV(
@@ -278,7 +313,8 @@ function RegistrationsPage() {
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight">Participants</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {eventName} — {totalCount} inscrit{totalCount > 1 ? "s" : ""} {statusFilter !== "all" || debouncedSearch ? "(filtré)" : ""}
+            {eventName} — {totalCount} inscrit{totalCount > 1 ? "s" : ""}{" "}
+            {statusFilter !== "all" || debouncedSearch ? "(filtré)" : ""}
           </p>
         </div>
         <div className="flex gap-2">
@@ -296,12 +332,30 @@ function RegistrationsPage() {
                 <p className="mb-3 text-sm font-semibold text-foreground">Canaux de notification</p>
                 <div className="space-y-2">
                   {[
-                    { id: "Email", label: "Email", icon: Mail, desc: "Tous les inscrits avec email" },
-                    { id: "WhatsApp", label: "WhatsApp", icon: MessageSquare, desc: "Inscrits avec n° de téléphone" },
+                    {
+                      id: "Email",
+                      label: "Email",
+                      icon: Mail,
+                      desc: "Tous les inscrits avec email",
+                    },
+                    {
+                      id: "WhatsApp",
+                      label: "WhatsApp",
+                      icon: MessageSquare,
+                      desc: "Inscrits avec n° de téléphone",
+                    },
                     { id: "SMS", label: "SMS", icon: Phone, desc: "Inscrits avec n° de téléphone" },
-                    { id: "Telegram", label: "Telegram", icon: Send, desc: "Inscrits avec n° de téléphone" },
+                    {
+                      id: "Telegram",
+                      label: "Telegram",
+                      icon: Send,
+                      desc: "Inscrits avec n° de téléphone",
+                    },
                   ].map((ch) => (
-                    <label key={ch.id} className="flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted">
+                    <label
+                      key={ch.id}
+                      className="flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted"
+                    >
                       <input
                         type="checkbox"
                         checked={selectedChannels.includes(ch.id)}
@@ -328,15 +382,26 @@ function RegistrationsPage() {
                     className="flex-1 rounded-lg"
                     disabled={selectedChannels.length === 0 || sendingReminder}
                     onClick={async () => {
-                      if (!confirm(`Envoyer un rappel via ${selectedChannels.join(", ")} à ${stats.total} inscrit(s) ?`)) return;
+                      if (
+                        !confirm(
+                          `Envoyer un rappel via ${selectedChannels.join(", ")} à ${stats.total} inscrit(s) ?`,
+                        )
+                      )
+                        return;
                       setShowChannelPicker(false);
                       setSendingReminder(true);
                       try {
-                        const result = await sendEventReminder({ data: { event_id: id, channels: selectedChannels } });
+                        const result = await sendEventReminder({
+                          data: { event_id: id, channels: selectedChannels },
+                        });
                         if (result.ok) {
-                          const details = result.details ? Object.entries(result.details)
-                            .map(([ch, s]) => `${ch}: ${(s as {sent:number}).sent} envoyé(s)`)
-                            .join(", ") : "";
+                          const details = result.details
+                            ? Object.entries(result.details)
+                                .map(
+                                  ([ch, s]) => `${ch}: ${(s as { sent: number }).sent} envoyé(s)`,
+                                )
+                                .join(", ")
+                            : "";
                           toast.success(`Rappel envoyé — ${details}`);
                         } else {
                           toast.error(result.error || "Erreur lors de l'envoi");
@@ -350,17 +415,31 @@ function RegistrationsPage() {
                   >
                     Envoyer
                   </Button>
-                  <Button size="sm" variant="ghost" className="rounded-lg" onClick={() => setShowChannelPicker(false)}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="rounded-lg"
+                    onClick={() => setShowChannelPicker(false)}
+                  >
                     Annuler
                   </Button>
                 </div>
               </div>
             )}
           </div>
-          <Button variant="outline" className="rounded-xl" onClick={exportCheckins} disabled={exporting || stats.checkedIn === 0}>
+          <Button
+            variant="outline"
+            className="rounded-xl"
+            onClick={exportCheckins}
+            disabled={exporting || stats.checkedIn === 0}
+          >
             <Download className="mr-2 h-4 w-4" /> Check-ins
           </Button>
-          <Button className="rounded-xl" onClick={exportCSV} disabled={exporting || totalCount === 0}>
+          <Button
+            className="rounded-xl"
+            onClick={exportCSV}
+            disabled={exporting || totalCount === 0}
+          >
             <Download className="mr-2 h-4 w-4" /> Exporter CSV
           </Button>
         </div>
@@ -388,7 +467,9 @@ function RegistrationsPage() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous les statuts</SelectItem>
             <SelectItem value="confirmed">Confirmé</SelectItem>
@@ -432,7 +513,10 @@ function RegistrationsPage() {
             </TableHeader>
             <TableBody>
               {rows.map((r) => {
-                const badge = STATUS_BADGE[r.status] ?? { label: r.status, className: "bg-muted text-muted-foreground" };
+                const badge = STATUS_BADGE[r.status] ?? {
+                  label: r.status,
+                  className: "bg-muted text-muted-foreground",
+                };
                 return (
                   <TableRow key={r.id} className="group">
                     <TableCell className="font-medium">{r.full_name}</TableCell>
@@ -440,7 +524,9 @@ function RegistrationsPage() {
                     <TableCell className="hidden md:table-cell">{r.phone ?? "—"}</TableCell>
                     <TableCell className="hidden lg:table-cell">{r.organization ?? "—"}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}>
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}
+                      >
                         {badge.label}
                       </span>
                     </TableCell>
@@ -476,13 +562,18 @@ function RegistrationsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <span className="tabular-nums">
-              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalCount)} sur {totalCount}
+              {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalCount)} sur{" "}
+              {totalCount}
             </span>
             <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
-              <SelectTrigger className="h-8 w-[100px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-8 w-[100px]">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((n) => (
-                  <SelectItem key={n} value={String(n)}>{n} / page</SelectItem>
+                  <SelectItem key={n} value={String(n)}>
+                    {n} / page
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -516,7 +607,15 @@ function RegistrationsPage() {
   );
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: typeof Users; label: string; value: number }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Users;
+  label: string;
+  value: number;
+}) {
   return (
     <div className="card-elevated flex items-center gap-3 rounded-xl border border-border bg-card p-3">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">

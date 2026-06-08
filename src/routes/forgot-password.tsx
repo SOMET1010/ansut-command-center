@@ -79,7 +79,8 @@ function ForgotPasswordPage() {
           </div>
           <p className="mt-2 text-muted-foreground">
             Si un compte existe pour <span className="font-medium text-foreground">{email}</span>,
-            vous recevrez un lien de réinitialisation dans quelques instants. Pensez à vérifier vos spams.
+            vous recevrez un lien de réinitialisation dans quelques instants. Pensez à vérifier vos
+            spams.
           </p>
         </div>
       ) : (
@@ -102,7 +103,9 @@ function ForgotPasswordPage() {
             className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
             disabled={loading}
           >
-            {loading ? "Envoi..." : (
+            {loading ? (
+              "Envoi..."
+            ) : (
               <>
                 Envoyer le lien
                 <ArrowRight className="ml-2 h-4 w-4" />

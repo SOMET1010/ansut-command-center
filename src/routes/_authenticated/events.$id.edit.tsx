@@ -21,11 +21,7 @@ function EditEvent() {
   const { data } = useQuery({
     queryKey: ["events", "detail", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const { data, error } = await supabase.from("events").select("*").eq("id", id).single();
       if (error) throw error;
       return data;
     },
@@ -34,11 +30,12 @@ function EditEvent() {
   const values = data ? eventToValues(data) : null;
   const orgId = data?.organization_id ?? null;
 
-
   return (
     <div className="section-gap">
       <Button variant="ghost" size="sm" asChild className="w-fit">
-        <Link to="/events"><ArrowLeft className="mr-2 h-4 w-4" /> Retour aux événements</Link>
+        <Link to="/events">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Retour aux événements
+        </Link>
       </Button>
 
       <div className="flex items-center gap-4">

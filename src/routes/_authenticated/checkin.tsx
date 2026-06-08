@@ -2,7 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Scanner } from "@yudiel/react-qr-scanner";
-import { CheckCircle2, AlertCircle, RefreshCw, Camera, ScanLine, Clock, WifiOff, Wifi } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Camera,
+  ScanLine,
+  Clock,
+  WifiOff,
+  Wifi,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -75,8 +84,12 @@ function CheckinPage() {
 
   // Écouter les changements de connectivité
   useEffect(() => {
-    function handleOnline() { setIsOnline(true); }
-    function handleOffline() { setIsOnline(false); }
+    function handleOnline() {
+      setIsOnline(true);
+    }
+    function handleOffline() {
+      setIsOnline(false);
+    }
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
     return () => {
@@ -109,7 +122,9 @@ function CheckinPage() {
         }
         const row = (Array.isArray(data) ? data[0] : data) as CheckResult | undefined;
         if (row) {
-          setHistory((h) => [row, ...h.filter((x) => x.registration_id !== row.registration_id)].slice(0, 20));
+          setHistory((h) =>
+            [row, ...h.filter((x) => x.registration_id !== row.registration_id)].slice(0, 20),
+          );
           successCount++;
         }
         removeFromQueue(item.token);
@@ -120,7 +135,9 @@ function CheckinPage() {
     }
 
     if (successCount > 0) {
-      toast.success(`${successCount} scan${successCount > 1 ? "s" : ""} synchronisé${successCount > 1 ? "s" : ""}`);
+      toast.success(
+        `${successCount} scan${successCount > 1 ? "s" : ""} synchronisé${successCount > 1 ? "s" : ""}`,
+      );
       void queryClient.invalidateQueries({ queryKey: ["registrations"] });
       void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     }
@@ -173,7 +190,11 @@ function CheckinPage() {
       });
       if (rpcErr) {
         // Si erreur réseau, basculer en mode hors-ligne
-        if (rpcErr.message.includes("fetch") || rpcErr.message.includes("network") || rpcErr.message.includes("Failed")) {
+        if (
+          rpcErr.message.includes("fetch") ||
+          rpcErr.message.includes("network") ||
+          rpcErr.message.includes("Failed")
+        ) {
           addToQueue(token);
           setPendingCount(loadQueue().length);
           setError("Connexion perdue — scan enregistré hors-ligne");
@@ -191,7 +212,9 @@ function CheckinPage() {
         return;
       }
       setResult(row);
-      setHistory((h) => [row, ...h.filter((x) => x.registration_id !== row.registration_id)].slice(0, 20));
+      setHistory((h) =>
+        [row, ...h.filter((x) => x.registration_id !== row.registration_id)].slice(0, 20),
+      );
 
       // Invalidation du cache après un check-in réussi
       void queryClient.invalidateQueries({ queryKey: ["registrations"] });
@@ -227,9 +250,13 @@ function CheckinPage() {
         </div>
         <div className="flex items-center gap-3">
           {/* Indicateur de connectivité */}
-          <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${
-            isOnline ? "bg-signal-ok/10 text-signal-ok" : "bg-signal-warning/10 text-signal-warning"
-          }`}>
+          <div
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${
+              isOnline
+                ? "bg-signal-ok/10 text-signal-ok"
+                : "bg-signal-warning/10 text-signal-warning"
+            }`}
+          >
             {isOnline ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
             {isOnline ? "En ligne" : "Hors-ligne"}
           </div>
@@ -247,7 +274,8 @@ function CheckinPage() {
           <div className="flex items-center gap-3">
             <WifiOff className="h-4 w-4 text-signal-warning" />
             <p className="text-sm text-foreground">
-              <strong>{pendingCount}</strong> scan{pendingCount > 1 ? "s" : ""} en attente de synchronisation
+              <strong>{pendingCount}</strong> scan{pendingCount > 1 ? "s" : ""} en attente de
+              synchronisation
             </p>
           </div>
           {isOnline && (
@@ -307,35 +335,45 @@ function CheckinPage() {
         {/* Résultat */}
         <div className="card-elevated flex flex-col rounded-2xl border border-border bg-card p-5">
           {error ? (
-            <div className={`flex items-start gap-3 rounded-xl border-l-4 p-4 ${
-              error.includes("hors-ligne")
-                ? "border-signal-warning bg-signal-warning/5"
-                : "border-signal-critical bg-ansut-danger-light"
-            }`}>
+            <div
+              className={`flex items-start gap-3 rounded-xl border-l-4 p-4 ${
+                error.includes("hors-ligne")
+                  ? "border-signal-warning bg-signal-warning/5"
+                  : "border-signal-critical bg-ansut-danger-light"
+              }`}
+            >
               {error.includes("hors-ligne") ? (
                 <WifiOff className="mt-0.5 h-5 w-5 shrink-0 text-signal-warning" />
               ) : (
                 <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-signal-critical" />
               )}
               <div>
-                <p className={`text-sm font-semibold ${error.includes("hors-ligne") ? "text-signal-warning" : "text-signal-critical"}`}>
+                <p
+                  className={`text-sm font-semibold ${error.includes("hors-ligne") ? "text-signal-warning" : "text-signal-critical"}`}
+                >
                   {error.includes("hors-ligne") ? "Mode hors-ligne" : "Erreur de scan"}
                 </p>
-                <p className={`mt-1 text-sm ${error.includes("hors-ligne") ? "text-signal-warning/80" : "text-signal-critical/80"}`}>
+                <p
+                  className={`mt-1 text-sm ${error.includes("hors-ligne") ? "text-signal-warning/80" : "text-signal-critical/80"}`}
+                >
                   {error}
                 </p>
               </div>
             </div>
           ) : result ? (
             <div className="flex flex-1 flex-col">
-              <div className={`flex items-start gap-3 rounded-xl border-l-4 p-4 ${
-                result.already_checked_in
-                  ? "border-signal-warning bg-ansut-orange-light"
-                  : "border-signal-ok bg-signal-ok/10"
-              }`}>
-                <CheckCircle2 className={`mt-0.5 h-6 w-6 shrink-0 ${
-                  result.already_checked_in ? "text-signal-warning" : "text-signal-ok"
-                }`} />
+              <div
+                className={`flex items-start gap-3 rounded-xl border-l-4 p-4 ${
+                  result.already_checked_in
+                    ? "border-signal-warning bg-ansut-orange-light"
+                    : "border-signal-ok bg-signal-ok/10"
+                }`}
+              >
+                <CheckCircle2
+                  className={`mt-0.5 h-6 w-6 shrink-0 ${
+                    result.already_checked_in ? "text-signal-warning" : "text-signal-ok"
+                  }`}
+                />
                 <div>
                   <p className="text-sm font-semibold">
                     {result.already_checked_in ? "Déjà enregistré" : "Entrée validée"}
@@ -399,13 +437,18 @@ function CheckinPage() {
           <div className="card-elevated overflow-hidden rounded-xl border border-border bg-card">
             <ul className="divide-y divide-border">
               {history.map((h) => (
-                <li key={h.registration_id + h.checked_at} className="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-muted/30">
+                <li
+                  key={h.registration_id + h.checked_at}
+                  className="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-muted/30"
+                >
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
-                      h.already_checked_in
-                        ? "bg-signal-warning/10 text-signal-warning"
-                        : "bg-signal-ok/10 text-signal-ok"
-                    }`}>
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
+                        h.already_checked_in
+                          ? "bg-signal-warning/10 text-signal-warning"
+                          : "bg-signal-ok/10 text-signal-ok"
+                      }`}
+                    >
                       {h.full_name.slice(0, 1).toUpperCase()}
                     </div>
                     <div>
@@ -417,7 +460,10 @@ function CheckinPage() {
                   </div>
                   <div className="text-right">
                     <span className="text-xs tabular-nums text-muted-foreground">
-                      {new Date(h.checked_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                      {new Date(h.checked_at).toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                     <span className="ml-2 text-xs text-muted-foreground/70">{h.event_name}</span>
                   </div>

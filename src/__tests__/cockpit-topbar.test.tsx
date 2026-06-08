@@ -2,10 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
-import {
-  COCKPIT_NAV_ITEMS,
-  getCockpitBreadcrumbLabel,
-} from "@/lib/cockpit-nav";
+import { COCKPIT_NAV_ITEMS, getCockpitBreadcrumbLabel } from "@/lib/cockpit-nav";
 import { AnsutLogo } from "@/components/ansut/Logo";
 
 // Stub TanStack Router's <Link> so AnsutLogo's withLink path renders a plain <a>

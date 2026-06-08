@@ -109,7 +109,12 @@ function AuthLayout() {
         )}
       >
         {/* Brand */}
-        <div className={cn("flex h-14 items-center gap-2.5 border-b border-sidebar-border px-3", collapsed && "md:justify-center md:px-0")}>
+        <div
+          className={cn(
+            "flex h-14 items-center gap-2.5 border-b border-sidebar-border px-3",
+            collapsed && "md:justify-center md:px-0",
+          )}
+        >
           <AnsutLogo size={collapsed ? "sm" : "md"} />
           {(!collapsed || mobileOpen) && (
             <div className="min-w-0 flex-1 leading-tight">
@@ -158,7 +163,9 @@ function AuthLayout() {
                           <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-secondary" />
                         )}
                         <item.icon className="h-4 w-4 shrink-0" />
-                        {(!collapsed || mobileOpen) && <span className="truncate">{item.label}</span>}
+                        {(!collapsed || mobileOpen) && (
+                          <span className="truncate">{item.label}</span>
+                        )}
                       </Link>
                     </li>
                   );
@@ -203,7 +210,11 @@ function AuthLayout() {
             className="mt-1 hidden w-full items-center justify-center rounded-md py-1.5 text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground md:flex"
             aria-label={collapsed ? "Étendre la barre latérale" : "Réduire la barre latérale"}
           >
-            {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+            {collapsed ? (
+              <ChevronRight className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronLeft className="h-3.5 w-3.5" />
+            )}
           </button>
         </div>
       </aside>
@@ -221,7 +232,11 @@ function AuthLayout() {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <Link to="/dashboard" className="hidden shrink-0 md:block" aria-label="Accueil console ANSUT EVENT">
+            <Link
+              to="/dashboard"
+              className="hidden shrink-0 md:block"
+              aria-label="Accueil console ANSUT EVENT"
+            >
               <AnsutLogo size="sm" />
             </Link>
             <span className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground/70 sm:inline">

@@ -11,7 +11,11 @@ interface LanguageSwitcherProps {
  * Sélecteur de langue pour les pages publiques.
  * Affiche les 4 langues UAT : FR, EN, AR, PT.
  */
-export function LanguageSwitcher({ language, onLanguageChange, compact = false }: LanguageSwitcherProps) {
+export function LanguageSwitcher({
+  language,
+  onLanguageChange,
+  compact = false,
+}: LanguageSwitcherProps) {
   if (compact) {
     return (
       <div className="inline-flex items-center gap-1 rounded-full border border-border bg-white/80 backdrop-blur-sm px-2 py-1">

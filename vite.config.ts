@@ -62,7 +62,6 @@ function tanstackCompileErrorLogger(): Plugin {
       server.config.logger.error = (msg, opts) => {
         const err = opts?.error as { plugin?: string } | undefined;
         if (err && isTanstackPlugin(err.plugin)) {
-          // eslint-disable-next-line no-console
           console.error(format(err));
         }
         return origError(msg, opts);

@@ -116,9 +116,7 @@ export async function sendViaHub(opts: HubSendOptions): Promise<{ ok: boolean; e
   const url = `${baseUrl.replace(/\/+$/, "")}/api/message/send`;
 
   // Normaliser le destinataire : retirer espaces, +, points, tirets pour les canaux téléphone
-  const to = opts.channel === "Email"
-    ? opts.to.trim()
-    : opts.to.replace(/[\s.+()-]/g, "");
+  const to = opts.channel === "Email" ? opts.to.trim() : opts.to.replace(/[\s.+()-]/g, "");
 
   const payload: Record<string, unknown> = {
     username,

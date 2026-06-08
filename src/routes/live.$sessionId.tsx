@@ -76,10 +76,11 @@ function LivePresentation() {
 
       if (sessionSpeakers) {
         setSpeakers(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           sessionSpeakers.map((ss: any) => ({
             ...ss.speaker,
             role: ss.role,
-          }))
+          })),
         );
       }
 
@@ -133,6 +134,7 @@ function LivePresentation() {
 
         if (votes) {
           const counts: Record<string, number> = {};
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           votes.forEach((v: any) => {
             const ans = typeof v.answer === "string" ? v.answer : JSON.stringify(v.answer);
             counts[ans] = (counts[ans] || 0) + 1;
@@ -148,18 +150,15 @@ function LivePresentation() {
   }, [session, sessionId]);
 
   // Navigation clavier
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === " ") {
-        setCurrentSlide((s) => Math.min(s + 1, 3));
-      } else if (e.key === "ArrowLeft") {
-        setCurrentSlide((s) => Math.max(s - 1, 0));
-      } else if (e.key === "f" || e.key === "F") {
-        document.documentElement.requestFullscreen?.();
-      }
-    },
-    []
-  );
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === "ArrowRight" || e.key === " ") {
+      setCurrentSlide((s) => Math.min(s + 1, 3));
+    } else if (e.key === "ArrowLeft") {
+      setCurrentSlide((s) => Math.max(s - 1, 0));
+    } else if (e.key === "f" || e.key === "F") {
+      document.documentElement.requestFullscreen?.();
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -189,12 +188,7 @@ function LivePresentation() {
   const moderators = speakers.filter((s) => s.role === "moderator");
   const panelists = speakers.filter((s) => s.role !== "moderator");
 
-  const slides = [
-    "session-info",
-    "speakers",
-    "attendance-qr",
-    "live-poll",
-  ];
+  const slides = ["session-info", "speakers", "attendance-qr", "live-poll"];
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
@@ -202,7 +196,9 @@ function LivePresentation() {
       <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between px-8 py-4">
         <div className="flex items-center gap-3">
           <div className="h-3 w-3 animate-pulse rounded-full bg-red-500" />
-          <span className="text-sm font-medium uppercase tracking-wider text-white/60">En direct</span>
+          <span className="text-sm font-medium uppercase tracking-wider text-white/60">
+            En direct
+          </span>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
@@ -213,9 +209,15 @@ function LivePresentation() {
           <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
             <Clock className="h-4 w-4" />
             <span className="font-mono text-sm">
-              {new Date(session.starts_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+              {new Date(session.starts_at).toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
               {" — "}
-              {new Date(session.ends_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+              {new Date(session.ends_at).toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </div>
         </div>
@@ -227,10 +229,13 @@ function LivePresentation() {
           <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-5 py-2 text-orange-300">
             <Mic2 className="h-5 w-5" />
             <span className="text-sm font-semibold uppercase tracking-wider">
-              {session.session_type === "keynote" ? "Keynote" :
-               session.session_type === "panel" ? "Panel" :
-               session.session_type === "workshop" ? "Atelier" :
-               session.session_type}
+              {session.session_type === "keynote"
+                ? "Keynote"
+                : session.session_type === "panel"
+                  ? "Panel"
+                  : session.session_type === "workshop"
+                    ? "Atelier"
+                    : session.session_type}
             </span>
           </div>
           <h1 className="max-w-4xl text-5xl font-bold leading-tight tracking-tight lg:text-6xl">
@@ -241,11 +246,7 @@ function LivePresentation() {
               {session.description}
             </p>
           )}
-          {session.location && (
-            <p className="mt-8 text-lg text-white/50">
-              📍 {session.location}
-            </p>
-          )}
+          {session.location && <p className="mt-8 text-lg text-white/50">📍 {session.location}</p>}
           {session.track && (
             <div className="mt-4 rounded-full bg-blue-500/20 px-4 py-1 text-sm text-blue-300">
               {session.track}
@@ -259,7 +260,9 @@ function LivePresentation() {
         <div className="flex h-full flex-col items-center justify-center px-16">
           {moderators.length > 0 && (
             <div className="mb-12 text-center">
-              <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-orange-300">Modérateur</p>
+              <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-orange-300">
+                Modérateur
+              </p>
               <div className="flex flex-wrap justify-center gap-8">
                 {moderators.map((s) => (
                   <SpeakerCard key={s.id} speaker={s} large />
@@ -304,7 +307,9 @@ function LivePresentation() {
           <div className="mt-8 flex items-center gap-2 rounded-full bg-green-500/20 px-5 py-2 text-green-300">
             <Users className="h-5 w-5" />
             <span className="font-bold">{attendanceCount}</span>
-            <span className="text-sm">participant{attendanceCount > 1 ? "s" : ""} enregistré{attendanceCount > 1 ? "s" : ""}</span>
+            <span className="text-sm">
+              participant{attendanceCount > 1 ? "s" : ""} enregistré{attendanceCount > 1 ? "s" : ""}
+            </span>
           </div>
         </div>
       )}
@@ -335,12 +340,21 @@ function LivePresentation() {
                       const count = pollResults[`"${option}"`] || pollResults[option] || 0;
                       const total = Object.values(pollResults).reduce((a, b) => a + b, 0);
                       const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-                      const colors = ["bg-blue-500", "bg-orange-500", "bg-green-500", "bg-purple-500", "bg-pink-500", "bg-cyan-500"];
+                      const colors = [
+                        "bg-blue-500",
+                        "bg-orange-500",
+                        "bg-green-500",
+                        "bg-purple-500",
+                        "bg-pink-500",
+                        "bg-cyan-500",
+                      ];
                       return (
                         <div key={idx} className="text-left">
                           <div className="mb-1 flex items-center justify-between">
                             <span className="text-lg font-medium">{option}</span>
-                            <span className="font-mono text-sm text-white/60">{count} vote{count > 1 ? "s" : ""} ({pct}%)</span>
+                            <span className="font-mono text-sm text-white/60">
+                              {count} vote{count > 1 ? "s" : ""} ({pct}%)
+                            </span>
                           </div>
                           <div className="h-8 w-full overflow-hidden rounded-full bg-white/10">
                             <div
@@ -440,9 +454,7 @@ function SpeakerCard({ speaker, large }: { speaker: Speaker; large?: boolean }) 
       <p className={`mt-4 font-bold text-center ${large ? "text-2xl" : "text-lg"}`}>
         {speaker.full_name}
       </p>
-      {speaker.title && (
-        <p className="mt-1 text-center text-sm text-white/60">{speaker.title}</p>
-      )}
+      {speaker.title && <p className="mt-1 text-center text-sm text-white/60">{speaker.title}</p>}
       {speaker.organization && (
         <p className="mt-1 text-center text-sm text-blue-300">{speaker.organization}</p>
       )}

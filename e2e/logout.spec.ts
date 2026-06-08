@@ -62,7 +62,10 @@ const FAKE_TOKEN_RESPONSE = {
 
 for (const env of ENVS) {
   test.describe(`Logout — ${env.name}`, () => {
-    test.skip(!env.baseURL, `Set PLAYWRIGHT_${env.name.toUpperCase()}_URL to run ${env.name} tests`);
+    test.skip(
+      !env.baseURL,
+      `Set PLAYWRIGHT_${env.name.toUpperCase()}_URL to run ${env.name} tests`,
+    );
     test.use({ baseURL: env.baseURL });
 
     test(`signs out, clears session, and lands on /login (${env.name})`, async ({ page }) => {
@@ -70,13 +73,25 @@ for (const env of ENVS) {
 
       // Stub login round-trip
       await page.route("**/api/public/auth/token", (route) =>
-        route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FAKE_TOKEN_RESPONSE) }),
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(FAKE_TOKEN_RESPONSE),
+        }),
       );
       await page.route("**/auth/v1/token**", (route) =>
-        route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FAKE_TOKEN_RESPONSE) }),
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(FAKE_TOKEN_RESPONSE),
+        }),
       );
       await page.route("**/auth/v1/user**", (route) =>
-        route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(FAKE_USER) }),
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(FAKE_USER),
+        }),
       );
       await page.route("**/rest/v1/**", (route) =>
         route.fulfill({ status: 200, contentType: "application/json", body: "[]" }),
@@ -100,7 +115,10 @@ for (const env of ENVS) {
       const sessionBefore = await page.evaluate(() =>
         Object.keys(localStorage).filter((k) => k.startsWith("sb-") && k.endsWith("-auth-token")),
       );
-      expect(sessionBefore.length, "supabase session must be persisted after login").toBeGreaterThan(0);
+      expect(
+        sessionBefore.length,
+        "supabase session must be persisted after login",
+      ).toBeGreaterThan(0);
 
       // 2. Click "Déconnexion" in the cockpit sidebar
       await page.getByRole("button", { name: /déconnexion/i }).click();
@@ -110,7 +128,10 @@ for (const env of ENVS) {
       expect(page.url()).toContain("/login");
 
       // 4. Supabase logout endpoint was hit
-      expect(logoutCalls.length, "supabase /auth/v1/logout should have been called").toBeGreaterThanOrEqual(1);
+      expect(
+        logoutCalls.length,
+        "supabase /auth/v1/logout should have been called",
+      ).toBeGreaterThanOrEqual(1);
       expect(logoutCalls[0].method).toBe("POST");
 
       // 5. Local session cleared

@@ -92,10 +92,7 @@ export function ChatBot({
         },
       });
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: result.reply },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: result.reply }]);
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -140,10 +137,10 @@ export function ChatBot({
                   {language === "fr"
                     ? "Assistant IA — ANSUT"
                     : language === "en"
-                    ? "AI Assistant — ANSUT"
-                    : language === "ar"
-                    ? "مساعد ذكي — ANSUT"
-                    : "Assistente IA — ANSUT"}
+                      ? "AI Assistant — ANSUT"
+                      : language === "ar"
+                        ? "مساعد ذكي — ANSUT"
+                        : "Assistente IA — ANSUT"}
                 </p>
               </div>
             </div>
@@ -160,9 +157,7 @@ export function ChatBot({
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex gap-2 ${
-                  msg.role === "user" ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
               >
                 <div
                   className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full ${

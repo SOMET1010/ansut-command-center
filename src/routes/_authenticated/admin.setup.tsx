@@ -50,7 +50,8 @@ function AdminSetup() {
 
           <h2 className="mt-5 text-lg font-bold text-foreground">Rôle super administrateur</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Connecté en tant que <span className="font-semibold text-foreground">{user?.email}</span>
+            Connecté en tant que{" "}
+            <span className="font-semibold text-foreground">{user?.email}</span>
           </p>
 
           <div className="mt-6">
@@ -75,7 +76,8 @@ function AdminSetup() {
                 <div>
                   <p className="text-sm font-semibold text-signal-warning">Accès restreint</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Un super administrateur est déjà configuré. Contactez-le pour obtenir des droits.
+                    Un super administrateur est déjà configuré. Contactez-le pour obtenir des
+                    droits.
                   </p>
                 </div>
               </div>
@@ -83,7 +85,8 @@ function AdminSetup() {
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
                   Aucun super administrateur n'existe encore. Cliquez ci-dessous pour vous attribuer
-                  ce rôle. Cette action est <span className="font-semibold text-foreground">unique et irréversible</span>.
+                  ce rôle. Cette action est{" "}
+                  <span className="font-semibold text-foreground">unique et irréversible</span>.
                 </p>
                 <Button className="w-full rounded-xl" onClick={claim} disabled={claiming}>
                   <ShieldCheck className="mr-2 h-4 w-4" />

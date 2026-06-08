@@ -59,7 +59,9 @@ export function KPICard({
       <div className="mt-1 flex items-center justify-between gap-2">
         {hint ? <span className="text-xs text-muted-foreground">{hint}</span> : <span />}
         {trend && trendValue ? (
-          <span className={cn("inline-flex items-center gap-0.5 text-xs font-semibold", trendColor)}>
+          <span
+            className={cn("inline-flex items-center gap-0.5 text-xs font-semibold", trendColor)}
+          >
             <TrendIcon className="h-3 w-3" />
             {trendValue}
           </span>

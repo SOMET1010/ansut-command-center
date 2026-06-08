@@ -95,13 +95,22 @@ export function eventToValues(e: {
     capacity: e.capacity?.toString() ?? "",
     cover_url: e.cover_url ?? "",
     status: e.status,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wifi_ssid: (e as any).wifi_ssid ?? "",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wifi_password: (e as any).wifi_password ?? "",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wifi_encryption: (e as any).wifi_encryption ?? "WPA",
   };
 }
 
-export function EventForm({ initial, organizationId }: { initial: EventFormValues; organizationId: string }) {
+export function EventForm({
+  initial,
+  organizationId,
+}: {
+  initial: EventFormValues;
+  organizationId: string;
+}) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [v, setV] = useState<EventFormValues>(initial);
@@ -130,6 +139,7 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
     }
 
     setSaving(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: Record<string, any> = {
       organization_id: organizationId,
       name: v.name.trim(),
@@ -147,8 +157,19 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
     };
 
     const { error, data } = isEdit
-      ? await supabase.from("events").update(payload as any).eq("id", v.id!).select("id").single()
-      : await supabase.from("events").insert(payload as any).select("id").single();
+      ? await supabase
+          .from("events")
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .update(payload as any)
+          .eq("id", v.id!)
+          .select("id")
+          .single()
+      : await supabase
+          .from("events")
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .insert(payload as any)
+          .select("id")
+          .single();
 
     setSaving(false);
     if (error) {
@@ -172,18 +193,39 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
             <Label htmlFor="name" className="text-sm font-semibold">
               Nom de l'événement <span className="text-destructive">*</span>
             </Label>
-            <Input id="name" value={v.name} onChange={(e) => update("name", e.target.value)} required placeholder="Ex : SUTEL 2026 — Conférence plénière" />
-            <p className="text-xs text-muted-foreground">Le nom tel qu'il apparaîtra publiquement.</p>
+            <Input
+              id="name"
+              value={v.name}
+              onChange={(e) => update("name", e.target.value)}
+              required
+              placeholder="Ex : SUTEL 2026 — Conférence plénière"
+            />
+            <p className="text-xs text-muted-foreground">
+              Le nom tel qu'il apparaîtra publiquement.
+            </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="slug" className="text-sm font-semibold">Slug (URL publique)</Label>
-            <Input id="slug" value={v.slug} onChange={(e) => update("slug", slugify(e.target.value))} placeholder="auto-généré" />
-            <p className="text-xs text-muted-foreground">Identifiant dans l'URL : /e/{v.slug || "..."}</p>
+            <Label htmlFor="slug" className="text-sm font-semibold">
+              Slug (URL publique)
+            </Label>
+            <Input
+              id="slug"
+              value={v.slug}
+              onChange={(e) => update("slug", slugify(e.target.value))}
+              placeholder="auto-généré"
+            />
+            <p className="text-xs text-muted-foreground">
+              Identifiant dans l'URL : /e/{v.slug || "..."}
+            </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="status" className="text-sm font-semibold">Statut</Label>
+            <Label htmlFor="status" className="text-sm font-semibold">
+              Statut
+            </Label>
             <Select value={v.status} onValueChange={(val) => update("status", val)}>
-              <SelectTrigger id="status"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="status">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="draft">Brouillon</SelectItem>
                 <SelectItem value="published">Publié</SelectItem>
@@ -202,21 +244,49 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
             <Label htmlFor="starts_at" className="text-sm font-semibold">
               Début <span className="text-destructive">*</span>
             </Label>
-            <Input id="starts_at" type="datetime-local" value={v.starts_at} onChange={(e) => update("starts_at", e.target.value)} required />
+            <Input
+              id="starts_at"
+              type="datetime-local"
+              value={v.starts_at}
+              onChange={(e) => update("starts_at", e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="ends_at" className="text-sm font-semibold">
               Fin <span className="text-destructive">*</span>
             </Label>
-            <Input id="ends_at" type="datetime-local" value={v.ends_at} onChange={(e) => update("ends_at", e.target.value)} required />
+            <Input
+              id="ends_at"
+              type="datetime-local"
+              value={v.ends_at}
+              onChange={(e) => update("ends_at", e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="location" className="text-sm font-semibold">Lieu</Label>
-            <Input id="location" value={v.location} onChange={(e) => update("location", e.target.value)} placeholder="Ex : Sofitel Abidjan Hôtel Ivoire" />
+            <Label htmlFor="location" className="text-sm font-semibold">
+              Lieu
+            </Label>
+            <Input
+              id="location"
+              value={v.location}
+              onChange={(e) => update("location", e.target.value)}
+              placeholder="Ex : Sofitel Abidjan Hôtel Ivoire"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="capacity" className="text-sm font-semibold">Capacité maximale</Label>
-            <Input id="capacity" type="number" min="0" value={v.capacity} onChange={(e) => update("capacity", e.target.value)} placeholder="Illimitée si vide" />
+            <Label htmlFor="capacity" className="text-sm font-semibold">
+              Capacité maximale
+            </Label>
+            <Input
+              id="capacity"
+              type="number"
+              min="0"
+              value={v.capacity}
+              onChange={(e) => update("capacity", e.target.value)}
+              placeholder="Illimitée si vide"
+            />
           </div>
         </div>
       </fieldset>
@@ -232,17 +302,38 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
         </p>
         <div className="grid gap-5 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="wifi_ssid" className="text-sm font-semibold">Nom du réseau (SSID)</Label>
-            <Input id="wifi_ssid" value={v.wifi_ssid} onChange={(e) => update("wifi_ssid", e.target.value)} placeholder="Ex : SUTEL-2026-GUEST" />
+            <Label htmlFor="wifi_ssid" className="text-sm font-semibold">
+              Nom du réseau (SSID)
+            </Label>
+            <Input
+              id="wifi_ssid"
+              value={v.wifi_ssid}
+              onChange={(e) => update("wifi_ssid", e.target.value)}
+              placeholder="Ex : SUTEL-2026-GUEST"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="wifi_password" className="text-sm font-semibold">Mot de passe</Label>
-            <Input id="wifi_password" value={v.wifi_password} onChange={(e) => update("wifi_password", e.target.value)} placeholder="••••••••" />
+            <Label htmlFor="wifi_password" className="text-sm font-semibold">
+              Mot de passe
+            </Label>
+            <Input
+              id="wifi_password"
+              value={v.wifi_password}
+              onChange={(e) => update("wifi_password", e.target.value)}
+              placeholder="••••••••"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="wifi_encryption" className="text-sm font-semibold">Sécurité</Label>
-            <Select value={v.wifi_encryption} onValueChange={(val) => update("wifi_encryption", val)}>
-              <SelectTrigger id="wifi_encryption"><SelectValue /></SelectTrigger>
+            <Label htmlFor="wifi_encryption" className="text-sm font-semibold">
+              Sécurité
+            </Label>
+            <Select
+              value={v.wifi_encryption}
+              onValueChange={(val) => update("wifi_encryption", val)}
+            >
+              <SelectTrigger id="wifi_encryption">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="WPA">WPA/WPA2</SelectItem>
                 <SelectItem value="WEP">WEP</SelectItem>
@@ -257,14 +348,33 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
       <fieldset className="space-y-4 border-t border-border pt-5">
         <legend className="text-sm font-semibold text-primary">Contenu</legend>
         <div className="space-y-2">
-          <Label htmlFor="cover_url" className="text-sm font-semibold">Image de couverture (URL)</Label>
-          <Input id="cover_url" value={v.cover_url} onChange={(e) => update("cover_url", e.target.value)} placeholder="https://..." />
-          <p className="text-xs text-muted-foreground">Format recommandé : 1200x400px, ratio 3:1.</p>
+          <Label htmlFor="cover_url" className="text-sm font-semibold">
+            Image de couverture (URL)
+          </Label>
+          <Input
+            id="cover_url"
+            value={v.cover_url}
+            onChange={(e) => update("cover_url", e.target.value)}
+            placeholder="https://..."
+          />
+          <p className="text-xs text-muted-foreground">
+            Format recommandé : 1200x400px, ratio 3:1.
+          </p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="description" className="text-sm font-semibold">Description</Label>
-          <Textarea id="description" rows={6} value={v.description} onChange={(e) => update("description", e.target.value)} placeholder="Décrivez l'événement, le programme, les intervenants..." />
-          <p className="text-xs text-muted-foreground">Visible sur la page publique d'inscription.</p>
+          <Label htmlFor="description" className="text-sm font-semibold">
+            Description
+          </Label>
+          <Textarea
+            id="description"
+            rows={6}
+            value={v.description}
+            onChange={(e) => update("description", e.target.value)}
+            placeholder="Décrivez l'événement, le programme, les intervenants..."
+          />
+          <p className="text-xs text-muted-foreground">
+            Visible sur la page publique d'inscription.
+          </p>
         </div>
       </fieldset>
 
@@ -273,7 +383,12 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
         <Button type="submit" disabled={saving} className="rounded-xl">
           {saving ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer l'événement"}
         </Button>
-        <Button type="button" variant="outline" className="rounded-xl" onClick={() => navigate({ to: "/events" })}>
+        <Button
+          type="button"
+          variant="outline"
+          className="rounded-xl"
+          onClick={() => navigate({ to: "/events" })}
+        >
           Annuler
         </Button>
       </div>

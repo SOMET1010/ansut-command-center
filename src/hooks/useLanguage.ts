@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { type Language, type TranslationKey, getStoredLanguage, setStoredLanguage, t as translate } from "@/lib/i18n";
+import {
+  type Language,
+  type TranslationKey,
+  getStoredLanguage,
+  setStoredLanguage,
+  t as translate,
+} from "@/lib/i18n";
 
 /**
  * Hook React pour gérer la langue courante et les traductions.
@@ -19,10 +25,7 @@ export function useLanguage() {
     setStoredLanguage(lang);
   }, []);
 
-  const t = useCallback(
-    (key: TranslationKey) => translate(key, language),
-    [language]
-  );
+  const t = useCallback((key: TranslationKey) => translate(key, language), [language]);
 
   return { language, setLanguage, t };
 }

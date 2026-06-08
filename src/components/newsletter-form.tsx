@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  Send,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  RotateCw,
-} from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, Loader2, RotateCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -28,10 +22,7 @@ export function NewsletterForm({ source = "landing" }: { source?: string }) {
   const [resendAttempts, setResendAttempts] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
 
-  function applyResult(
-    res: Awaited<ReturnType<typeof subscribe>>,
-    attempt: number,
-  ) {
+  function applyResult(res: Awaited<ReturnType<typeof subscribe>>, attempt: number) {
     if (!res.ok) {
       const msg = res.error;
       toast.error(msg);
@@ -104,14 +95,10 @@ export function NewsletterForm({ source = "landing" }: { source?: string }) {
   }
 
   const canResend =
-    state === "done" &&
-    result?.kind === "warning" &&
-    resendAttempts < MAX_RESEND_ATTEMPTS;
+    state === "done" && result?.kind === "warning" && resendAttempts < MAX_RESEND_ATTEMPTS;
 
   const exhausted =
-    state === "done" &&
-    result?.kind === "warning" &&
-    resendAttempts >= MAX_RESEND_ATTEMPTS;
+    state === "done" && result?.kind === "warning" && resendAttempts >= MAX_RESEND_ATTEMPTS;
 
   return (
     <form
@@ -164,8 +151,8 @@ export function NewsletterForm({ source = "landing" }: { source?: string }) {
 
           {exhausted && (
             <p className="text-xs text-muted-foreground">
-              Nombre maximum de tentatives atteint ({MAX_RESEND_ATTEMPTS}/
-              {MAX_RESEND_ATTEMPTS}). Contactez-nous si le problème persiste.
+              Nombre maximum de tentatives atteint ({MAX_RESEND_ATTEMPTS}/{MAX_RESEND_ATTEMPTS}).
+              Contactez-nous si le problème persiste.
             </p>
           )}
         </div>

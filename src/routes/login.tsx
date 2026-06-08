@@ -124,7 +124,9 @@ function LoginPage() {
           className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
           disabled={loading}
         >
-          {loading ? "Connexion..." : (
+          {loading ? (
+            "Connexion..."
+          ) : (
             <>
               Se connecter
               <ArrowRight className="ml-2 h-4 w-4" />

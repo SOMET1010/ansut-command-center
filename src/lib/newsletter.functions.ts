@@ -18,16 +18,14 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
       .eq("email", data.email)
       .maybeSingle();
 
-    const { error } = await supabaseAdmin
-      .from("newsletter_subscribers")
-      .upsert(
-        {
-          email: data.email,
-          source: data.source ?? "landing",
-          unsubscribed_at: null,
-        },
-        { onConflict: "email" },
-      );
+    const { error } = await supabaseAdmin.from("newsletter_subscribers").upsert(
+      {
+        email: data.email,
+        source: data.source ?? "landing",
+        unsubscribed_at: null,
+      },
+      { onConflict: "email" },
+    );
 
     if (error) {
       console.error("newsletter subscribe error", error);
@@ -38,9 +36,7 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
     // envoyé/maj dans les 10 dernières minutes, on n'en envoie pas un nouveau.
     const COOLDOWN_MS = 10 * 60 * 1000;
     const last = existing?.updated_at ?? existing?.created_at;
-    const recentlyTouched = last
-      ? Date.now() - new Date(last).getTime() < COOLDOWN_MS
-      : false;
+    const recentlyTouched = last ? Date.now() - new Date(last).getTime() < COOLDOWN_MS : false;
     if (existing && recentlyTouched) {
       return { ok: true as const, emailStatus: "skipped" as const, emailError: "cooldown" };
     }

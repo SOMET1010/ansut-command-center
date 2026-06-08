@@ -121,7 +121,9 @@ function SignupPage() {
           className="h-11 w-full rounded-xl bg-primary font-bold text-primary-foreground shadow-sm hover:bg-primary/90"
           disabled={loading}
         >
-          {loading ? "Création..." : (
+          {loading ? (
+            "Création..."
+          ) : (
             <>
               Créer mon compte
               <ArrowRight className="ml-2 h-4 w-4" />

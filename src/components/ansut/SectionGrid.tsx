@@ -39,7 +39,9 @@ export function SectionGrid({
                   </span>
                 ) : null}
               </div>
-            ) : <span />}
+            ) : (
+              <span />
+            )}
           </div>
           {action}
         </header>

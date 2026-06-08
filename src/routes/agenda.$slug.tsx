@@ -59,7 +59,9 @@ function AgendaPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [dayFilter, setDayFilter] = useState("all");
-  const [myToken, setMyToken] = useState(() => localStorage.getItem("ansut_participant_token") || "");
+  const [myToken, setMyToken] = useState(
+    () => localStorage.getItem("ansut_participant_token") || "",
+  );
   const [showMyAgenda, setShowMyAgenda] = useState(false);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
@@ -84,7 +86,9 @@ function AgendaPage() {
     queryFn: async () => {
       const { data: sessionsData, error } = await supabase
         .from("event_sessions")
-        .select("id, title, description, session_type, track, location, starts_at, ends_at, capacity, sort_order")
+        .select(
+          "id, title, description, session_type, track, location, starts_at, ends_at, capacity, sort_order",
+        )
         .eq("event_id", event!.id)
         .order("starts_at", { ascending: true })
         .order("sort_order", { ascending: true });
@@ -94,7 +98,10 @@ function AgendaPage() {
       const { data: sessionSpeakers } = await supabase
         .from("event_session_speakers")
         .select("session_id, speaker_id, role")
-        .in("session_id", sessionsData.map((s) => s.id));
+        .in(
+          "session_id",
+          sessionsData.map((s) => s.id),
+        );
 
       const { data: speakers } = await supabase
         .from("event_speakers")
@@ -133,6 +140,7 @@ function AgendaPage() {
         p_qr_token: myToken,
         p_event_id: event!.id,
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data ?? []).map((b: any) => b.session_id) as string[];
     },
   });
@@ -167,18 +175,21 @@ function AgendaPage() {
   const filteredDays = useMemo(() => {
     return days
       .filter(([day]) => dayFilter === "all" || day === dayFilter)
-      .map(([day, daySessions]) => [
-        day,
-        daySessions.filter((s) => {
-          const matchSearch =
-            search === "" ||
-            s.title.toLowerCase().includes(search.toLowerCase()) ||
-            s.speakers.some((sp) => sp.full_name.toLowerCase().includes(search.toLowerCase()));
-          const matchType = typeFilter === "all" || s.session_type === typeFilter;
-          const matchBookmark = !showMyAgenda || bookmarks.includes(s.id);
-          return matchSearch && matchType && matchBookmark;
-        }),
-      ] as [string, Session[]])
+      .map(
+        ([day, daySessions]) =>
+          [
+            day,
+            daySessions.filter((s) => {
+              const matchSearch =
+                search === "" ||
+                s.title.toLowerCase().includes(search.toLowerCase()) ||
+                s.speakers.some((sp) => sp.full_name.toLowerCase().includes(search.toLowerCase()));
+              const matchType = typeFilter === "all" || s.session_type === typeFilter;
+              const matchBookmark = !showMyAgenda || bookmarks.includes(s.id);
+              return matchSearch && matchType && matchBookmark;
+            }),
+          ] as [string, Session[]],
+      )
       .filter(([, s]) => s.length > 0);
   }, [days, search, typeFilter, dayFilter, showMyAgenda, bookmarks]);
 
@@ -419,7 +430,9 @@ function AgendaPage() {
                                     ? "text-ansut-orange bg-orange-50"
                                     : "text-gray-300 hover:text-gray-500 hover:bg-gray-50"
                                 }`}
-                                aria-label={isBookmarked ? "Retirer de mon agenda" : "Ajouter à mon agenda"}
+                                aria-label={
+                                  isBookmarked ? "Retirer de mon agenda" : "Ajouter à mon agenda"
+                                }
                               >
                                 {isBookmarked ? (
                                   <BookmarkCheck className="h-4 w-4" />
@@ -454,11 +467,17 @@ function AgendaPage() {
                                 <div key={i} className="flex items-center gap-2">
                                   <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
                                     <span className="text-[10px] font-bold text-primary">
-                                      {sp.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                                      {sp.full_name
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")
+                                        .slice(0, 2)}
                                     </span>
                                   </div>
                                   <div>
-                                    <p className="text-sm font-medium text-gray-900">{sp.full_name}</p>
+                                    <p className="text-sm font-medium text-gray-900">
+                                      {sp.full_name}
+                                    </p>
                                     {(sp.title || sp.organization) && (
                                       <p className="text-[11px] text-gray-500">
                                         {[sp.title, sp.organization].filter(Boolean).join(" — ")}
@@ -487,14 +506,16 @@ function AgendaPage() {
         {/* Liens utiles */}
         <div className="flex flex-wrap gap-3 pt-4">
           <Link
-            to={`/networking/${slug}`}
+            to="/networking/$slug"
+            params={{ slug }}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
           >
             <Users className="h-4 w-4" />
             Annuaire participants
           </Link>
           <Link
-            to={`/e/${slug}`}
+            to="/e/$slug"
+            params={{ slug }}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
           >
             Inscription
