@@ -243,20 +243,59 @@ function ExportsPage() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1 lg:col-span-1">
-            <Label className="text-xs text-muted-foreground">Événement</Label>
-            <Select value={eventFilter} onValueChange={setEventFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Tous les événements" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les événements</SelectItem>
-                {events.map((e) => (
-                  <SelectItem key={e.id} value={e.id}>
-                    {e.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label className="text-xs text-muted-foreground">Événements</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-between font-normal">
+                  <span className="truncate">
+                    {selectedEventIds.length === 0
+                      ? "Tous les événements"
+                      : selectedEventIds.length === 1
+                        ? (events.find((e) => e.id === selectedEventIds[0])?.name ?? "1 sélectionné")
+                        : `${selectedEventIds.length} sélectionnés`}
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                <div className="flex items-center justify-between border-b border-border px-3 py-2 text-xs">
+                  <button
+                    type="button"
+                    className="text-primary hover:underline"
+                    onClick={() => setSelectedEventIds(events.map((e) => e.id))}
+                  >
+                    Tout sélectionner
+                  </button>
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground hover:underline"
+                    onClick={() => setSelectedEventIds([])}
+                  >
+                    Effacer
+                  </button>
+                </div>
+                <div className="max-h-64 overflow-auto py-1">
+                  {events.length === 0 ? (
+                    <div className="px-3 py-2 text-xs text-muted-foreground">
+                      Aucun événement
+                    </div>
+                  ) : (
+                    events.map((e) => (
+                      <label
+                        key={e.id}
+                        className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent"
+                      >
+                        <Checkbox
+                          checked={selectedEventIds.includes(e.id)}
+                          onCheckedChange={() => toggleEventSelection(e.id)}
+                        />
+                        <span className="truncate">{e.name}</span>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="space-y-1">
             <Label htmlFor="date-from" className="text-xs text-muted-foreground">
