@@ -79,15 +79,21 @@ function ExportsPage() {
   });
 
   const filteredEvents = useMemo(
-    () => (eventFilter === "all" ? events : events.filter((e) => e.id === eventFilter)),
-    [events, eventFilter],
+    () =>
+      selectedEventIds.length === 0
+        ? events
+        : events.filter((e) => selectedEventIds.includes(e.id)),
+    [events, selectedEventIds],
   );
 
   const filterSummary = useMemo(() => {
     const bits: string[] = [];
-    if (eventFilter !== "all") {
-      const ev = events.find((e) => e.id === eventFilter);
-      if (ev) bits.push(`événement : ${ev.name}`);
+    if (selectedEventIds.length > 0) {
+      bits.push(
+        selectedEventIds.length === 1
+          ? `événement : ${events.find((e) => e.id === selectedEventIds[0])?.name ?? "1 sélectionné"}`
+          : `${selectedEventIds.length} événements sélectionnés`,
+      );
     }
     if (dateFrom) bits.push(`depuis ${dateFrom}`);
     if (dateTo) bits.push(`jusqu'au ${dateTo}`);
@@ -96,15 +102,22 @@ function ExportsPage() {
     }
     if (categoryFilter !== "all") bits.push(`rôle : ${categoryFilter}`);
     return bits.length ? bits.join(" · ") : "aucun filtre actif";
-  }, [eventFilter, events, dateFrom, dateTo, statusFilter, categoryFilter]);
+  }, [selectedEventIds, events, dateFrom, dateTo, statusFilter, categoryFilter]);
 
   function resetFilters() {
     setDateFrom("");
     setDateTo("");
     setStatusFilter("all");
     setCategoryFilter("all");
-    setEventFilter("all");
+    setSelectedEventIds([]);
   }
+
+  function toggleEventSelection(id: string) {
+    setSelectedEventIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }
+
 
   function applyServerFilters<T extends ReturnType<typeof supabase.from>>(
     query: T,
