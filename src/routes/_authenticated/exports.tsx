@@ -228,7 +228,23 @@ function ExportsPage() {
             Réinitialiser
           </Button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="space-y-1 lg:col-span-1">
+            <Label className="text-xs text-muted-foreground">Événement</Label>
+            <Select value={eventFilter} onValueChange={setEventFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Tous les événements" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les événements</SelectItem>
+                {events.map((e) => (
+                  <SelectItem key={e.id} value={e.id}>
+                    {e.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-1">
             <Label htmlFor="date-from" className="text-xs text-muted-foreground">
               Inscrits à partir du
