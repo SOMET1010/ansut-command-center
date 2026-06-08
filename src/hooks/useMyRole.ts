@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyRole, type MyRoleResponse } from "@/lib/me.functions";
 
@@ -15,7 +15,7 @@ export function useMyRole() {
     error: null,
   });
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     setState({ status: "loading", data: null, error: null });
     try {
       const data = await fetchMyRole();
@@ -24,11 +24,11 @@ export function useMyRole() {
       const msg = e instanceof Error ? e.message : "Erreur inconnue";
       setState({ status: "error", data: null, error: msg });
     }
-  }
+  }, [fetchMyRole]);
 
   useEffect(() => {
     refresh();
-  }, []);
+  }, [refresh]);
 
   return { ...state, refresh };
 }

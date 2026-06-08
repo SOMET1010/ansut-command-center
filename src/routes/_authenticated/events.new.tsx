@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, CalendarPlus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { EventForm, emptyEventValues } from "@/components/event-form";
+import { EventForm } from "@/components/event-form";
+import { emptyEventValues } from "@/components/event-form-utils";
 import { Button } from "@/components/ui/button";
 import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
