@@ -48,12 +48,22 @@ export function EventForm({
       if (k === "name" && !isEdit && !prev.slug) {
         next.slug = slugify(val as string);
       }
+      // Auto-corrige la date de fin si elle devient antérieure à la date de début
+      if (k === "starts_at" && next.ends_at && new Date(next.ends_at) <= new Date(val as string)) {
+        next.ends_at = "";
+      }
       return next;
     });
   }
 
+  const dateError =
+    v.starts_at && v.ends_at && new Date(v.ends_at) <= new Date(v.starts_at)
+      ? "La date de fin doit être strictement après la date de début."
+      : null;
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (saving) return; // garde anti double-soumission
     if (!v.name || !v.starts_at || !v.ends_at) {
       toast.error("Nom, date de début et date de fin sont obligatoires");
       return;
@@ -62,6 +72,7 @@ export function EventForm({
       toast.error("La date de fin doit être après la date de début");
       return;
     }
+
 
     setSaving(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
