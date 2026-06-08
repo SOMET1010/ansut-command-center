@@ -2,6 +2,7 @@
  * Mention officielle République de Côte d'Ivoire · MTNIT
  * Affichée sur toutes les pages via le root layout (header + footer).
  */
+import { openCookiePreferences } from "./CookieConsent";
 
 export const OFFICIAL_MENTION =
   "République de Côte d'Ivoire · Ministère de la Transition Numérique et de l'Innovation Technologique";
@@ -25,7 +26,7 @@ export function OfficialFooter() {
     <footer className="w-full border-t border-border bg-[#08172E] text-white/75">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-3 text-center text-[11px] sm:flex-row sm:text-left sm:px-6">
         <span className="font-medium">{OFFICIAL_MENTION}</span>
-        <div className="flex items-center gap-3 opacity-80">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 opacity-80 sm:justify-end">
           <a
             href="/mentions-legales"
             className="underline-offset-2 hover:text-white hover:underline"
@@ -33,9 +34,22 @@ export function OfficialFooter() {
             Mentions légales
           </a>
           <span className="opacity-40">·</span>
-          <span className="opacity-70">
-            © {new Date().getFullYear()} ANSUT — Tous droits réservés
-          </span>
+          <a
+            href="/politique-confidentialite"
+            className="underline-offset-2 hover:text-white hover:underline"
+          >
+            Politique de confidentialité
+          </a>
+          <span className="opacity-40">·</span>
+          <button
+            type="button"
+            onClick={openCookiePreferences}
+            className="underline-offset-2 hover:text-white hover:underline"
+          >
+            Préférences cookies
+          </button>
+          <span className="opacity-40">·</span>
+          <span className="opacity-70">© {new Date().getFullYear()} ANSUT</span>
         </div>
       </div>
     </footer>
