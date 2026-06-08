@@ -325,7 +325,7 @@ export function EventForm({
 
       {/* Actions */}
       <div className="flex gap-3 border-t border-border pt-5">
-        <Button type="submit" disabled={saving} className="rounded-xl">
+        <Button type="submit" disabled={saving || !!dateError} className="rounded-xl">
           {saving ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer l'événement"}
         </Button>
         <Button
