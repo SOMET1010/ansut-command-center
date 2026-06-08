@@ -349,7 +349,7 @@ function AuthLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="relative h-8 w-8">
+            <Button variant="ghost" size="icon" aria-label="Notifications" className="relative h-8 w-8">
               <Bell className="h-4 w-4" />
               <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-secondary" />
             </Button>
