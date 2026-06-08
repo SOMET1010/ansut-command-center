@@ -76,7 +76,7 @@ function LivePresentation() {
 
       if (sessionSpeakers) {
         setSpeakers(
-          sessionSpeakers.map((ss: Record<string, unknown>) => ({
+          sessionSpeakers.map((ss: any) => ({
             ...ss.speaker,
             role: ss.role,
           })),
@@ -133,7 +133,7 @@ function LivePresentation() {
 
         if (votes) {
           const counts: Record<string, number> = {};
-          votes.forEach((v: Record<string, unknown>) => {
+          votes.forEach((v: any) => {
             const ans = typeof v.answer === "string" ? v.answer : JSON.stringify(v.answer);
             counts[ans] = (counts[ans] || 0) + 1;
           });

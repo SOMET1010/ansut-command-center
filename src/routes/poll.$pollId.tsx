@@ -9,8 +9,8 @@ export const Route = createFileRoute("/poll/$pollId")({
 
 function PollVote() {
   const { pollId } = Route.useParams();
-  const [poll, setPoll] = useState<Record<string, unknown> | null>(null);
-  const [session, setSession] = useState<Record<string, unknown> | null>(null);
+  const [poll, setPoll] = useState<any>(null);
+  const [session, setSession] = useState<any>(null);
   const [step, setStep] = useState<
     "identify" | "vote" | "success" | "closed" | "already" | "error"
   >("identify");
@@ -72,7 +72,7 @@ function PollVote() {
     if (!tokenSaved) return;
     setLoading(true);
 
-    let answer: unknown;
+    let answer: any;
     if (poll.poll_type === "single") answer = selectedOption;
     else if (poll.poll_type === "multi") answer = selectedOptions;
     else if (poll.poll_type === "rating") answer = rating;
@@ -100,7 +100,7 @@ function PollVote() {
         .eq("poll_id", pollId);
       if (votes) {
         const counts: Record<string, number> = {};
-        votes.forEach((v: Record<string, unknown>) => {
+        votes.forEach((v: any) => {
           const ans =
             typeof v.answer === "string" ? v.answer.replace(/^"|"$/g, "") : String(v.answer);
           counts[ans] = (counts[ans] || 0) + 1;

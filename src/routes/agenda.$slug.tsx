@@ -140,7 +140,7 @@ function AgendaPage() {
         p_qr_token: myToken,
         p_event_id: event!.id,
       });
-      return (data ?? []).map((b: { session_id: string }) => b.session_id) as string[];
+      return (data ?? []).map((b: any) => b.session_id) as string[];
     },
   });
 

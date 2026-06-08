@@ -78,7 +78,7 @@ function RdvPage() {
   async function loadMeetings() {
     const { data } = await supabase.rpc("list_my_meetings", { p_qr_token: token.trim() });
     if (!data) return;
-    const enriched: Meeting[] = (data as unknown[]).map((m) => ({
+    const enriched: Meeting[] = (data as any[]).map((m) => ({
       id: m.id,
       event_id: m.event_id,
       requester_id: m.requester_id,

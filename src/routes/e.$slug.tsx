@@ -288,12 +288,12 @@ function PublicEventPage() {
         )}
 
         {/* WiFi QR Code */}
-        {(event as unknown as Record<string, string | undefined>).wifi_ssid && (
+        {(event as any).wifi_ssid && (
           <div className="mt-8">
             <WifiQrCode
-              ssid={(event as unknown as Record<string, string | undefined>).wifi_ssid}
-              password={(event as unknown as Record<string, string | undefined>).wifi_password || ""}
-              encryption={(event as unknown as Record<string, string | undefined>).wifi_encryption || "WPA"}
+              ssid={(event as any).wifi_ssid}
+              password={(event as any).wifi_password || ""}
+              encryption={(event as any).wifi_encryption || "WPA"}
             />
           </div>
         )}

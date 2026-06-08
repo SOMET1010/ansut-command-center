@@ -9,7 +9,7 @@ export const Route = createFileRoute("/attendance/$sessionId")({
 
 function SessionAttendance() {
   const { sessionId } = Route.useParams();
-  const [session, setSession] = useState<Record<string, unknown> | null>(null);
+  const [session, setSession] = useState<any>(null);
   const [step, setStep] = useState<"identify" | "success" | "already" | "error">("identify");
   const [badgeCode, setBadgeCode] = useState("");
   const [participantName, setParticipantName] = useState("");
