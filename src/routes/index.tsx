@@ -415,10 +415,10 @@ function Landing() {
                   variant="outline"
                   className="mt-5 w-full rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Link to="/events">
+                  <ProgrammeLink>
                     Programme complet
                     <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                  </Link>
+                  </ProgrammeLink>
                 </Button>
               </div>
 
