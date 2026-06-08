@@ -243,13 +243,9 @@ function EventsListPage() {
                     <TableRow key={ev.id} className="group">
                       <TableCell className="font-medium">{ev.name}</TableCell>
                       <TableCell className="tabular-nums">
-                        {new Date(ev.starts_at).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {formatEventDate(ev.starts_at)}
                       </TableCell>
-                      <TableCell>{ev.location ?? "—"}</TableCell>
+                      <TableCell>{displayOrDash(ev.location)}</TableCell>
                       <TableCell>
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.className}`}
