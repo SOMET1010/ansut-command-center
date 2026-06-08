@@ -583,6 +583,7 @@ function RegistrationsPage() {
             <Button
               variant="outline"
               size="sm"
+              aria-label="Page précédente"
               className="rounded-lg"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1}
@@ -595,6 +596,7 @@ function RegistrationsPage() {
             <Button
               variant="outline"
               size="sm"
+              aria-label="Page suivante"
               className="rounded-lg"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages}
