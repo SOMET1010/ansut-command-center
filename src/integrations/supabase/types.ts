@@ -1113,6 +1113,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      run_security_audit: { Args: never; Returns: Json }
       send_conversation_message: {
         Args: {
           p_content: string
