@@ -232,13 +232,13 @@ function AnnoncesPage() {
           <p>Mise à jour automatique toutes les 10 secondes</p>
           {event && (
             <div className="mt-2 flex flex-wrap justify-center gap-4">
-              <Link to={`/agenda/${slug}`} className="text-primary hover:underline">
+              <Link to="/agenda/$slug" params={{ slug }} className="text-primary hover:underline">
                 Programme
               </Link>
-              <Link to={`/networking/${slug}`} className="text-primary hover:underline">
+              <Link to="/networking/$slug" params={{ slug }} className="text-primary hover:underline">
                 Annuaire
               </Link>
-              <Link to={`/e/${slug}`} className="text-primary hover:underline">
+              <Link to="/e/$slug" params={{ slug }} className="text-primary hover:underline">
                 Inscription
               </Link>
             </div>

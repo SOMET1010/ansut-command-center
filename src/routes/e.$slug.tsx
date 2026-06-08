@@ -233,13 +233,13 @@ function PublicEventPage() {
           <div className="flex items-center gap-3">
             <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
             <Link
-              to={`/annonces/${slug}`}
+              to="/annonces/$slug" params={{ slug }}
               className="text-xs font-medium text-muted-foreground hover:text-primary"
             >
               {t("nav.announcements")}
             </Link>
             <Link
-              to={`/agenda/${slug}`}
+              to="/agenda/$slug" params={{ slug }}
               className="text-xs font-medium text-muted-foreground hover:text-primary"
             >
               {t("nav.program")}
@@ -342,7 +342,7 @@ function PublicEventPage() {
                     {downloadingBadge ? "Génération du badge..." : "Télécharger mon badge"}
                   </Button>
                   <Link
-                    to={`/networking/${slug}`}
+                    to="/networking/$slug" params={{ slug }}
                     className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                   >
                     <Users className="h-4 w-4" />

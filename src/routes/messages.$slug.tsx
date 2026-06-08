@@ -172,7 +172,7 @@ function MessagesPage() {
                 <MessageCircle className="h-10 w-10 mx-auto mb-3 opacity-40" />
                 <p>Sélectionnez une conversation ou</p>
                 <Link
-                  to={`/networking/${slug}`}
+                  to="/networking/$slug" params={{ slug }}
                   className="text-primary font-medium hover:underline"
                 >
                   parcourez l'annuaire pour contacter un participant
@@ -276,7 +276,7 @@ function ConversationList({
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-sm text-slate-800">Messages</h2>
           <Link
-            to={`/networking/${slug}`}
+            to="/networking/$slug" params={{ slug }}
             className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
           >
             <Users className="h-3.5 w-3.5" /> Annuaire
@@ -298,7 +298,7 @@ function ConversationList({
             <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-40" />
             <p>Aucune conversation.</p>
             <Link
-              to={`/networking/${slug}`}
+              to="/networking/$slug" params={{ slug }}
               className="text-primary font-medium hover:underline text-xs"
             >
               Parcourir l'annuaire
@@ -555,19 +555,19 @@ function PageShell({ slug, children }: { slug: string; children: React.ReactNode
           </Link>
           <div className="flex items-center gap-3">
             <Link
-              to={`/annonces/${slug}`}
+              to="/annonces/$slug" params={{ slug }}
               className="text-xs font-medium text-muted-foreground hover:text-primary"
             >
               Annonces
             </Link>
             <Link
-              to={`/networking/${slug}`}
+              to="/networking/$slug" params={{ slug }}
               className="text-xs font-medium text-muted-foreground hover:text-primary"
             >
               Annuaire
             </Link>
             <Link
-              to={`/e/${slug}`}
+              to="/e/$slug" params={{ slug }}
               className="text-xs font-medium text-muted-foreground hover:text-primary"
             >
               Inscription
