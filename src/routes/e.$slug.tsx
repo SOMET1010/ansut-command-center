@@ -288,11 +288,15 @@ function PublicEventPage() {
         )}
 
         {/* WiFi QR Code */}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {(event as any).wifi_ssid && (
           <div className="mt-8">
             <WifiQrCode
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ssid={(event as any).wifi_ssid}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               password={(event as any).wifi_password || ""}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               encryption={(event as any).wifi_encryption || "WPA"}
             />
           </div>

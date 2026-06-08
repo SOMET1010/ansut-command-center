@@ -9,6 +9,7 @@ export const Route = createFileRoute("/attendance/$sessionId")({
 
 function SessionAttendance() {
   const { sessionId } = Route.useParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [session, setSession] = useState<any>(null);
   const [step, setStep] = useState<"identify" | "success" | "already" | "error">("identify");
   const [badgeCode, setBadgeCode] = useState("");

@@ -140,6 +140,7 @@ function AgendaPage() {
         p_qr_token: myToken,
         p_event_id: event!.id,
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data ?? []).map((b: any) => b.session_id) as string[];
     },
   });

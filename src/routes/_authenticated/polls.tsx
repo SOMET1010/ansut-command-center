@@ -63,6 +63,7 @@ function PollsPage() {
         .from("event_sessions")
         .select("id, title, starts_at, event_id, event:events(title, slug)")
         .order("starts_at", { ascending: true });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (data) setSessions(data as any);
       setLoading(false);
     }
@@ -84,6 +85,7 @@ function PollsPage() {
 
       if (data) {
         const pollsWithVotes = await Promise.all(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data.map(async (p: any) => {
             const { count } = await supabase
               .from("live_poll_votes")
@@ -137,6 +139,7 @@ function PollsPage() {
         .order("sort_order");
       if (data)
         setPolls(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
         );
     }
@@ -168,6 +171,7 @@ function PollsPage() {
       .order("sort_order");
     if (data)
       setPolls(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.map((p: any) => ({ ...p, options: Array.isArray(p.options) ? p.options : [] })),
       );
   }

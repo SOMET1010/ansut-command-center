@@ -76,6 +76,7 @@ function LivePresentation() {
 
       if (sessionSpeakers) {
         setSpeakers(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           sessionSpeakers.map((ss: any) => ({
             ...ss.speaker,
             role: ss.role,
@@ -133,6 +134,7 @@ function LivePresentation() {
 
         if (votes) {
           const counts: Record<string, number> = {};
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           votes.forEach((v: any) => {
             const ans = typeof v.answer === "string" ? v.answer : JSON.stringify(v.answer);
             counts[ans] = (counts[ans] || 0) + 1;

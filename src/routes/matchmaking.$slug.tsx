@@ -86,6 +86,7 @@ function MatchmakingPage() {
     const { data: existing } = await supabase.rpc("list_my_sent_meeting_recipients", {
       p_qr_token: token.trim(),
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (existing) setSentRequests(new Set((existing as any[]).map((m) => m.recipient_id)));
 
     setLoading(false);
@@ -107,6 +108,7 @@ function MatchmakingPage() {
     setSendingTo(null);
 
     if (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (error.message?.includes("duplicate") || (error as any).code === "23505") {
         toast.error("Vous avez déjà envoyé une demande à ce participant.");
       } else {

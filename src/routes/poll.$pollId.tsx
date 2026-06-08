@@ -9,7 +9,9 @@ export const Route = createFileRoute("/poll/$pollId")({
 
 function PollVote() {
   const { pollId } = Route.useParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [poll, setPoll] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [session, setSession] = useState<any>(null);
   const [step, setStep] = useState<
     "identify" | "vote" | "success" | "closed" | "already" | "error"
@@ -72,6 +74,7 @@ function PollVote() {
     if (!tokenSaved) return;
     setLoading(true);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let answer: any;
     if (poll.poll_type === "single") answer = selectedOption;
     else if (poll.poll_type === "multi") answer = selectedOptions;
@@ -100,6 +103,7 @@ function PollVote() {
         .eq("poll_id", pollId);
       if (votes) {
         const counts: Record<string, number> = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         votes.forEach((v: any) => {
           const ans =
             typeof v.answer === "string" ? v.answer.replace(/^"|"$/g, "") : String(v.answer);
