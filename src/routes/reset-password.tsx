@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/ansut/AuthLayout";
+import { RequiredMark } from "@/components/ansut/RequiredMark";
+import { resetPasswordSchema, zodFieldErrors } from "@/lib/auth-schemas";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "Nouveau mot de passe — ANSUT EVENT" }] }),
