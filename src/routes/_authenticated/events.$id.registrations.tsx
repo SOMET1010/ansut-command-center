@@ -39,6 +39,7 @@ import {
 import { toCSVChunked, downloadCSV } from "@/lib/csv";
 import { sendEventReminder } from "@/lib/reminders.functions";
 import { downloadBadge } from "@/lib/badges";
+import { formatEventDate, displayOrDash } from "@/lib/formatters";
 
 export const Route = createFileRoute("/_authenticated/events/$id/registrations")({
   head: () => ({ meta: [{ title: "Participants — ANSUT EVENT" }] }),
@@ -522,8 +523,8 @@ function RegistrationsPage() {
                   <TableRow key={r.id} className="group">
                     <TableCell className="font-medium">{r.full_name}</TableCell>
                     <TableCell className="text-muted-foreground">{r.email}</TableCell>
-                    <TableCell className="hidden md:table-cell">{r.phone ?? "—"}</TableCell>
-                    <TableCell className="hidden lg:table-cell">{r.organization ?? "—"}</TableCell>
+                    <TableCell className="hidden md:table-cell">{displayOrDash(r.phone)}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{displayOrDash(r.organization)}</TableCell>
                     <TableCell>
                       <span
                         className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${badge.className}`}
@@ -532,7 +533,7 @@ function RegistrationsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="hidden tabular-nums sm:table-cell">
-                      {new Date(r.created_at).toLocaleDateString("fr-FR")}
+                      {formatEventDate(r.created_at)}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

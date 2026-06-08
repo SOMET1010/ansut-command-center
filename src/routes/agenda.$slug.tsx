@@ -220,7 +220,7 @@ function AgendaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 py-4">
