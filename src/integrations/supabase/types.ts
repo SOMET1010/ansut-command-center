@@ -966,6 +966,14 @@ export type Database = {
       }
       current_user_org: { Args: never; Returns: string }
       event_org: { Args: { _event_id: string }; Returns: string }
+      get_event_wifi: {
+        Args: { p_event_id: string }
+        Returns: {
+          wifi_encryption: string
+          wifi_password: string
+          wifi_ssid: string
+        }[]
+      }
       get_match_recommendations: {
         Args: {
           p_event_id: string
@@ -1018,6 +1026,21 @@ export type Database = {
           id: string
           read_at: string
           sender_id: string
+        }[]
+      }
+      list_event_directory: {
+        Args: { p_category?: string; p_event_id: string }
+        Returns: {
+          bio: string
+          country: string
+          full_name: string
+          id: string
+          interests: string[]
+          linkedin_url: string
+          organization: string
+          participant_category: string
+          photo_url: string
+          position: string
         }[]
       }
       list_my_bookmarks: {
