@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { EventForm, eventToValues } from "@/components/event-form";
+import { EventForm, eventToValues } from "@/components/event-form-utils";
 import { Button } from "@/components/ui/button";
 import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
