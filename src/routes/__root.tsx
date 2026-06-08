@@ -21,6 +21,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { OfficialBanner, OfficialFooter } from "../components/OfficialMention";
+import { CookieConsent } from "../components/CookieConsent";
 
 function NotFoundComponent() {
   return (
@@ -188,6 +189,7 @@ function RootComponent() {
         </div>
         <OfficialFooter />
       </div>
+      <CookieConsent />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
