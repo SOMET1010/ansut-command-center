@@ -46,6 +46,7 @@ function ExportsPage() {
   const [dateTo, setDateTo] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [eventFilter, setEventFilter] = useState<string>("all");
 
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["exports", "events"],
