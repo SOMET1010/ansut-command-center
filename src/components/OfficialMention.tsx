@@ -25,7 +25,18 @@ export function OfficialFooter() {
     <footer className="w-full border-t border-border bg-[#08172E] text-white/75">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-3 text-center text-[11px] sm:flex-row sm:text-left sm:px-6">
         <span className="font-medium">{OFFICIAL_MENTION}</span>
-        <span className="opacity-60">© {new Date().getFullYear()} ANSUT — Tous droits réservés</span>
+        <div className="flex items-center gap-3 opacity-80">
+          <a
+            href="/mentions-legales"
+            className="underline-offset-2 hover:text-white hover:underline"
+          >
+            Mentions légales
+          </a>
+          <span className="opacity-40">·</span>
+          <span className="opacity-70">
+            © {new Date().getFullYear()} ANSUT — Tous droits réservés
+          </span>
+        </div>
       </div>
     </footer>
   );
