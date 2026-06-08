@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { RequireSuperAdmin } from "@/components/auth/RoleGuard";
 
 /* ─── Types ─── */
 type Session = {
