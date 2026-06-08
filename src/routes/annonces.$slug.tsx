@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ChatBot } from "@/components/ChatBot";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -73,6 +76,7 @@ const TYPE_CONFIG: Record<
 
 function AnnoncesPage() {
   const { slug } = Route.useParams();
+  const { language, setLanguage, t } = useLanguage();
   const [event, setEvent] = useState<Event | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,12 +173,15 @@ function AnnoncesPage() {
                 <p className="text-sm text-muted-foreground">{event.name}</p>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <RefreshCw className="h-3 w-3" />
-              {lastRefresh.toLocaleTimeString("fr-FR", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <RefreshCw className="h-3 w-3" />
+                {lastRefresh.toLocaleTimeString("fr-FR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -271,6 +278,15 @@ function AnnoncesPage() {
           )}
         </footer>
       </main>
+
+      {/* Chatbot IA flottant */}
+      {event && (
+        <ChatBot
+          eventName={event.name}
+          eventSlug={slug}
+          language={language}
+        />
+      )}
     </div>
   );
 }

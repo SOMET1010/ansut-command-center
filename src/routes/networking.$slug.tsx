@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ChatBot } from "@/components/ChatBot";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +41,7 @@ export const Route = createFileRoute("/networking/$slug")({
 
 function NetworkingDirectory() {
   const { slug } = Route.useParams();
+  const { language, setLanguage, t } = useLanguage();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -140,17 +144,18 @@ function NetworkingDirectory() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
               <Link
                 to={`/annonces/${slug}`}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                Annonces
+                {t("nav.announcements")}
               </Link>
               <Link
                 to={`/agenda/${slug}`}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                Programme
+                {t("nav.program")}
               </Link>
             </div>
           </div>
@@ -241,6 +246,16 @@ function NetworkingDirectory() {
           Plateforme événementielle ANSUT — Données personnelles affichées avec le consentement des participants
         </div>
       </footer>
+
+      {/* Chatbot IA flottant */}
+      {event && (
+        <ChatBot
+          eventName={event.name}
+          eventSlug={slug}
+          venue={event.location || undefined}
+          language={language}
+        />
+      )}
     </div>
   );
 }

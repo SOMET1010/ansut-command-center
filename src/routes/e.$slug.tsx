@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AnsutLogo } from "@/components/ansut/Logo";
+import { ChatBot } from "@/components/ChatBot";
+import { WifiQrCode } from "@/components/WifiQrCode";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/hooks/useLanguage";
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 
@@ -64,6 +68,7 @@ type FormErrors = Partial<Record<string, string>>;
 
 function PublicEventPage() {
   const { slug } = Route.useParams();
+  const { language, setLanguage, t } = useLanguage();
   const [event, setEvent] = useState<PublicEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [done, setDone] = useState(false);
@@ -211,14 +216,15 @@ function PublicEventPage() {
             </div>
           </Link>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
             <Link to={`/annonces/${slug}`} className="text-xs font-medium text-muted-foreground hover:text-primary">
-              Annonces
+              {t("nav.announcements")}
             </Link>
             <Link to={`/agenda/${slug}`} className="text-xs font-medium text-muted-foreground hover:text-primary">
-              Programme
+              {t("nav.program")}
             </Link>
             <Link to="/login" className="text-xs font-medium text-muted-foreground hover:text-primary">
-              Espace organisateur
+              {t("nav.admin")}
             </Link>
           </div>
         </div>
@@ -245,6 +251,17 @@ function PublicEventPage() {
 
         {event.description && (
           <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-foreground/90">{event.description}</p>
+        )}
+
+        {/* WiFi QR Code */}
+        {(event as any).wifi_ssid && (
+          <div className="mt-8">
+            <WifiQrCode
+              ssid={(event as any).wifi_ssid}
+              password={(event as any).wifi_password || ""}
+              encryption={(event as any).wifi_encryption || "WPA"}
+            />
+          </div>
         )}
 
         {/* CARTE FORMULAIRE */}
@@ -466,6 +483,14 @@ function PublicEventPage() {
           © {new Date().getFullYear()} <span className="font-semibold text-foreground">ANSUT</span> — Agence Nationale du Service Universel des Télécommunications
         </div>
       </footer>
+
+      {/* Chatbot IA flottant */}
+      <ChatBot
+        eventName={event.name}
+        eventSlug={slug}
+        venue={event.location || undefined}
+        language={language}
+      />
     </div>
   );
 }

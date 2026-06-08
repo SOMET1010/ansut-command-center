@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Wifi } from "lucide-react";
 
 export type EventFormValues = {
   id?: string;
@@ -27,6 +28,9 @@ export type EventFormValues = {
   capacity: string;
   cover_url: string;
   status: string;
+  wifi_ssid: string;
+  wifi_password: string;
+  wifi_encryption: string;
 };
 
 function slugify(s: string) {
@@ -57,6 +61,9 @@ export function emptyEventValues(): EventFormValues {
     capacity: "",
     cover_url: "",
     status: "draft",
+    wifi_ssid: "",
+    wifi_password: "",
+    wifi_encryption: "WPA",
   };
 }
 
@@ -72,6 +79,9 @@ export function eventToValues(e: {
   capacity: number | null;
   cover_url: string | null;
   status: string;
+  wifi_ssid?: string | null;
+  wifi_password?: string | null;
+  wifi_encryption?: string | null;
 }): EventFormValues {
   return {
     id: e.id,
@@ -85,6 +95,9 @@ export function eventToValues(e: {
     capacity: e.capacity?.toString() ?? "",
     cover_url: e.cover_url ?? "",
     status: e.status,
+    wifi_ssid: (e as any).wifi_ssid ?? "",
+    wifi_password: (e as any).wifi_password ?? "",
+    wifi_encryption: (e as any).wifi_encryption ?? "WPA",
   };
 }
 
@@ -117,7 +130,7 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
     }
 
     setSaving(true);
-    const payload = {
+    const payload: Record<string, any> = {
       organization_id: organizationId,
       name: v.name.trim(),
       slug: v.slug.trim() || slugify(v.name),
@@ -128,6 +141,9 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
       capacity: v.capacity ? Number(v.capacity) : null,
       cover_url: v.cover_url || null,
       status: v.status,
+      wifi_ssid: v.wifi_ssid || null,
+      wifi_password: v.wifi_password || null,
+      wifi_encryption: v.wifi_encryption || "WPA",
     };
 
     const { error, data } = isEdit
@@ -201,6 +217,38 @@ export function EventForm({ initial, organizationId }: { initial: EventFormValue
           <div className="space-y-2">
             <Label htmlFor="capacity" className="text-sm font-semibold">Capacité maximale</Label>
             <Input id="capacity" type="number" min="0" value={v.capacity} onChange={(e) => update("capacity", e.target.value)} placeholder="Illimitée si vide" />
+          </div>
+        </div>
+      </fieldset>
+
+      {/* Configuration WiFi */}
+      <fieldset className="space-y-4 border-t border-border pt-5">
+        <legend className="text-sm font-semibold text-primary flex items-center gap-2">
+          <Wifi className="h-4 w-4" />
+          WiFi de l'événement
+        </legend>
+        <p className="text-xs text-muted-foreground">
+          Configurez le WiFi pour permettre aux participants de se connecter en scannant un QR code.
+        </p>
+        <div className="grid gap-5 sm:grid-cols-3">
+          <div className="space-y-2">
+            <Label htmlFor="wifi_ssid" className="text-sm font-semibold">Nom du réseau (SSID)</Label>
+            <Input id="wifi_ssid" value={v.wifi_ssid} onChange={(e) => update("wifi_ssid", e.target.value)} placeholder="Ex : SUTEL-2026-GUEST" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="wifi_password" className="text-sm font-semibold">Mot de passe</Label>
+            <Input id="wifi_password" value={v.wifi_password} onChange={(e) => update("wifi_password", e.target.value)} placeholder="••••••••" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="wifi_encryption" className="text-sm font-semibold">Sécurité</Label>
+            <Select value={v.wifi_encryption} onValueChange={(val) => update("wifi_encryption", val)}>
+              <SelectTrigger id="wifi_encryption"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="WPA">WPA/WPA2</SelectItem>
+                <SelectItem value="WEP">WEP</SelectItem>
+                <SelectItem value="nopass">Ouvert (sans mot de passe)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </fieldset>
