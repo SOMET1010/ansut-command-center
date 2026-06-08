@@ -79,13 +79,34 @@ export function confirmDialog(options: ConfirmOptions): Promise<boolean> {
 
 export function ConfirmRoot() {
   const [state, setState] = useState<ConfirmState>(DEFAULT_STATE);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const lastPathRef = useRef(pathname);
 
   useEffect(() => {
     externalSet = setState;
     return () => {
       externalSet = null;
+      // Composant démonté → on libère toute promesse en attente pour éviter le leak.
+      if (pendingResolver) {
+        pendingResolver(false);
+        pendingResolver = null;
+      }
     };
   }, []);
+
+  // Auto-dismiss on route change : tout dialog ouvert est résolu à false dès
+  // que l'utilisateur navigue (back, link, redirect…). Empêche un dialog
+  // orphelin de bloquer la nouvelle page.
+  useEffect(() => {
+    if (lastPathRef.current !== pathname) {
+      lastPathRef.current = pathname;
+      if (pendingResolver) {
+        pendingResolver(false);
+        pendingResolver = null;
+        setState((s) => ({ ...s, open: false }));
+      }
+    }
+  }, [pathname]);
 
   function resolve(value: boolean) {
     if (pendingResolver) {
