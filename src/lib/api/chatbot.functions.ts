@@ -1,6 +1,33 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import process from "node:process";
+
+/**
+ * Anti-abuse : limite par IP le nombre d'appels au chatbot pour éviter
+ * qu'un acteur anonyme vide le quota OpenAI. Fenêtre glissante en mémoire.
+ */
+const CHAT_RATE_WINDOW_MS = 60_000; // 1 minute
+const CHAT_RATE_MAX = 10; // max 10 requêtes / IP / minute
+const chatRateBuckets = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const bucket = (chatRateBuckets.get(ip) ?? []).filter((t) => now - t < CHAT_RATE_WINDOW_MS);
+  if (bucket.length >= CHAT_RATE_MAX) {
+    chatRateBuckets.set(ip, bucket);
+    return true;
+  }
+  bucket.push(now);
+  chatRateBuckets.set(ip, bucket);
+  // Garbage-collect old buckets occasionnellement
+  if (chatRateBuckets.size > 5000) {
+    for (const [k, v] of chatRateBuckets) {
+      if (v.every((t) => now - t > CHAT_RATE_WINDOW_MS)) chatRateBuckets.delete(k);
+    }
+  }
+  return false;
+}
 
 /**
  * Chatbot IA — ANSUT EVENT Assistant
@@ -8,29 +35,39 @@ import process from "node:process";
  * pour répondre aux questions des participants sur l'événement.
  */
 
+// Strip control characters / newlines from any free-text field that is
+// interpolated into the OpenAI system prompt. Prevents prompt-injection via
+// embedded instructions like "\n\nIgnore previous instructions...".
+const safeText = (max: number) =>
+  z
+    .string()
+    .max(max)
+    .transform((v) => v.replace(/[\r\n\t\u0000-\u001f\u007f]+/g, " ").trim());
+
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
-  content: z.string(),
+  content: z.string().max(2000),
 });
 
 const chatInputSchema = z.object({
-  messages: z.array(messageSchema),
+  messages: z.array(messageSchema).max(20),
   eventContext: z.object({
-    eventName: z.string(),
-    eventSlug: z.string(),
+    eventName: safeText(200),
+    eventSlug: z.string().max(120).regex(/^[a-zA-Z0-9_-]+$/),
     sessions: z
       .array(
         z.object({
-          title: z.string(),
-          speaker: z.string().optional(),
-          starts_at: z.string().optional(),
-          location: z.string().optional(),
+          title: safeText(200),
+          speaker: safeText(120).optional(),
+          starts_at: z.string().max(64).optional(),
+          location: safeText(200).optional(),
         }),
       )
+      .max(50)
       .optional(),
-    wifiSsid: z.string().optional(),
-    wifiPassword: z.string().optional(),
-    venue: z.string().optional(),
+    wifiSsid: safeText(64).optional(),
+    wifiPassword: safeText(128).optional(),
+    venue: safeText(200).optional(),
   }),
   language: z.enum(["fr", "en", "ar", "pt"]).default("fr"),
 });
@@ -89,6 +126,22 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
   .inputValidator(chatInputSchema)
   .handler(async ({ data }) => {
     const { messages, eventContext, language } = data;
+
+    // Rate-limit par IP pour limiter l'abus de l'API OpenAI
+    const req = getRequest();
+    const ip =
+      req?.headers.get("cf-connecting-ip") ??
+      req?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    if (isRateLimited(ip)) {
+      return {
+        reply:
+          language === "fr"
+            ? "Vous envoyez trop de messages. Patientez une minute avant de réessayer."
+            : "Too many requests. Please wait a minute before trying again.",
+        error: true,
+      };
+    }
 
     const apiKey = process.env.OPENAI_API_KEY;
     const apiBase = process.env.OPENAI_API_BASE || "https://api.openai.com/v1";

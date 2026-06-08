@@ -975,7 +975,6 @@ export type Database = {
         Returns: {
           bio: string
           country: string
-          email: string
           full_name: string
           id: string
           interests: string[]

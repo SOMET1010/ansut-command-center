@@ -25,7 +25,7 @@ export const Route = createFileRoute("/matchmaking/$slug")({
 type Recommendation = {
   id: string;
   full_name: string;
-  email: string;
+  
   organization: string;
   job_title: string;
   country: string;

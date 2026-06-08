@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { type NotificationChannel, sendMultiChannel } from "./notifications.functions";
 
 /**
@@ -33,8 +34,24 @@ const lastReminderSent = new Map<string, number>();
 const MIN_INTERVAL_MS = 4 * 60 * 60 * 1000; // 4 heures
 
 export const sendEventReminder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ReminderSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    // Vérifier que l'appelant a le rôle requis pour envoyer des notifications de masse
+    const { userId } = context;
+    const { data: roleRows, error: roleErr } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    if (roleErr) {
+      return { ok: false as const, error: "Vérification des droits impossible", sent: 0, details: {} };
+    }
+    const roles = (roleRows ?? []).map((r) => r.role as string);
+    const allowed = roles.some((r) => ["super_admin", "org_admin", "staff"].includes(r));
+    if (!allowed) {
+      throw new Error("Forbidden: rôle admin requis pour envoyer des rappels");
+    }
+
     // Anti-flood par canal
     const blockedChannels: string[] = [];
     for (const ch of data.channels) {
