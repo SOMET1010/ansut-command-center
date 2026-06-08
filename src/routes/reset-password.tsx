@@ -123,12 +123,11 @@ function ResetPasswordPage() {
     e.preventDefault();
     setFormError(null);
 
-    if (password.length < 6) {
-      setFormError("Le mot de passe doit contenir au moins 6 caractères.");
-      return;
-    }
-    if (password !== confirm) {
-      setFormError("Les deux mots de passe ne correspondent pas.");
+    // M-12 Validation Zod (mot de passe + confirmation)
+    const parsed = resetPasswordSchema.safeParse({ password, confirm });
+    if (!parsed.success) {
+      const fieldErrors = zodFieldErrors(parsed.error);
+      setFormError(fieldErrors.password || fieldErrors.confirm || "Formulaire invalide.");
       return;
     }
 
