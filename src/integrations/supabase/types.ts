@@ -1003,11 +1003,7 @@ export type Database = {
         }[]
       }
       get_match_recommendations: {
-        Args: {
-          p_event_id: string
-          p_limit?: number
-          p_registration_id: string
-        }
+        Args: { p_limit?: number; p_qr_token: string }
         Returns: {
           bio: string
           country: string
@@ -1021,14 +1017,6 @@ export type Database = {
           participant_category: string
           photo_url: string
         }[]
-      }
-      get_or_create_conversation: {
-        Args: {
-          p_event_id: string
-          p_participant_a: string
-          p_participant_b: string
-        }
-        Returns: string
       }
       get_participant_public: {
         Args: { p_id: string }
