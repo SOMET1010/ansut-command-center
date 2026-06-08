@@ -189,6 +189,7 @@ function RootComponent() {
         </div>
         <OfficialFooter />
       </div>
+      <CookieConsent />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
