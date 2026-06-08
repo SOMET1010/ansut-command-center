@@ -99,13 +99,32 @@ function ExportsPage() {
     },
   });
 
-  const filteredEvents = useMemo(
-    () =>
+  const filteredEvents = useMemo(() => {
+    const base =
       selectedEventIds.length === 0
         ? events
-        : events.filter((e) => selectedEventIds.includes(e.id)),
-    [events, selectedEventIds],
-  );
+        : events.filter((e) => selectedEventIds.includes(e.id));
+    const sorted = [...base];
+    sorted.sort((a, b) => {
+      switch (sortBy) {
+        case "starts_at_asc":
+          return a.starts_at.localeCompare(b.starts_at);
+        case "starts_at_desc":
+          return b.starts_at.localeCompare(a.starts_at);
+        case "name_asc":
+          return a.name.localeCompare(b.name, "fr", { sensitivity: "base" });
+        case "name_desc":
+          return b.name.localeCompare(a.name, "fr", { sensitivity: "base" });
+        case "created_at_asc":
+          return (a.created_at ?? "").localeCompare(b.created_at ?? "");
+        case "created_at_desc":
+          return (b.created_at ?? "").localeCompare(a.created_at ?? "");
+        default:
+          return 0;
+      }
+    });
+    return sorted;
+  }, [events, selectedEventIds, sortBy]);
 
   const filterSummary = useMemo(() => {
     const bits: string[] = [];
