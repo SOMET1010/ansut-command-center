@@ -1,0 +1,55 @@
+{
+    "checks": {
+        "rls_disabled_tables": [],
+        "permissive_write_policies": [],
+        "security_definer_callable_by_anon": [
+            {
+                "function": "check_in_registration"
+            },
+            {
+                "function": "get_event_wifi"
+            },
+            {
+                "function": "current_user_org"
+            },
+            {
+                "function": "event_org"
+            },
+            {
+                "function": "list_my_sent_meeting_recipients"
+            },
+            {
+                "function": "get_or_create_conversation"
+            },
+            {
+                "function": "_security_audit_on_ddl"
+            }
+        ],
+        "sensitive_columns_exposed_to_anon": [
+            {
+                "table": "profiles",
+                "column": "phone"
+            },
+            {
+                "table": "super_admin_bootstrap_emails",
+                "column": "email"
+            },
+            {
+                "table": "profiles",
+                "column": "email"
+            },
+            {
+                "table": "newsletter_subscribers",
+                "column": "email"
+            }
+        ]
+    },
+    "counts": {
+        "permissive": 0,
+        "pii_exposed": 4,
+        "definer_anon": 7,
+        "rls_disabled": 0
+    },
+    "generated_at": "2026-06-08T21:49:48.807004+00:00",
+    "total_issues": 11
+}
