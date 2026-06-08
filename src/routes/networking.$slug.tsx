@@ -76,7 +76,7 @@ function NetworkingDirectory() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("list_event_networking", {
         p_slug: slug,
-        p_category: categoryFilter === "all" ? null : categoryFilter,
+        p_category: categoryFilter === "all" ? undefined : categoryFilter,
       });
       if (error) throw error;
       return (data ?? []) as Participant[];
