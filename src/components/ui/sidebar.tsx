@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/sidebar-context";
 import { sidebarMenuButtonVariants } from "@/components/ui/sidebar-menu-button-variants";
 
-
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -484,9 +483,6 @@ const SidebarMenuItem = React.forwardRef<HTMLLIElement, React.ComponentProps<"li
   ),
 );
 SidebarMenuItem.displayName = "SidebarMenuItem";
-
-
-
 
 const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
