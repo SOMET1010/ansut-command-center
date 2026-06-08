@@ -369,12 +369,9 @@ function Landing() {
                     </div>
                     <h2 className="mt-1 text-base font-semibold text-white">Programme du jour</h2>
                   </div>
-                  <Link
-                    to="/events"
-                    className="text-xs font-semibold text-secondary hover:underline"
-                  >
+                  <ProgrammeLink className="text-xs font-semibold text-secondary hover:underline">
                     Voir tout →
-                  </Link>
+                  </ProgrammeLink>
                 </div>
 
                 <ul className="space-y-2">
