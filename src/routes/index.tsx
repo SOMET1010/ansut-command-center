@@ -499,14 +499,7 @@ function Landing() {
                   <div className="absolute -inset-10 rounded-full bg-secondary/30 blur-[100px]" />
                   <div className="relative flex h-[420px] w-64 flex-col items-center justify-center rounded-[2.5rem] border-[8px] border-white/10 bg-primary p-6 shadow-2xl">
                     <div className="mb-8 h-32 w-32 rounded-xl bg-white p-2">
-                      <div className="grid h-full w-full grid-cols-5 gap-0.5 p-2">
-                        {Array.from({ length: 25 }).map((_, i) => (
-                          <div
-                            key={i}
-                            className={i % 3 === 0 || i % 5 === 0 ? "bg-primary" : "bg-white"}
-                          />
-                        ))}
-                      </div>
+                      <SampleBadgeQr />
                     </div>
                     <div className="text-center">
                       <div className="text-lg font-bold">SUTEL 2026</div>
