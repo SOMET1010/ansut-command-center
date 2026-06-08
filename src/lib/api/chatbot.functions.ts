@@ -1,6 +1,33 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import process from "node:process";
+
+/**
+ * Anti-abuse : limite par IP le nombre d'appels au chatbot pour éviter
+ * qu'un acteur anonyme vide le quota OpenAI. Fenêtre glissante en mémoire.
+ */
+const CHAT_RATE_WINDOW_MS = 60_000; // 1 minute
+const CHAT_RATE_MAX = 10; // max 10 requêtes / IP / minute
+const chatRateBuckets = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const bucket = (chatRateBuckets.get(ip) ?? []).filter((t) => now - t < CHAT_RATE_WINDOW_MS);
+  if (bucket.length >= CHAT_RATE_MAX) {
+    chatRateBuckets.set(ip, bucket);
+    return true;
+  }
+  bucket.push(now);
+  chatRateBuckets.set(ip, bucket);
+  // Garbage-collect old buckets occasionnellement
+  if (chatRateBuckets.size > 5000) {
+    for (const [k, v] of chatRateBuckets) {
+      if (v.every((t) => now - t > CHAT_RATE_WINDOW_MS)) chatRateBuckets.delete(k);
+    }
+  }
+  return false;
+}
 
 /**
  * Chatbot IA — ANSUT EVENT Assistant
