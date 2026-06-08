@@ -245,11 +245,13 @@ function ResetPasswordPage() {
               className="h-11"
               autoComplete="new-password"
               aria-invalid={!!formError}
+              aria-describedby={formError ? "reset-error" : undefined}
             />
           </div>
 
           {formError ? (
             <div
+              id="reset-error"
               role="alert"
               className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
             >
