@@ -1,152 +1,105 @@
-# Phase S — Sécurité & Gouvernance
+# Sprint 0 — Product Workflow & Information Architecture
 
-Phase exclusivement backend / configuration. Aucune modification UX, aucune modification de flux métier, aucune refonte visuelle. Chaque lot est livré avec : findings, correctifs SQL/code, tests de non-régression, et rapport de clôture.
+## Contexte
 
----
+Diagnostic validé : le problème remonté par les testeurs ("on se perd") n'est ni un bug, ni une faille sécurité, ni une régression perf. C'est un **déficit de modèle mental** : 20+ briques fonctionnelles ont été empilées sans qu'aucun parcours rôle-par-rôle ne soit consolidé.
 
-## Lot S0 — Cadre & outillage (préalable)
+Décision : finir d'abord le verrou sécurité (S5 GRANTs, S7, S9), puis **geler les nouvelles fonctionnalités** et lancer un Sprint 0 Produit avant toute Phase 4 UX Premium.
 
-- Lancer `supabase--linter` + `_security_audit_compute()` (déjà en place) et figer un **rapport baseline** (snapshot initial).
-- Activer la table `security_audit_runs` comme référence avant/après chaque lot.
-- Définir la grille de sévérité : **Critique** (fuite données / écriture publique), **Élevé** (PII exposée, RPC anon), **Moyen** (config), **Bas** (hygiène).
+## Pré-requis (avant Sprint 0)
 
-Livrable : `docs/security/baseline-phase-S.md` + export JSON du rapport initial.
+Sécurité doit être close pour pouvoir réorganiser la navigation sans rouvrir de surface :
+- **S5** — REVOKE GRANTs anon sur les 10+ tables identifiées
+- **S7** — durcissement RPC publiques restantes
+- **S9** — clôture matrice RLS
 
----
+Aucune migration UX ne démarre avant validation S5/S7/S9.
 
-## Lot S1 — Correctif `/networking/$slug` (401 anon)
+## Livrables Sprint 0
 
-**Cause connue** : `event_registrations` n'autorise pas `anon` en SELECT (et ne doit pas — contient email, phone, qr_token). Le composant networking lit directement la table.
+### J1 — Cartographie des rôles (read-only audit)
 
-**Correctif** :
-1. Créer une RPC `SECURITY DEFINER` : `public.list_event_networking(p_slug text, p_category text default null)` retournant **uniquement** les colonnes publiques : `id, full_name, organization, position, country, bio, photo_url, interests, participant_category, linkedin_url`.
-2. Filtres internes : `events.status='published'` + `is_visible_in_directory=true` + `status='confirmed'`.
-3. `GRANT EXECUTE ... TO anon, authenticated`.
-4. Refactor `src/routes/networking.$slug.tsx` pour appeler la RPC via `supabase.rpc(...)` au lieu d'un `.from('event_registrations').select(...)`.
-5. Vérifier qu'aucune autre route publique (`agenda`, `matchmaking`, `e.$slug`, `annonces`, `rdv`, `messages`) ne lit directement `event_registrations` en anon — sinon même traitement.
+Pour chaque rôle existant en base (`app_role`) :
+- **Participant** — vue par défaut, ce qu'il voit, ce qu'il fait, ce qu'il ne doit jamais voir
+- **Staff** — opérationnel terrain (check-in, support)
+- **Org Admin** — gestion d'une organisation (scope `current_user_org()`)
+- **Super Admin** — vue globale plateforme
+- **Sponsor** — (à confirmer : rôle existe-t-il déjà ou à créer ?)
 
-**Tests** : page networking charge en anon, aucune colonne sensible exposée, comportement identique pour utilisateur connecté.
+Format livrable : un tableau Markdown `role × écran × action autorisée × action interdite`, croisé avec les policies RLS validées en S4/S4-bis pour garantir cohérence UX ↔ sécurité.
 
----
+### J2 — Cartographie des parcours
 
-## Lot S2 — Revue des warnings Supabase Linter
+Un diagramme ASCII par rôle, du premier contact à la tâche finale. Exemple Participant :
 
-- Exécuter `supabase--linter`, classer les ~59 warnings préexistants.
-- Pour chaque finding : action **fix / ignore documenté / accepter risque**.
-- Cibles prioritaires :
-  - `function_search_path_mutable` → ajouter `SET search_path = public` sur toute fonction qui n'en a pas.
-  - `security_definer_view` → convertir en `security_invoker=on` si possible.
-  - `auth_otp_long_expiry`, `auth_leaked_password_protection` → activer HIBP + raccourcir OTP via `supabase--configure_auth`.
-  - `extension_in_public` → déplacer extensions hors `public` si applicable.
+```text
+Lien magique → Inscription → Profil → Badge → Agenda
+                                       ↓
+                       Vote ← Networking ← Messages ← RDV
+                                       ↓
+                                   Documents
+```
 
-Livrable : tableau finding → décision → migration appliquée.
+Pour chaque étape : écran actuel, gap identifié (fonctionnalité existe mais non découvrable / dispersée / dupliquée).
 
----
+### J3 — Réorganisation de la navigation (proposition, non appliquée)
 
-## Lot S3 — Audit RPC (fonctions exposées)
+Nouvelle IA cible par rôle, mappée sur les routes existantes. Exemple :
 
-Inventaire de toutes les `SECURITY DEFINER` callables par `anon` / `authenticated` (la liste blanche de `_security_audit_compute` donne déjà 24 fonctions autorisées).
+| Rôle | Onglets cibles | Routes actuelles à regrouper |
+|---|---|---|
+| Participant | Accueil · Mon agenda · Réseau · Messages · Mon profil | `/e/:slug/accueil`, `/e/:slug/agenda`, … |
+| Staff | Check-in · Participants · Annonces · Support | … |
+| Org Admin | Dashboard · Événements · Participants · Programme · Communication · Exports | … |
+| Super Admin | Organisations · Administration · Sécurité · Audit | … |
 
-Pour chaque RPC :
-- vérifier que `auth.uid()` ou un `qr_token` est requis avant toute écriture ;
-- vérifier les bornes (`length`, `IN (...)`) déjà présentes ;
-- vérifier qu'aucune RPC ne renvoie de colonnes sensibles (`email`, `phone`, `qr_token`, `wifi_password`) à `anon` ;
-- ajouter rate-limit applicatif côté front pour `register_for_event`, `cast_poll_vote`, `create_meeting_request`, `send_conversation_message` (anti-spam basique, debounce + désactivation bouton).
+Livrable : tableau de mapping + liste des écrans à fusionner / déplacer / déprécier. **Aucune route renommée sans validation**.
 
-Livrable : `docs/security/rpc-matrix.md` (RPC × rôle × données retournées).
+### J4 — Cockpit orienté tâches (maquette papier)
 
----
+Spec d'un nouveau dashboard "actions" remplaçant la vue "données" :
 
-## Lot S4 — Audit RLS table par table
+```text
+┌─ 3 actions en attente ──────────────┐
+│ • 12 inscriptions à valider [Voir]  │
+│ • 1 sondage à publier      [Publier]│
+│ • 2 annonces brouillon     [Éditer] │
+└──────────────────────────────────────┘
+```
 
-Pour les 21 tables `public.*` :
-- table a-t-elle RLS activée ? (le rapport audit le confirme)
-- chaque commande (SELECT/INSERT/UPDATE/DELETE) a-t-elle une policy explicite ?
-- aucune policy permissive `USING (true)` / `WITH CHECK (true)` sur INSERT/UPDATE/DELETE sauf justification ;
-- les tables sensibles (`event_registrations`, `event_messages`, `event_meetings`, `live_poll_votes`, `notification_outbox`, `audit_trail`, `user_roles`, `profiles`) sont vérifiées en priorité ;
-- `user_roles` : confirmer qu'aucun utilisateur ne peut s'auto-attribuer un rôle (hors `claim_first_admin` qui est gardée).
+Source des compteurs : requêtes existantes (pas de nouvelle table). Spec décrit : sélecteur SQL par carte, action button, route cible.
 
-Livrable : `docs/security/rls-matrix.md` + migrations correctives groupées.
+### J5 — Audit de découvrabilité
 
----
+Protocole de test à faire passer à 3-5 testeurs sur build figé :
+1. Comment publier une annonce ?
+2. Comment créer un sondage ?
+3. Comment exporter les participants ?
+4. Comment préparer un événement ?
 
-## Lot S5 — Audit GRANT (anon / authenticated / service_role)
+Métriques : clics, temps, abandons, chemin emprunté vs chemin optimal. Livrable : rapport + top 5 frictions à corriger en priorité.
 
-- Pour chaque table publique, lister les GRANT effectifs (`information_schema.role_table_grants`).
-- Règle : `anon` ne reçoit `SELECT` **que** sur les tables réellement publiques (events publiés, sessions, annonces, speakers). Jamais sur `event_registrations`, `event_messages`, `event_meetings`, `live_poll_votes`, `notification_outbox`, `audit_trail`, `user_roles`, `profiles`.
-- `authenticated` : `SELECT/INSERT/UPDATE/DELETE` filtrés par RLS.
-- `service_role` : `ALL` partout.
+## Ce que Sprint 0 NE fait PAS
 
-Livrable : migration consolidée des GRANT corrigés.
+- Aucune migration SQL
+- Aucun renommage de route en production
+- Aucune refonte visuelle (Phase 4 UX Premium reste après)
+- Aucune nouvelle fonctionnalité
+- Aucune modification de policies RLS (gelées après S5)
 
----
+## Sortie attendue
 
-## Lot S6 — Audit Storage buckets
+À la fin du Sprint 0 :
+- Décision GO/NO-GO sur la nouvelle IA
+- Backlog priorisé "réorganisation" (vs "nouvelles features")
+- Spec cockpit actions prête à implémenter
+- Rapport découvrabilité chiffré
 
-État actuel : **aucun bucket**.
+Phase 4 UX Premium démarre **après** validation de ces livrables, sur base IA stabilisée.
 
-- Confirmer qu'aucun upload n'est attendu en Phase 3 (photos profil, logos events, exports PDF).
-- Si la Phase 4 introduit des uploads, préparer un **template de bucket sécurisé** : privé par défaut, policies par `auth.uid()`, signed URLs, limite MIME + taille.
+## Question à arbitrer avant de lancer
 
-Livrable : `docs/security/storage-policy-template.md` (prêt à appliquer en Phase 4, pas appliqué maintenant).
-
----
-
-## Lot S7 — Exports & données sensibles
-
-- Revue de `exports.tsx` et de la fonction d'export participants : confirmer que seuls `super_admin`, `org_admin`, `staff` peuvent exporter, et seulement sur leurs propres événements.
-- Vérifier qu'aucun export public ne contient `email`, `phone`, `qr_token`.
-- Ajouter une entrée `audit_trail` `action='EXPORTED'` à chaque export (traçabilité RGPD).
-- Vérifier que `wifi_password` / `wifi_ssid` ne fuitent que via `get_event_wifi` (déjà gardé).
-
-Livrable : checklist RGPD signée + trigger d'audit export.
-
----
-
-## Lot S8 — Auth & configuration projet
-
-- Activer **Leaked Password Protection** (HIBP).
-- Vérifier OTP expiry ≤ 1h.
-- Vérifier que **signups anonymes** sont désactivés.
-- Vérifier providers actifs (Google + email/password uniquement, pas plus).
-- Vérifier redirect URLs autorisées (preview + published + custom domain si présent).
-
-Livrable : capture de la config auth finale + migration `configure_auth`.
-
----
-
-## Lot S9 — Rapport de clôture Phase S
-
-- Re-run `supabase--linter` + `_security_audit_compute()` → comparer au baseline S0.
-- Tous les findings doivent être : **corrigés**, **acceptés avec justification écrite**, ou **planifiés Phase 4**.
-- Document final : `docs/security/phase-S-closure.md` avec :
-  - liste des migrations appliquées,
-  - delta findings avant/après,
-  - matrice RLS / GRANT / RPC,
-  - registre des décisions « accepter le risque ».
-
----
-
-## Contraintes transverses Phase S
-
-- **Aucune** modification UX, aucune refonte visuelle, aucun changement de copie.
-- **Aucune** modification des règles métier (capacité, statuts, workflow inscription).
-- **Aucune** modification des flux d'authentification utilisateurs (pas de logout forcé, pas de changement de session).
-- Toute migration est **réversible** ou documentée comme non-réversible avec justification.
-- Chaque lot se termine par un test de non-régression sur les parcours clés : inscription événement, check-in QR, messagerie, sondages, networking, exports.
-
----
-
-## Ordre d'exécution proposé
-
-1. S0 (baseline) → S1 (quick win networking 401) → S8 (config auth, gains immédiats).
-2. S2 (warnings linter) → S3 (RPC) → S4 (RLS) → S5 (GRANT).
-3. S6 (préparation Phase 4) → S7 (exports/RGPD).
-4. S9 (clôture + handover Phase 4).
-
-Estimation : 4 à 6 itérations de validation utilisateur, chaque lot livré indépendamment pour validation incrémentale.
-
----
-
-**En attente de votre validation sur ce plan avant toute intervention backend.**
-Si vous souhaitez ajuster le périmètre (ajouter pentest externe, exclure un lot, prioriser différemment), indiquez-le et je révise le plan.
+1. **Rôle Sponsor** — existe en base ou à créer dans le cadre du Sprint 0 ?
+2. **Format livrables** — Markdown dans le repo (`/docs/sprint-0/`) ou document externe ?
+3. **Testeurs J5** — pool disponible côté ANSUT ou à recruter ?
+4. **Ordre** — confirmez-vous : finir S5 → S7 → S9, **puis** Sprint 0, **puis** Phase 4 ?
