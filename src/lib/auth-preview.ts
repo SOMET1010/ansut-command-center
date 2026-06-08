@@ -8,5 +8,9 @@
 export function isLovablePreview(): boolean {
   if (typeof window === "undefined") return false;
   const host = window.location.hostname;
-  return /(^|\.)id-preview--/.test(host) || host.includes("--preview-");
+  return (
+    /(^|\.)id-preview--/.test(host) ||
+    host.includes("--preview-") ||
+    host.endsWith(".lovableproject.com")
+  );
 }
