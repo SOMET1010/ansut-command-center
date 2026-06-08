@@ -92,7 +92,7 @@ function RdvPage() {
   async function handleRespond(meetingId: string, status: "accepted" | "declined") {
     setRespondingTo(meetingId);
     const { error } = await supabase.rpc("respond_to_meeting", {
-      p_qr_token: token.trim(), p_meeting_id: meetingId, p_status: status, p_response_message: null,
+      p_qr_token: token.trim(), p_meeting_id: meetingId, p_status: status, p_response_message: undefined,
     });
     setRespondingTo(null);
     if (error) toast.error("Erreur lors de la réponse.");

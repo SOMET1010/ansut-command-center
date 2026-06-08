@@ -99,9 +99,9 @@ function MatchmakingPage() {
     const { error } = await supabase.rpc("create_meeting_request", {
       p_qr_token: token.trim(),
       p_recipient_id: targetParticipant.id,
-      p_message: meetingMessage.trim() || null,
-      p_proposed_time: proposedTime || null,
-      p_proposed_location: proposedLocation.trim() || null,
+      p_message: meetingMessage.trim() || undefined,
+      p_proposed_time: proposedTime || undefined,
+      p_proposed_location: proposedLocation.trim() || undefined,
     });
 
     setSendingTo(null);
