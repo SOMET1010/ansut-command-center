@@ -262,9 +262,7 @@ function PublicEventPage() {
             className="mb-8 aspect-[3/1] w-full rounded-xl object-cover"
           />
         )}
-
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{event.name}</h1>
-
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Calendar className="h-4 w-4 text-primary" />
@@ -280,13 +278,11 @@ function PublicEventPage() {
             </span>
           )}
         </div>
-
         {event.description && (
           <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-foreground/90">
             {event.description}
           </p>
         )}
-
         {/* WiFi QR Code */}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {(event as any).wifi_ssid && (
@@ -301,7 +297,6 @@ function PublicEventPage() {
             />
           </div>
         )}
-
         {/* CARTE FORMULAIRE */}
         <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10">
           {isFull && !done ? (
