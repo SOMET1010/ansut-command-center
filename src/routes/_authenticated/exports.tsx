@@ -310,9 +310,13 @@ function ExportsPage() {
         <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
           Aucun événement disponible.
         </div>
+      ) : filteredEvents.length === 0 ? (
+        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+          Aucun événement ne correspond au filtre sélectionné.
+        </div>
       ) : (
         <div className="space-y-3">
-          {events.map((ev) => (
+          {filteredEvents.map((ev) => (
             <div
               key={ev.id}
               className="card-elevated flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
