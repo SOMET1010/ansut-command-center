@@ -21,7 +21,11 @@ import { AnsutLogo } from "@/components/ansut/Logo";
 function SampleBadgeQr() {
   const [src, setSrc] = useState<string>("");
   useEffect(() => {
-    QRCode.toDataURL("https://ansut-event.ci/sutel-2026/participant-demo", {
+    const origin =
+      typeof window !== "undefined" && window.location?.origin
+        ? window.location.origin
+        : "https://ansut-craft-kit.lovable.app";
+    QRCode.toDataURL(`${origin}/signup`, {
       margin: 1,
       width: 256,
       errorCorrectionLevel: "M",
