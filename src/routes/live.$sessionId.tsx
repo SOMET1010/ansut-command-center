@@ -126,20 +126,11 @@ function LivePresentation() {
           options: (Array.isArray(poll.options) ? poll.options : []) as string[],
         });
 
-        // Compter les votes
-        const { data: votes } = await supabase
-          .from("live_poll_votes")
-          .select("answer")
-          .eq("poll_id", poll.id);
-
-        if (votes) {
-          const counts: Record<string, number> = {};
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          votes.forEach((v: any) => {
-            const ans = typeof v.answer === "string" ? v.answer : JSON.stringify(v.answer);
-            counts[ans] = (counts[ans] || 0) + 1;
-          });
-          setPollResults(counts);
+        // Compter les votes via RPC agrégée (pas d'accès direct aux votes bruts)
+        const { data: agg } = await supabase.rpc("get_poll_results", { p_poll_id: poll.id });
+        const aggResult = agg as { ok: boolean; counts?: Record<string, number> } | null;
+        if (aggResult?.ok) {
+          setPollResults(aggResult.counts ?? {});
         }
       } else {
         setActivePoll(null);

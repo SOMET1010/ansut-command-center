@@ -97,20 +97,11 @@ function PollVote() {
       else if (result?.error === "poll_closed") setStep("closed");
       else setStep("error");
     } else {
-      const { data: votes } = await supabase
-        .from("live_poll_votes")
-        .select("answer")
-        .eq("poll_id", pollId);
-      if (votes) {
-        const counts: Record<string, number> = {};
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        votes.forEach((v: any) => {
-          const ans =
-            typeof v.answer === "string" ? v.answer.replace(/^"|"$/g, "") : String(v.answer);
-          counts[ans] = (counts[ans] || 0) + 1;
-        });
-        setResults(counts);
-        setTotalVotes(votes.length);
+      const { data: agg } = await supabase.rpc("get_poll_results", { p_poll_id: pollId });
+      const aggResult = agg as { ok: boolean; total_votes?: number; counts?: Record<string, number> } | null;
+      if (aggResult?.ok) {
+        setResults(aggResult.counts ?? {});
+        setTotalVotes(aggResult.total_votes ?? 0);
       }
       setStep("success");
     }
