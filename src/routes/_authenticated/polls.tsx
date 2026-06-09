@@ -94,14 +94,12 @@ function PollsPage() {
         const pollsWithVotes = await Promise.all(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data.map(async (p: any) => {
-            const { count } = await supabase
-              .from("live_poll_votes")
-              .select("*", { count: "exact", head: true })
-              .eq("poll_id", p.id);
+            const { data: agg } = await supabase.rpc("get_poll_results", { p_poll_id: p.id });
+            const aggResult = agg as { ok: boolean; total_votes?: number } | null;
             return {
               ...p,
               options: Array.isArray(p.options) ? p.options : [],
-              vote_count: count || 0,
+              vote_count: aggResult?.ok ? (aggResult.total_votes ?? 0) : 0,
             };
           }),
         );

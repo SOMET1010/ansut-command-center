@@ -1027,6 +1027,7 @@ export type Database = {
           participant_category: string
         }[]
       }
+      get_poll_results: { Args: { p_poll_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
