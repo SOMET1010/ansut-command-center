@@ -78,3 +78,18 @@ $$;
 ## Rappel principe
 
 Pas de lecture brute publique des votes. Toute exposition publique doit passer par un agrégat contrôlé.
+
+---
+
+## Point complémentaire — comportement SELECT `events`
+
+Observé pendant S5 Famille 3 :
+- `has_table_privilege('anon','public.events','SELECT')` → **false**
+- `relacl` de `events` ne contient pas `r` pour `anon`
+- Pourtant `curl /rest/v1/events?status=eq.published` avec la publishable key répond **200 avec données**.
+
+Hypothèse : la couche PostgREST + publishable key contourne `has_table_privilege` standard, ou applique une autorisation au niveau policy `roles:{public}` indépendamment du GRANT relationnel. À clarifier en S7 :
+1. Reproduire avec `psql` en `SET ROLE anon` (devrait échouer).
+2. Reproduire via curl avec ancien `anon` JWT (devrait également passer).
+3. Conclure : effet publishable key, effet PostgREST, ou inheritance de rôle ?
+4. Si effet structurel : documenter ; si bug local : créer le GRANT SELECT explicite (cohérent avec policy intentionnelle).
