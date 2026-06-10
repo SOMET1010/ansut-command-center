@@ -195,6 +195,9 @@ function PublicEventPage() {
       return;
     }
     setQrToken(token as string);
+    if (typeof window !== "undefined" && token) {
+      window.localStorage.setItem(`${BADGE_STORAGE_PREFIX}${slug}`, token as string);
+    }
 
     // Confirmation multi-canal (best-effort, ne bloque pas l'UI).
     // Le serveur regénère destinataire + contenu depuis le qr_token.
