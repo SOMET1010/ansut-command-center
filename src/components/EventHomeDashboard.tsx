@@ -344,11 +344,7 @@ function AlertsBlock({
   if (announcements.length === 0) return null;
   const last = announcements[0];
   return (
-    <Link
-      to="/annonces/$slug"
-      params={{ slug }}
-      className="group block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-colors hover:border-primary/40 hover:bg-primary/5"
-    >
+    <div className="block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
       <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         <Megaphone className="h-3.5 w-3.5 text-primary" />
         {announcements.length === 1
@@ -369,9 +365,8 @@ function AlertsBlock({
             {last.content}
           </p>
         </div>
-        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
       </div>
-    </Link>
+    </div>
   );
 }
 
