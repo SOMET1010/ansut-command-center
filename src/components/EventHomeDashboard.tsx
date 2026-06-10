@@ -2,28 +2,30 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   CalendarDays,
-  Users,
-  MessageSquare,
-  User,
   Megaphone,
   Clock,
   MapPin,
   Pin,
-  ScanLine,
   ArrowRight,
+  Users,
+  IdCard,
+  Radio,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { MyBadgeCard } from "@/components/MyBadgeCard";
 
 /**
- * Phase 4 — Accueil inscrit simplifié.
+ * Phase 4 — Accueil inscrit, refonte "événement d'abord".
  *
- * 4 blocs sous le badge :
- *   1. Ma prochaine action (statique, dérivée de status)
- *   2. Programme du jour (2-3 prochaines sessions du jour)
- *   3. Annonces importantes (1-2 dernières, épinglées en priorité)
- *   4. Accès rapides (4 tuiles)
+ * Structure (standards Whova / Swapcard / Eventee / Brella) :
+ *   1. Maintenant       — session en cours (hero dominant)
+ *   2. Ensuite          — prochaine session
+ *   3. Alertes          — annonces récentes
+ *   4. Réseau           — 3 participants à découvrir
+ *   5. Mon badge        — accès secondaire repliable
  *
- * Pas de logique métier complexe (cf. mémoire Phase 4.1).
+ * Le participant comprend en moins de 5 s :
+ *   où il est, ce qui se passe maintenant, ce qu'il doit faire ensuite.
  */
 
 type Session = {
@@ -39,9 +41,17 @@ type Announcement = {
   id: string;
   title: string;
   content: string;
-  announcement_type: string;
   is_pinned: boolean;
   published_at: string;
+};
+
+type Participant = {
+  id: string;
+  full_name: string;
+  organization: string | null;
+  position: string | null;
+  photo_url: string | null;
+  participant_category: string;
 };
 
 const TZ = "Africa/Abidjan";
@@ -54,296 +64,322 @@ function formatTime(iso: string) {
   });
 }
 
-function todayBoundsAbidjan() {
-  // Borne large : on prend la journée locale Abidjan
-  const now = new Date();
-  const fmt = new Intl.DateTimeFormat("en-CA", {
-    timeZone: TZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const ymd = fmt.format(now); // YYYY-MM-DD
-  const start = new Date(`${ymd}T00:00:00+00:00`);
-  // Africa/Abidjan = UTC+0, donc pas d'offset à appliquer
-  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
-  return { start: start.toISOString(), end: end.toISOString() };
-}
-
 export function EventHomeDashboard({
   eventId,
+  eventName,
   slug,
   qrToken,
 }: {
   eventId: string;
+  eventName: string;
   slug: string;
   qrToken: string;
 }) {
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
-  useEffect(() => {
-    let cancelled = false;
-    supabase
-      .rpc("me_registration", { p_qr_token: qrToken })
-      .then(({ data }) => {
-        if (cancelled) return;
-        const row = Array.isArray(data) ? data[0] : data;
-        if (row?.status === "checked_in") setIsCheckedIn(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [qrToken]);
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [current, setCurrent] = useState<Session | null>(null);
+  const [next, setNext] = useState<Session | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { start, end } = todayBoundsAbidjan();
       const nowIso = new Date().toISOString();
 
-      const [sessRes, annRes] = await Promise.all([
+      const [currRes, nextRes, annRes, partRes] = await Promise.all([
         supabase
           .from("event_sessions")
           .select("id, title, starts_at, ends_at, location, track")
           .eq("event_id", eventId)
+          .lte("starts_at", nowIso)
           .gte("ends_at", nowIso)
-          .lt("starts_at", end)
-          .gte("starts_at", start)
           .order("starts_at", { ascending: true })
-          .limit(3),
+          .limit(1),
+        supabase
+          .from("event_sessions")
+          .select("id, title, starts_at, ends_at, location, track")
+          .eq("event_id", eventId)
+          .gt("starts_at", nowIso)
+          .order("starts_at", { ascending: true })
+          .limit(1),
         supabase
           .from("event_announcements")
-          .select("id, title, content, announcement_type, is_pinned, published_at")
+          .select("id, title, content, is_pinned, published_at")
           .eq("event_id", eventId)
           .lte("published_at", nowIso)
           .order("is_pinned", { ascending: false })
           .order("published_at", { ascending: false })
-          .limit(2),
+          .limit(3),
+        supabase.rpc("list_event_networking", { p_slug: slug }),
       ]);
 
       if (cancelled) return;
-      if (sessRes.data) setSessions(sessRes.data as Session[]);
+      setCurrent(((currRes.data ?? [])[0] as Session) ?? null);
+      setNext(((nextRes.data ?? [])[0] as Session) ?? null);
       if (annRes.data) setAnnouncements(annRes.data as Announcement[]);
+      if (partRes.data)
+        setParticipants((partRes.data as Participant[]).slice(0, 3));
     })();
     return () => {
       cancelled = true;
     };
-  }, [eventId]);
+  }, [eventId, slug]);
 
   return (
-    <div className="space-y-6">
-      {/* 1. Ma prochaine action */}
-      <NextActionBlock slug={slug} isCheckedIn={isCheckedIn} />
+    <div className="space-y-5">
+      {/* Bloc 1 — MAINTENANT (élément dominant) */}
+      <NowBlock eventName={eventName} session={current} slug={slug} />
 
-      {/* 2. Programme du jour */}
-      <section
-        aria-labelledby="home-program-heading"
-        className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]"
-      >
-        <header className="mb-3 flex items-center justify-between gap-3">
-          <h2
-            id="home-program-heading"
-            className="flex items-center gap-2 text-base font-bold text-foreground"
-          >
-            <CalendarDays className="h-4 w-4 text-primary" />
-            Programme du jour
-          </h2>
-          <Link
-            to="/agenda/$slug"
-            params={{ slug }}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-          >
-            Voir tout <ArrowRight className="h-3 w-3" />
-          </Link>
-        </header>
-        {sessions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Aucune session prévue aujourd’hui.
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {sessions.map((s) => (
-              <li key={s.id} className="py-2.5 first:pt-0 last:pb-0">
-                <div className="flex items-start gap-3">
-                  <div className="shrink-0 rounded-lg bg-primary/10 px-2.5 py-1.5 text-center">
-                    <div className="text-sm font-bold leading-none text-primary">
-                      {formatTime(s.starts_at)}
-                    </div>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-semibold text-foreground">
-                      {s.title}
-                    </div>
-                    {s.location && (
-                      <div className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        <span className="truncate">{s.location}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {/* Bloc 2 — ENSUITE */}
+      <NextBlock session={next} slug={slug} hasCurrent={!!current} />
 
-      {/* 3. Annonces importantes */}
-      <section
-        aria-labelledby="home-ann-heading"
-        className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]"
-      >
-        <header className="mb-3 flex items-center justify-between gap-3">
-          <h2
-            id="home-ann-heading"
-            className="flex items-center gap-2 text-base font-bold text-foreground"
-          >
-            <Megaphone className="h-4 w-4 text-primary" />
-            Annonces importantes
-          </h2>
-          <Link
-            to="/annonces/$slug"
-            params={{ slug }}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-          >
-            Toutes <ArrowRight className="h-3 w-3" />
-          </Link>
-        </header>
-        {announcements.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Aucune annonce pour le moment.
-          </p>
-        ) : (
-          <ul className="space-y-3">
-            {announcements.map((a) => (
-              <li key={a.id} className="rounded-lg border border-border/60 bg-background p-3">
-                <div className="flex items-center gap-2">
-                  {a.is_pinned && (
-                    <Pin className="h-3.5 w-3.5 shrink-0 text-amber-600" aria-label="Épinglée" />
-                  )}
-                  <h3 className="truncate text-sm font-semibold text-foreground">{a.title}</h3>
-                </div>
-                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{a.content}</p>
-                <div className="mt-1.5 flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  {new Date(a.published_at).toLocaleString("fr-FR", {
-                    dateStyle: "short",
-                    timeStyle: "short",
-                    timeZone: TZ,
-                  })}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {/* Bloc 3 — ALERTES */}
+      <AlertsBlock announcements={announcements} slug={slug} />
 
-      {/* 4. Accès rapides */}
-      <section
-        aria-labelledby="home-quick-heading"
-        className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]"
-      >
-        <h2
-          id="home-quick-heading"
-          className="mb-3 text-base font-bold text-foreground"
-        >
-          Accès rapides
-        </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <QuickTile
-            to="/agenda/$slug"
-            params={{ slug }}
-            icon={CalendarDays}
-            label="Programme"
-          />
-          <QuickTile
-            to="/networking/$slug"
-            params={{ slug }}
-            icon={Users}
-            label="Participants"
-          />
-          <QuickTile
-            to="/annonces/$slug"
-            params={{ slug }}
-            icon={MessageSquare}
-            label="Salon"
-          />
-          <QuickTile to="/me/role" icon={User} label="Mon Profil" />
-        </div>
-      </section>
+      {/* Bloc 4 — RÉSEAU */}
+      <NetworkBlock participants={participants} slug={slug} />
+
+      {/* Bloc 5 — BADGE (repliable) */}
+      <BadgeBlock qrToken={qrToken} />
     </div>
   );
 }
 
-function NextActionBlock({ slug, isCheckedIn }: { slug: string; isCheckedIn: boolean }) {
-  if (isCheckedIn) {
-    return (
-      <Link
-        to="/agenda/$slug"
-        params={{ slug }}
-        className="group block rounded-2xl border border-primary/30 bg-primary/5 p-5 shadow-[var(--shadow-card)] transition-colors hover:bg-primary/10"
-      >
-        <div className="flex items-center gap-4">
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-            <CalendarDays className="h-6 w-6" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
-              Ma prochaine action
-            </div>
-            <div className="mt-1 text-base font-bold text-foreground">
-              Consultez le programme du jour
-            </div>
-          </div>
-          <ArrowRight className="h-5 w-5 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
-        </div>
-      </Link>
-    );
-  }
-  return (
-    <div className="rounded-2xl border border-amber-300/60 bg-amber-50 p-5 shadow-[var(--shadow-card)] dark:border-amber-500/30 dark:bg-amber-950/30">
-      <div className="flex items-center gap-4">
-        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-amber-500 text-white">
-          <ScanLine className="h-6 w-6" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-400">
-            Ma prochaine action
-          </div>
-          <div className="mt-1 text-base font-bold text-foreground">
-            Présentez votre badge à l’accueil
-          </div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
-            Le QR ci-dessus sera scanné pour votre check-in.
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QuickTile({
-  to,
-  params,
-  icon: Icon,
-  label,
+function NowBlock({
+  eventName,
+  session,
+  slug,
 }: {
-  to: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params?: any;
-  icon: typeof CalendarDays;
-  label: string;
+  eventName: string;
+  session: Session | null;
+  slug: string;
 }) {
   return (
-    <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      to={to as any}
-      params={params}
-      className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background p-4 text-center transition-colors hover:border-primary/40 hover:bg-primary/5"
+    <section
+      aria-labelledby="home-now-heading"
+      className="rounded-3xl bg-gradient-to-br from-primary to-primary/85 p-6 text-primary-foreground shadow-[var(--shadow-card)] sm:p-8"
     >
-      <Icon className="h-5 w-5 text-primary" />
-      <span className="text-xs font-semibold text-foreground">{label}</span>
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-foreground/85">
+        <span>{eventName}</span>
+      </div>
+
+      {session ? (
+        <>
+          <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground/90">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+            </span>
+            En cours maintenant
+          </div>
+          <h2
+            id="home-now-heading"
+            className="mt-2 text-xl font-bold leading-tight sm:text-2xl"
+          >
+            {session.title}
+          </h2>
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-primary-foreground/90">
+            {session.location && (
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" /> {session.location}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="h-4 w-4" />
+              {formatTime(session.starts_at)} – {formatTime(session.ends_at)}
+            </span>
+          </div>
+          <div className="mt-5">
+            <Link
+              to="/live/$sessionId"
+              params={{ sessionId: session.id }}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
+            >
+              <Radio className="h-4 w-4" />
+              Rejoindre
+            </Link>
+          </div>
+        </>
+      ) : (
+        <>
+          <h2
+            id="home-now-heading"
+            className="mt-3 text-xl font-bold leading-tight sm:text-2xl"
+          >
+            Bienvenue
+          </h2>
+          <p className="mt-2 text-sm text-primary-foreground/85">
+            Aucune session en cours. Consultez le programme pour la prochaine.
+          </p>
+          <div className="mt-5">
+            <Link
+              to="/agenda/$slug"
+              params={{ slug }}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
+            >
+              <CalendarDays className="h-4 w-4" />
+              Voir le programme
+            </Link>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+function NextBlock({
+  session,
+  slug,
+  hasCurrent,
+}: {
+  session: Session | null;
+  slug: string;
+  hasCurrent: boolean;
+}) {
+  if (!session) return null;
+  return (
+    <Link
+      to="/agenda/$slug"
+      params={{ slug }}
+      className="group block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-colors hover:border-primary/40 hover:bg-primary/5"
+    >
+      <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        {hasCurrent ? "Prochaine session" : "Ensuite"}
+      </div>
+      <div className="mt-1.5 flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-bold text-foreground">
+            {session.title}
+          </div>
+          <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1">
+              <Clock className="h-3 w-3" /> {formatTime(session.starts_at)}
+            </span>
+            {session.location && (
+              <span className="inline-flex items-center gap-1 truncate">
+                <MapPin className="h-3 w-3" /> {session.location}
+              </span>
+            )}
+          </div>
+        </div>
+        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </div>
     </Link>
+  );
+}
+
+function AlertsBlock({
+  announcements,
+  slug,
+}: {
+  announcements: Announcement[];
+  slug: string;
+}) {
+  if (announcements.length === 0) return null;
+  const last = announcements[0];
+  return (
+    <Link
+      to="/annonces/$slug"
+      params={{ slug }}
+      className="group block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-colors hover:border-primary/40 hover:bg-primary/5"
+    >
+      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <Megaphone className="h-3.5 w-3.5 text-primary" />
+        {announcements.length === 1
+          ? "1 annonce"
+          : `${announcements.length} nouvelles annonces`}
+      </div>
+      <div className="mt-1.5 flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            {last.is_pinned && (
+              <Pin className="h-3 w-3 shrink-0 text-amber-600" />
+            )}
+            <div className="truncate text-sm font-bold text-foreground">
+              {last.title}
+            </div>
+          </div>
+          <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+            {last.content}
+          </p>
+        </div>
+        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </div>
+    </Link>
+  );
+}
+
+function NetworkBlock({
+  participants,
+  slug,
+}: {
+  participants: Participant[];
+  slug: string;
+}) {
+  if (participants.length === 0) return null;
+  return (
+    <Link
+      to="/networking/$slug"
+      params={{ slug }}
+      className="group block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-colors hover:border-primary/40 hover:bg-primary/5"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <Users className="mr-1 inline h-3.5 w-3.5 text-primary" />
+          {participants.length} personnes à découvrir
+        </div>
+        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <div className="flex -space-x-2">
+          {participants.map((p) => (
+            <div
+              key={p.id}
+              className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-card bg-primary/10 text-xs font-bold text-primary"
+              title={p.full_name}
+            >
+              {p.photo_url ? (
+                <img
+                  src={p.photo_url}
+                  alt={p.full_name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                p.full_name
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((s) => s[0])
+                  .join("")
+                  .toUpperCase()
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="min-w-0 flex-1 text-xs text-muted-foreground">
+          {participants
+            .map((p) => p.full_name.split(" ")[0])
+            .join(" · ")}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function BadgeBlock({ qrToken }: { qrToken: string }) {
+  return (
+    <details className="group rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+      <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-foreground select-none">
+        <IdCard className="h-4 w-4 text-primary" />
+        Mon badge
+        <span className="ml-auto text-xs font-normal text-muted-foreground group-open:hidden">
+          Agrandir
+        </span>
+        <span className="ml-auto hidden text-xs font-normal text-muted-foreground group-open:inline">
+          Réduire
+        </span>
+      </summary>
+      <div className="mt-4">
+        <MyBadgeCard qrToken={qrToken} />
+      </div>
+    </details>
   );
 }
