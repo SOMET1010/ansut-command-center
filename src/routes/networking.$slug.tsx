@@ -161,8 +161,8 @@ function NetworkingPage() {
           <TabsContent value="messages" className="mt-6">
             <ComingSoonPanel
               icon={MessageSquare}
-              title="Messagerie"
-              description="La messagerie privée entre participants sera activée pour l'événement. Vous pourrez échanger directement avec les personnes rencontrées."
+              title="Messages"
+              description="Cette fonctionnalité sera activée pour les prochains événements. Vous pourrez échanger directement avec les participants rencontrés."
             />
           </TabsContent>
 
@@ -170,7 +170,7 @@ function NetworkingPage() {
             <ComingSoonPanel
               icon={CalendarClock}
               title="Rendez-vous"
-              description="La prise de rendez-vous sera disponible prochainement : proposez un créneau, recevez les confirmations et retrouvez vos rencontres planifiées."
+              description="Cette fonctionnalité sera activée pour les prochains événements. Vous pourrez proposer et gérer des rendez-vous individuels."
             />
           </TabsContent>
         </Tabs>
