@@ -38,18 +38,24 @@ function LoginPage() {
     setLoading(true);
     try {
       if (isLovablePreview()) {
+        // Le proxy lovable.js casse tout /auth/v1/*. On obtient les tokens via
+        // notre route same-origin puis on persiste la session manuellement
+        // dans localStorage (format supabase-js) avant un hard-reload.
         const res = await fetch("/api/public/auth/token", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: data.email, password: data.password }),
         });
         const json = await res.json();
-        if (!res.ok) throw new Error(json.error_description || json.msg || "Connexion impossible");
-        const { error } = await supabase.auth.setSession({
-          access_token: json.access_token,
-          refresh_token: json.refresh_token,
-        });
-        if (error) throw error;
+        if (!res.ok) {
+          throw new Error(json.error_description || json.msg || json.error || "Connexion impossible");
+        }
+        const user = persistPreviewSession(json);
+        const target = await pickPostLoginTarget(user.id, json.access_token);
+        toast.success("Connexion réussie");
+        // Hard reload pour que supabase initialise depuis localStorage
+        window.location.assign(target);
+        return;
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: data.email,
@@ -64,10 +70,7 @@ function LoginPage() {
     }
     setLoading(false);
     toast.success("Connexion réussie");
-    // Lot 1 Phase 4.1 — redirection post-login par rôle.
-    // super_admin / org_admin → /dashboard (Cockpit)
-    // staff                   → /checkin
-    // participant / autre     → /me/role (qui affichera son contexte)
+    // Lot 1 Phase 4.1 — redirection post-login par rôle (mode production).
     try {
       const {
         data: { user },
@@ -90,6 +93,72 @@ function LoginPage() {
       navigate({ to: "/dashboard" });
     }
   }
+
+  // --- Helpers preview ---
+  function persistPreviewSession(tok: {
+    access_token: string;
+    refresh_token: string;
+    expires_in?: number;
+    token_type?: string;
+  }) {
+    const payload = JSON.parse(
+      atob(tok.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
+    );
+    const expiresIn = tok.expires_in ?? 3600;
+    const session = {
+      access_token: tok.access_token,
+      refresh_token: tok.refresh_token,
+      expires_in: expiresIn,
+      expires_at: Math.floor(Date.now() / 1000) + expiresIn,
+      token_type: tok.token_type ?? "bearer",
+      user: {
+        id: payload.sub,
+        aud: payload.aud,
+        role: payload.role,
+        email: payload.email,
+        phone: payload.phone ?? "",
+        app_metadata: payload.app_metadata ?? {},
+        user_metadata: payload.user_metadata ?? {},
+        created_at: new Date(0).toISOString(),
+      },
+    };
+    const url =
+      (import.meta.env.VITE_SUPABASE_URL as string | undefined) ??
+      (process.env.SUPABASE_URL as string | undefined) ??
+      "";
+    const projectRef = new URL(url).hostname.split(".")[0];
+    localStorage.setItem(`sb-${projectRef}-auth-token`, JSON.stringify(session));
+    return session.user;
+  }
+
+  async function pickPostLoginTarget(userId: string, accessToken: string) {
+    try {
+      const url = import.meta.env.VITE_SUPABASE_URL as string;
+      const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+      const res = await fetch(
+        `${url}/rest/v1/user_roles?user_id=eq.${userId}&select=role`,
+        {
+          headers: {
+            apikey: key,
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+        },
+      );
+      if (res.ok) {
+        const rows = (await res.json()) as { role: string }[];
+        const roles = rows.map((r) => r.role);
+        if (roles.includes("super_admin") || roles.includes("org_admin")) {
+          return "/dashboard";
+        }
+        if (roles.includes("staff")) return "/checkin";
+      }
+    } catch {
+      // ignore — fallback ci-dessous
+    }
+    return "/me/role";
+  }
+
 
   return (
     <AuthLayout
