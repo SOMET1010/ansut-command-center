@@ -10,8 +10,7 @@ import { Label } from "@/components/ui/label";
 import { AnsutLogo } from "@/components/ansut/Logo";
 import { ChatBot } from "@/components/ChatBot";
 
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/hooks/useLanguage";
+
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
@@ -82,7 +81,7 @@ type FormErrors = Partial<Record<string, string>>;
 
 function PublicEventPage() {
   const { slug } = Route.useParams();
-  const { language, setLanguage, t } = useLanguage();
+
   const [event, setEvent] = useState<PublicEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [done, setDone] = useState(false);
@@ -259,7 +258,7 @@ function PublicEventPage() {
             </div>
           </Link>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
+
             {!qrToken && (
               <Link
                 to="/login"
@@ -585,7 +584,7 @@ function PublicEventPage() {
         eventName={event.name}
         eventSlug={slug}
         venue={event.location || undefined}
-        language={language}
+        language="fr"
       />
     </div>
   );

@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { ChatBot } from "@/components/ChatBot";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/hooks/useLanguage";
+
 import { WifiQrCode } from "@/components/WifiQrCode";
 import {
   Building2,
@@ -23,7 +22,7 @@ export const Route = createFileRoute("/salon/$slug")({
 
 function SalonPage() {
   const { slug } = Route.useParams();
-  const { language, setLanguage, t } = useLanguage();
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["salon", slug],
@@ -129,11 +128,7 @@ function SalonPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <LanguageSwitcher
-                language={language}
-                onLanguageChange={setLanguage}
-                compact
-              />
+
               <Link
                 to="/e/$slug"
                 params={{ slug }}
@@ -286,7 +281,7 @@ function SalonPage() {
         eventName={event.name}
         eventSlug={slug}
         venue={event.location ?? undefined}
-        language={language}
+        language="fr"
       />
     </div>
   );

@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { ChatBot } from "@/components/ChatBot";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/hooks/useLanguage";
+
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,7 +55,7 @@ export const Route = createFileRoute("/agenda/$slug")({
 
 function AgendaPage() {
   const { slug } = Route.useParams();
-  const { language, setLanguage, t } = useLanguage();
+
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [dayFilter, setDayFilter] = useState("all");
@@ -240,7 +239,7 @@ function AgendaPage() {
               <Calendar className="h-5 w-5 text-primary" />
               <h1 className="text-xl font-bold text-gray-900 leading-tight">{event.name}</h1>
             </div>
-            <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
+
           </div>
           {event.location && (
             <p className="text-sm text-gray-500 flex items-center gap-1.5 ml-8">
@@ -553,7 +552,7 @@ function AgendaPage() {
           eventName={event.name}
           eventSlug={slug}
           venue={event.location || undefined}
-          language={language}
+          language="fr"
         />
       )}
     </div>

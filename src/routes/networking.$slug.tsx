@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { ChatBot } from "@/components/ChatBot";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/hooks/useLanguage";
+
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,7 +52,7 @@ export const Route = createFileRoute("/networking/$slug")({
 
 function NetworkingPage() {
   const { slug } = Route.useParams();
-  const { language, setLanguage, t } = useLanguage();
+
 
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ["event-networking", slug],
@@ -113,11 +112,7 @@ function NetworkingPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <LanguageSwitcher
-                language={language}
-                onLanguageChange={setLanguage}
-                compact
-              />
+
               <Link
                 to="/e/$slug"
                 params={{ slug }}
@@ -188,7 +183,7 @@ function NetworkingPage() {
           eventName={event.name}
           eventSlug={slug}
           venue={event.location || undefined}
-          language={language}
+          language="fr"
         />
       )}
     </div>

@@ -16,8 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { MyBadgeCard } from "@/components/MyBadgeCard";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/hooks/useLanguage";
+
 
 /**
  * Profil participant (Sprint A — Phase 5).
@@ -61,7 +60,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 function MyProfilePage() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
+
   const [token, setToken] = useState<string>("");
 
   // Token : ?token=... > localStorage canonique > legacy.
@@ -203,7 +202,7 @@ function MyProfilePage() {
             <UserIcon className="h-5 w-5 text-primary" />
             <h1 className="text-lg font-bold text-gray-900">Mon profil</h1>
           </div>
-          <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
+
         </div>
       </header>
 
@@ -306,7 +305,7 @@ function MyProfilePage() {
           </h3>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-700">Langue de l'application</span>
-            <LanguageSwitcher language={language} onLanguageChange={setLanguage} />
+
           </div>
           <button
             onClick={disconnect}
