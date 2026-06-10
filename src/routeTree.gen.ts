@@ -41,6 +41,7 @@ import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authen
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
 import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
+import { Route as ApiPublicAuthRolesRouteImport } from './routes/api/public/auth/roles'
 import { Route as ApiPublicAuthRecoverRouteImport } from './routes/api/public/auth/recover'
 import { Route as AuthenticatedEventsIdSessionsRouteImport } from './routes/_authenticated/events.$id.sessions'
 import { Route as AuthenticatedEventsIdRegistrationsRouteImport } from './routes/_authenticated/events.$id.registrations'
@@ -209,6 +210,11 @@ const ApiPublicAuthTokenRoute = ApiPublicAuthTokenRouteImport.update({
   path: '/api/public/auth/token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAuthRolesRoute = ApiPublicAuthRolesRouteImport.update({
+  id: '/api/public/auth/roles',
+  path: '/api/public/auth/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAuthRecoverRoute = ApiPublicAuthRecoverRouteImport.update({
   id: '/api/public/auth/recover',
   path: '/api/public/auth/recover',
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
+  '/api/public/auth/roles': typeof ApiPublicAuthRolesRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
 export interface FileRoutesByTo {
@@ -305,6 +312,7 @@ export interface FileRoutesByTo {
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
+  '/api/public/auth/roles': typeof ApiPublicAuthRolesRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
 export interface FileRoutesById {
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/_authenticated/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/_authenticated/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
+  '/api/public/auth/roles': typeof ApiPublicAuthRolesRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
 }
 export interface FileRouteTypes {
@@ -383,6 +392,7 @@ export interface FileRouteTypes {
     | '/events/$id/registrations'
     | '/events/$id/sessions'
     | '/api/public/auth/recover'
+    | '/api/public/auth/roles'
     | '/api/public/auth/token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -420,6 +430,7 @@ export interface FileRouteTypes {
     | '/events/$id/registrations'
     | '/events/$id/sessions'
     | '/api/public/auth/recover'
+    | '/api/public/auth/roles'
     | '/api/public/auth/token'
   id:
     | '__root__'
@@ -458,6 +469,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events/$id/registrations'
     | '/_authenticated/events/$id/sessions'
     | '/api/public/auth/recover'
+    | '/api/public/auth/roles'
     | '/api/public/auth/token'
   fileRoutesById: FileRoutesById
 }
@@ -484,6 +496,7 @@ export interface RootRouteChildren {
   PollPollIdRoute: typeof PollPollIdRoute
   RdvSlugRoute: typeof RdvSlugRoute
   ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
+  ApiPublicAuthRolesRoute: typeof ApiPublicAuthRolesRoute
   ApiPublicAuthTokenRoute: typeof ApiPublicAuthTokenRoute
 }
 
@@ -713,6 +726,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAuthTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/auth/roles': {
+      id: '/api/public/auth/roles'
+      path: '/api/public/auth/roles'
+      fullPath: '/api/public/auth/roles'
+      preLoaderRoute: typeof ApiPublicAuthRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/auth/recover': {
       id: '/api/public/auth/recover'
       path: '/api/public/auth/recover'
@@ -813,6 +833,7 @@ const rootRouteChildren: RootRouteChildren = {
   PollPollIdRoute: PollPollIdRoute,
   RdvSlugRoute: RdvSlugRoute,
   ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,
+  ApiPublicAuthRolesRoute: ApiPublicAuthRolesRoute,
   ApiPublicAuthTokenRoute: ApiPublicAuthTokenRoute,
 }
 export const routeTree = rootRouteImport
