@@ -162,7 +162,7 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
     // chatbot, qui est accessible aux visiteurs anonymes.
     let contextInfo = `\n\nContexte de l'événement actuel:\n- Nom: ${eventContext.eventName}`;
     if (eventContext.venue) contextInfo += `\n- Lieu: ${eventContext.venue}`;
-      contextInfo += `\n- WiFi: Réseau "${eventContext.wifiSsid}", Mot de passe: "${eventContext.wifiPassword}"`;
+      
     if (eventContext.sessions && eventContext.sessions.length > 0) {
       contextInfo += `\n- Sessions au programme:`;
       for (const s of eventContext.sessions.slice(0, 10)) {
