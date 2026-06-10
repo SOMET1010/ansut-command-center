@@ -65,8 +65,6 @@ const chatInputSchema = z.object({
       )
       .max(50)
       .optional(),
-    wifiSsid: safeText(64).optional(),
-    wifiPassword: safeText(128).optional(),
     venue: safeText(200).optional(),
   }),
   language: z.enum(["fr", "en", "ar", "pt"]).default("fr"),
