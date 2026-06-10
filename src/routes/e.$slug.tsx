@@ -249,7 +249,7 @@ function PublicEventPage() {
       {/* HEADER officiel ANSUT */}
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-4">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/e/$slug" params={{ slug }} className="flex items-center gap-3">
             <AnsutLogo size="md" />
             <div className="leading-tight">
               <div className="text-sm font-semibold text-foreground">ANSUT EVENT</div>
