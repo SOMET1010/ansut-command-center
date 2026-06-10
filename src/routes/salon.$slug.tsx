@@ -13,8 +13,6 @@ import {
   Clock,
   Megaphone,
   Vote,
-  Phone,
-  Mail,
   Pin,
 } from "lucide-react";
 
@@ -33,7 +31,7 @@ function SalonPage() {
       const { data: event, error } = await supabase
         .from("events")
         .select(
-          "id, name, slug, starts_at, ends_at, location, wifi_ssid, wifi_password, wifi_encryption, contact_email, contact_phone",
+          "id, name, slug, starts_at, ends_at, location, wifi_ssid, wifi_password, wifi_encryption",
         )
         .eq("slug", slug)
         .eq("status", "published")
@@ -196,46 +194,13 @@ function SalonPage() {
                       <WifiQrCode
                         ssid={event.wifi_ssid}
                         password={event.wifi_password ?? ""}
-                        encryption={
-                          (event.wifi_encryption as "WPA" | "WEP" | "nopass") ??
-                          "WPA"
-                        }
-                        size={140}
+                        encryption={event.wifi_encryption ?? "WPA"}
+                        compact
                       />
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-
-            {/* Contacts */}
-            {event.contact_email && (
-              <InfoRow
-                icon={Mail}
-                label="Contact e-mail"
-                value={
-                  <a
-                    href={`mailto:${event.contact_email}`}
-                    className="text-primary hover:underline"
-                  >
-                    {event.contact_email}
-                  </a>
-                }
-              />
-            )}
-            {event.contact_phone && (
-              <InfoRow
-                icon={Phone}
-                label="Contact téléphone"
-                value={
-                  <a
-                    href={`tel:${event.contact_phone}`}
-                    className="text-primary hover:underline"
-                  >
-                    {event.contact_phone}
-                  </a>
-                }
-              />
             )}
           </div>
         </section>
