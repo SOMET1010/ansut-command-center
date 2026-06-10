@@ -135,7 +135,7 @@ function SalonPage() {
                 params={{ slug }}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                {t("nav.home")}
+Accueil
               </Link>
             </div>
           </div>

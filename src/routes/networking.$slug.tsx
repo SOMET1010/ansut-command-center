@@ -110,6 +110,9 @@ function NetworkingPage() {
                   Réseau &amp; rencontres
                 </h1>
                 <p className="text-sm text-muted-foreground">{event.name}</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  Découvrir · Messages · Rendez-vous
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -119,14 +122,14 @@ function NetworkingPage() {
                 params={{ slug }}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                {t("nav.home")}
+Accueil
               </Link>
               <Link
                 to="/agenda/$slug"
                 params={{ slug }}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                {t("nav.program")}
+Programme
               </Link>
             </div>
           </div>

@@ -170,9 +170,6 @@ function Landing() {
           </span>
           <span className="sm:hidden">RCI · ANSUT</span>
           <div className="flex items-center gap-4">
-            <span className="hidden md:inline">FR</span>
-            <span className="hidden md:inline opacity-40">|</span>
-            <span className="hidden md:inline opacity-60">EN</span>
             <span className="opacity-60">Édition officielle 2026</span>
           </div>
         </div>
