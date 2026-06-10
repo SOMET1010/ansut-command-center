@@ -60,12 +60,21 @@ function AgendaPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [dayFilter, setDayFilter] = useState("all");
-  const [myToken, setMyToken] = useState(
-    () =>
-      (typeof window !== "undefined" &&
-        window.localStorage.getItem("ansut_participant_token")) ||
-      "",
-  );
+  // Token participant — source unique partagée avec l'Accueil et le Profil.
+  // Ordre : URL ?token=... > localStorage canonique `ansut:badge:{slug}` > legacy.
+  const [myToken, setMyToken] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    if (urlToken && /^[0-9a-f-]{20,}$/i.test(urlToken)) {
+      window.localStorage.setItem(`ansut:badge:${slug}`, urlToken);
+      return urlToken;
+    }
+    return (
+      window.localStorage.getItem(`ansut:badge:${slug}`) ||
+      window.localStorage.getItem("ansut_participant_token") ||
+      ""
+    );
+  });
   const [showMyAgenda, setShowMyAgenda] = useState(false);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
@@ -243,21 +252,26 @@ function AgendaPage() {
       </header>
 
       <main id="main-content" className="max-w-4xl mx-auto px-4 py-6 space-y-5">
-        {/* Identification participant (pour bookmarks) */}
-        {!myParticipant && (
+        {/* Identification participant (pour bookmarks) — affichée uniquement
+            si aucun token n'est connu. Lorsque le participant arrive depuis
+            l'Accueil ou un lien ?token=..., on n'affiche rien : son agenda
+            personnalisé est déjà disponible. */}
+        {!myToken && !myParticipant && (
           <div className="bg-white rounded-xl border p-4">
             <p className="text-sm text-gray-600 mb-2">
-              Entrez votre code badge pour personnaliser votre agenda :
+              Vous n'avez pas encore de badge ? <Link to="/e/$slug" params={{ slug }} className="text-primary font-medium underline">Inscrivez-vous</Link>, ou collez votre code badge ci-dessous pour personnaliser votre agenda :
             </p>
             <div className="flex gap-2">
               <Input
-                placeholder="Code badge (ex: ABC123)"
+                placeholder="Code badge (UUID)"
                 value={myToken}
                 onChange={(e) => setMyToken(e.target.value)}
                 className="flex-1"
               />
               <button
-                onClick={() => localStorage.setItem("ansut_participant_token", myToken)}
+                onClick={() => {
+                  if (myToken) localStorage.setItem(`ansut:badge:${slug}`, myToken);
+                }}
                 className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
               >
                 Valider

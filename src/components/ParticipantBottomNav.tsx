@@ -70,8 +70,8 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
     {
       label: "Mon Profil",
       icon: User,
-      to: `/me/role`,
-      matches: (p) => p.startsWith("/me"),
+      to: `/me/${slug}`,
+      matches: (p) => p.startsWith(`/me/${slug}`) || p === "/me/role",
     },
   ];
 
