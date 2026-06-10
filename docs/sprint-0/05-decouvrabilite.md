@@ -2,11 +2,12 @@
 
 Protocole prêt à exécuter dès que le pool de testeurs est confirmé. À faire sur **build figé** (avant toute refonte Phase 4) pour mesurer le baseline.
 
-## Pool cible
+## Pool cible — amendé comité produit
 
-- 5 testeurs minimum : 2 Org Admin, 2 Participant, 1 Staff
+- **5 participants + 3 staffs + 2 org_admin** (10 testeurs)
 - Sponsor & Super Admin : différés (parcours incomplets actuellement)
 - Profils non techniques, n'ayant **jamais** utilisé l'app
+
 
 ## Protocole
 
@@ -16,32 +17,23 @@ Protocole prêt à exécuter dès que le pool de testeurs est confirmé. À fair
 - Observateur silencieux, pas d'aide
 - Outils : chronomètre, comptage clics manuel, enregistrement écran
 
-### Tâches (par rôle)
+### Scénarios chronométrés — amendés comité produit
 
-#### Org Admin
-| # | Tâche | Chemin optimal | Métriques |
-|---|---|---|---|
-| T1 | Publier une annonce sur l'événement X | Dashboard → Annonces → Nouvelle → Publier | clics, temps, erreurs |
-| T2 | Créer un sondage "Satisfaction J1" | Dashboard → Polls → Nouveau | clics, temps, erreurs |
-| T3 | Exporter la liste des participants en CSV | Dashboard → Exports → Sélection → Télécharger | clics, temps, erreurs |
-| T4 | Préparer un nouvel événement de A à Z | Dashboard → Events → Nouveau → Sessions → Comm | clics, temps, abandons |
-| T5 | Valider 3 inscriptions en attente | Dashboard → Participants → filtre pending | clics, temps |
+Mesurer pour chaque scénario : **temps d'exécution · nombre de clics · nombre de blocages · écrans où le testeur hésite**. Ajouter en fin de scénario la question ouverte : *« Où seriez-vous allé spontanément pour faire ça ? »* (validation du vocabulaire missions).
 
-#### Participant
-| # | Tâche | Chemin optimal | Métriques |
-|---|---|---|---|
-| T1 | Trouver son badge QR | `/e/:slug` → Profil → Badge | clics, temps |
-| T2 | Ajouter une session à son agenda | `/e/:slug` → Agenda → Bookmark | clics, temps |
-| T3 | Envoyer un message à un autre participant | Networking → Annuaire → Contact → Message | clics, temps |
-| T4 | Voter à un sondage en cours | Annonces → Poll | clics, temps |
-| T5 | Prendre RDV avec un sponsor | Networking → RDV → Sélection créneau | clics, temps |
+| # | Scénario | Rôle |
+|---|---|---|
+| S1 | S'inscrire à un événement | Participant |
+| S2 | Retrouver son agenda et bookmarker une session | Participant |
+| S3 | Trouver un participant donné dans l'annuaire | Participant |
+| S4 | Envoyer un message à ce participant | Participant |
+| S5 | Répondre à un sondage en cours | Participant |
+| S6 | Faire un check-in d'un participant arrivé | Staff |
+| S7 | Marquer un participant manuellement présent | Staff |
+| S8 | Publier une annonce | Org Admin |
+| S9 | Valider 3 inscriptions en attente | Org Admin |
+| S10 | Préparer un nouvel événement de A à Z | Org Admin |
 
-#### Staff
-| # | Tâche | Chemin optimal | Métriques |
-|---|---|---|---|
-| T1 | Scanner le badge d'un participant arrivé | Checkin → Scan | clics, temps |
-| T2 | Marquer manuellement un participant présent | Checkin → Recherche → Valider | clics, temps |
-| T3 | Lire les annonces du jour | Annonces | clics, temps |
 
 ## Grille de mesure
 
