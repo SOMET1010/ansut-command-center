@@ -38,7 +38,7 @@ const CATEGORIES: Record<string, string> = {
   all: "Tous",
   fsu: "Fonds de Service Universel",
   regulator: "Régulateur",
-  operator: "Opérateur",
+  operator: "Opérateur télécom",
   partner: "Partenaire financier",
   startup: "Startup / Innovation",
   international_org: "Organisation internationale",
