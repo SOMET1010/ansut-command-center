@@ -378,11 +378,16 @@ function AlertsBlock({
 function NetworkBlock({
   participants,
   slug,
+  sameCategory,
 }: {
   participants: Participant[];
   slug: string;
+  sameCategory: boolean;
 }) {
   if (participants.length === 0) return null;
+  const label = sameCategory
+    ? `${participants.length} personnes de votre catégorie`
+    : `${participants.length} personnes à découvrir`;
   return (
     <Link
       to="/networking/$slug"
@@ -392,7 +397,7 @@ function NetworkBlock({
       <div className="flex items-center justify-between gap-3">
         <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           <Users className="mr-1 inline h-3.5 w-3.5 text-primary" />
-          {participants.length} personnes à découvrir
+          {label}
         </div>
         <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
       </div>
