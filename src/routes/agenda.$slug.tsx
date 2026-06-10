@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { getParticipantToken, storeParticipantToken } from "@/lib/token";
 import {
   Search,
   Calendar,
@@ -59,21 +60,7 @@ function AgendaPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [dayFilter, setDayFilter] = useState("all");
-  // Token participant — source unique partagée avec l'Accueil et le Profil.
-  // Ordre : URL ?token=... > localStorage canonique `ansut:badge:{slug}` > legacy.
-  const [myToken, setMyToken] = useState(() => {
-    if (typeof window === "undefined") return "";
-    const urlToken = new URLSearchParams(window.location.search).get("token");
-    if (urlToken && /^[0-9a-f-]{20,}$/i.test(urlToken)) {
-      window.localStorage.setItem(`ansut:badge:${slug}`, urlToken);
-      return urlToken;
-    }
-    return (
-      window.localStorage.getItem(`ansut:badge:${slug}`) ||
-      window.localStorage.getItem("ansut_participant_token") ||
-      ""
-    );
-  });
+  const [myToken, setMyToken] = useState(() => getParticipantToken(slug));
   const [showMyAgenda, setShowMyAgenda] = useState(false);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
@@ -269,7 +256,7 @@ function AgendaPage() {
               />
               <button
                 onClick={() => {
-                  if (myToken) localStorage.setItem(`ansut:badge:${slug}`, myToken);
+                  if (myToken) storeParticipantToken(slug, myToken);
                 }}
                 className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
               >

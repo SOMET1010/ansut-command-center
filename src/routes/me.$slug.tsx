@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { MyBadgeCard } from "@/components/MyBadgeCard";
+import { getParticipantToken, clearParticipantToken } from "@/lib/token";
 
 
 /**
@@ -63,20 +64,9 @@ function MyProfilePage() {
 
   const [token, setToken] = useState<string>("");
 
-  // Token : ?token=... > localStorage canonique > legacy.
+  // Lecture unifiée du token — migration legacy automatique.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const urlToken = new URLSearchParams(window.location.search).get("token");
-    if (urlToken && /^[0-9a-f-]{20,}$/i.test(urlToken)) {
-      window.localStorage.setItem(`ansut:badge:${slug}`, urlToken);
-      setToken(urlToken);
-      return;
-    }
-    setToken(
-      window.localStorage.getItem(`ansut:badge:${slug}`) ||
-        window.localStorage.getItem("ansut_participant_token") ||
-        "",
-    );
+    setToken(getParticipantToken(slug));
   }, [slug]);
 
   const { data: me, isLoading: meLoading } = useQuery({
@@ -127,10 +117,7 @@ function MyProfilePage() {
   }, [me?.full_name]);
 
   function disconnect() {
-    if (typeof window === "undefined") return;
-    window.localStorage.removeItem(`ansut:badge:${slug}`);
-    window.localStorage.removeItem("ansut_participant_token");
-    if (token) window.localStorage.removeItem(`ansut:badge:data:${token}`);
+    clearParticipantToken(slug, token);
     navigate({ to: "/e/$slug", params: { slug } });
   }
 

@@ -13,11 +13,12 @@ import { ChatBot } from "@/components/ChatBot";
 
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
+import { getParticipantToken, storeParticipantToken } from "@/lib/token";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { MyBadgeCard } from "@/components/MyBadgeCard";
 import { EventHomeDashboard } from "@/components/EventHomeDashboard";
 
-const BADGE_STORAGE_PREFIX = "ansut:badge:";
+
 
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
@@ -142,14 +143,8 @@ function PublicEventPage() {
   // Au prochain rendu, le token URL est aussi persisté pour les visites suivantes.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const urlToken = new URLSearchParams(window.location.search).get("token");
-    if (urlToken && /^[0-9a-f-]{20,}$/i.test(urlToken)) {
-      window.localStorage.setItem(`${BADGE_STORAGE_PREFIX}${slug}`, urlToken);
-      setQrToken(urlToken);
-      return;
-    }
-    const stored = window.localStorage.getItem(`${BADGE_STORAGE_PREFIX}${slug}`);
-    if (stored) setQrToken(stored);
+    const token = getParticipantToken(slug);
+    if (token) setQrToken(token);
   }, [slug]);
 
   function updateField<K extends keyof typeof form>(key: K, value: string) {
@@ -207,7 +202,7 @@ function PublicEventPage() {
     }
     setQrToken(token as string);
     if (typeof window !== "undefined" && token) {
-      window.localStorage.setItem(`${BADGE_STORAGE_PREFIX}${slug}`, token as string);
+      storeParticipantToken(slug, token as string);
     }
 
     // Confirmation multi-canal (best-effort, ne bloque pas l'UI).
