@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { AlertCircle, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
@@ -13,6 +13,16 @@ import { loginSchema, zodFieldErrors } from "@/lib/auth-schemas";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Connexion — ANSUT EVENT" }] }),
+  // Guard: si déjà connecté, on évite d'afficher /login (cohérence post-rollback).
+  ssr: false,
+  beforeLoad: async () => {
+    const user = isLovablePreview()
+      ? (await supabase.auth.getSession()).data.session?.user
+      : (await supabase.auth.getUser()).data.user;
+    if (user) {
+      throw redirect({ to: "/me/role" });
+    }
+  },
   component: LoginPage,
 });
 
