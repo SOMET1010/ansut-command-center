@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AnsutLogo } from "@/components/ansut/Logo";
 import { ChatBot } from "@/components/ChatBot";
-import { WifiQrCode } from "@/components/WifiQrCode";
+
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
