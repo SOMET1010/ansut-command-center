@@ -14,8 +14,6 @@ import {
   Building2,
   Linkedin,
   User,
-  MessageCircle,
-  Sparkles,
 } from "lucide-react";
 
 /* ─── Types ─── */
