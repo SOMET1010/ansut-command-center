@@ -115,13 +115,15 @@ Un design premium appliqué à une navigation confuse n'améliore rien.
 
 1. **Navigation par missions, pas par modules** (Amendement 1).
 2. **Cockpit obligatoire post-login pour chaque rôle** (Amendement 2).
-3. **4 à 6 entrées de navigation maximum par rôle** (Amendement 3).
+3. **5 entrées de navigation maximum par rôle** (Amendement 5 — durci, prime sur Amendement 3 qui parlait de 4-6).
 4. **Une home par rôle.** Fin du `/dashboard` unique.
-5. **Regrouper par intention métier, pas par table SQL.**
+5. **Vocabulaire « app de salon »** (Whova/Eventee/Brella/Swapcard), pas vocabulaire interne (Amendement 5).
 6. **Cockpit = « Que dois-je faire maintenant ? »** — pas un dashboard de données.
 7. **Aucune nouvelle table, aucune nouvelle policy RLS.** Surfaces Phase S réutilisées.
 8. **Redirections 301 obligatoires** sur tout renommage (QR badges, liens email déjà émis).
 9. **J5 mesuré avant Phase 4** (Amendement 4). Pas de refonte fondée sur l'intuition.
+10. **Règle des 5 boutons** validée avant toute maquette (Amendement 5).
+
 
 ---
 
