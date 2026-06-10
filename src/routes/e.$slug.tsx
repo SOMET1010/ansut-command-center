@@ -16,6 +16,7 @@ import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { MyBadgeCard } from "@/components/MyBadgeCard";
+import { EventHomeDashboard } from "@/components/EventHomeDashboard";
 
 const BADGE_STORAGE_PREFIX = "ansut:badge:";
 
