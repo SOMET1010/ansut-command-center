@@ -27,23 +27,26 @@ export type CockpitNavSection = { label: string; items: CockpitNavItem[] };
 export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
   {
     label: "Pilotage",
-    items: [{ to: "/dashboard", label: "Tableau de bord" }],
+    items: [{ to: "/dashboard", label: "Cockpit" }],
   },
   {
-    label: "Modules métier",
+    label: "Événement",
     items: [
-      { to: "/events", label: "Événements" },
-      { to: "/participants", label: "Participants", hidden: true },
-      { to: "/polls", label: "Live Polling" },
-      { to: "/announcements", label: "Annonces" },
-    ],
-  },
-  {
-    label: "Exécution",
-    items: [
+      { to: "/events", label: "Programme" },
+      { to: "/participants", label: "Participants" },
       { to: "/checkin", label: "Check-in" },
-      { to: "/admin/setup", label: "Administration" },
     ],
+  },
+  {
+    label: "Communication",
+    items: [
+      { to: "/announcements", label: "Annonces" },
+      { to: "/polls", label: "Sondages" },
+    ],
+  },
+  {
+    label: "Paramètres",
+    items: [{ to: "/admin/setup", label: "Administration" }],
   },
 ];
 
