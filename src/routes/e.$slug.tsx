@@ -16,6 +16,7 @@ import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { MyBadgeCard } from "@/components/MyBadgeCard";
+import { EventHomeDashboard } from "@/components/EventHomeDashboard";
 
 const BADGE_STORAGE_PREFIX = "ansut:badge:";
 
@@ -284,51 +285,90 @@ function PublicEventPage() {
       </header>
 
       <main id="main-content" className="mx-auto max-w-4xl px-6 py-10">
-        {qrToken && <MyBadgeCard qrToken={qrToken} />}
-        {event.cover_url && (
-          <img
-            src={event.cover_url}
-            alt={event.name}
-            className="mb-8 aspect-[3/1] w-full rounded-xl object-cover"
-          />
-        )}
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{event.name}</h1>
-        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-4 w-4 text-primary" />
-            {new Date(event.starts_at).toLocaleString("fr-FR", {
-              dateStyle: "long",
-              timeStyle: "short",
-              timeZone: "Africa/Abidjan",
-            })}
-          </span>
-          {event.location && (
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-primary" /> {event.location}
-            </span>
-          )}
-        </div>
-        {event.description && (
-          <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-foreground/90">
-            {event.description}
-          </p>
-        )}
-        {/* WiFi QR Code */}
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {(event as any).wifi_ssid && (
-          <div className="mt-8">
-            <WifiQrCode
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ssid={(event as any).wifi_ssid}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              password={(event as any).wifi_password || ""}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              encryption={(event as any).wifi_encryption || "WPA"}
-            />
-          </div>
-        )}
-        {/* CARTE FORMULAIRE */}
-        <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10">
+        {qrToken ? (
+          /* Accueil inscrit simplifié — Phase 4 */
+          <>
+            <MyBadgeCard qrToken={qrToken} />
+            <div className="mt-6">
+              <EventHomeDashboard eventId={event.id} slug={slug} qrToken={qrToken} />
+            </div>
+            <details className="mt-6 rounded-2xl border border-border bg-card p-5">
+              <summary className="cursor-pointer text-sm font-semibold text-foreground select-none">
+                À propos de l’événement
+              </summary>
+              <div className="mt-4 space-y-3">
+                <h1 className="text-xl font-bold tracking-tight">{event.name}</h1>
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    {new Date(event.starts_at).toLocaleString("fr-FR", {
+                      dateStyle: "long",
+                      timeStyle: "short",
+                      timeZone: "Africa/Abidjan",
+                    })}
+                  </span>
+                  {event.location && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-primary" /> {event.location}
+                    </span>
+                  )}
+                </div>
+                {event.description && (
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">
+                    {event.description}
+                  </p>
+                )}
+              </div>
+            </details>
+          </>
+        ) : (
+          /* Accueil non inscrit — formulaire d’inscription (inchangé) */
+          <>
+            {event.cover_url && (
+              <img
+                src={event.cover_url}
+                alt={event.name}
+                className="mb-8 aspect-[3/1] w-full rounded-xl object-cover"
+              />
+            )}
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{event.name}</h1>
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-primary" />
+                {new Date(event.starts_at).toLocaleString("fr-FR", {
+                  dateStyle: "long",
+                  timeStyle: "short",
+                  timeZone: "Africa/Abidjan",
+                })}
+              </span>
+              {event.location && (
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-primary" /> {event.location}
+                </span>
+              )}
+            </div>
+            {event.description && (
+              <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-foreground/90">
+                {event.description}
+              </p>
+            )}
+            {/* WiFi QR Code */}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {(event as any).wifi_ssid && (
+              <div className="mt-8">
+                <WifiQrCode
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  ssid={(event as any).wifi_ssid}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  password={(event as any).wifi_password || ""}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  encryption={(event as any).wifi_encryption || "WPA"}
+                />
+              </div>
+            )}
+            {/* CARTE FORMULAIRE */}
+            <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10">
+
           {isFull && !done ? (
             <div className="py-10 text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-signal-warning/10">
@@ -548,7 +588,10 @@ function PublicEventPage() {
             </>
           )}
         </div>
+          </>
+        )}
       </main>
+
 
       <footer className="border-t border-border bg-muted py-6">
         <div className="mx-auto max-w-4xl px-6 text-center text-xs text-muted-foreground">
