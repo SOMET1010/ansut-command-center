@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ShieldCheck, ShieldAlert, RefreshCw, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +7,16 @@ import { isLovablePreview } from "@/lib/auth-preview";
 
 export const Route = createFileRoute("/me/role")({
   head: () => ({ meta: [{ title: "Mon rôle — ANSUT EVENT" }] }),
+  // Guard: route protégée — sans session on renvoie vers /login.
+  ssr: false,
+  beforeLoad: async () => {
+    const user = isLovablePreview()
+      ? (await supabase.auth.getSession()).data.session?.user
+      : (await supabase.auth.getUser()).data.user;
+    if (!user) {
+      throw redirect({ to: "/login" });
+    }
+  },
   component: MyRolePage,
 });
 
