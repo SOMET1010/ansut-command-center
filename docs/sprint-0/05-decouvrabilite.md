@@ -19,7 +19,7 @@ Protocole prêt à exécuter dès que le pool de testeurs est confirmé. À fair
 
 ### Scénarios chronométrés — amendés comité produit
 
-Mesurer pour chaque scénario : **temps d'exécution · nombre de clics · nombre de blocages · écrans où le testeur hésite**. Ajouter en fin de scénario la question ouverte : *« Où seriez-vous allé spontanément pour faire ça ? »* (validation du vocabulaire missions).
+Mesurer pour chaque scénario : **temps d'exécution · nombre de clics · taux de réussite · abandon · écran de blocage · compréhension vocabulaire**. Question additionnelle obligatoire en fin de chaque scénario : *« Si vous deviez retrouver cette fonction demain, où iriez-vous spontanément ? »* (révèle immédiatement les erreurs d'architecture / vocabulaire missions).
 
 | # | Scénario | Rôle |
 |---|---|---|
