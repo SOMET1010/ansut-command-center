@@ -52,6 +52,7 @@ type Participant = {
   position: string | null;
   photo_url: string | null;
   participant_category: string;
+  interests?: string[] | null;
 };
 
 const TZ = "Africa/Abidjan";
