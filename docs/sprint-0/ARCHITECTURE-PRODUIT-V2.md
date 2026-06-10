@@ -1,121 +1,187 @@
 # Architecture Produit V2 — Document de référence
 
-**Statut** : proposition à valider. **Aucune ligne de code ne sera modifiée tant que ce document n'est pas explicitement validé.**
-**Périmètre** : sortie Sprint 0 — réorganisation produit. Pré-requis avant toute Phase 4 (UX Premium) et toute nouvelle fonctionnalité.
-**Méthode** : consolidation des travaux J1 à J6 (`docs/sprint-0/01..06`) en un document unique pour validation comité produit.
+**Statut** : **validée sous réserve des 4 amendements de validation comité (cf. §A).** Aucune ligne de code modifiée.
+**Périmètre** : sortie Sprint 0. Pré-requis avant toute Phase 4 (UX Premium) et toute nouvelle fonctionnalité.
+**Prochaine étape obligatoire** : **exécution J5 (audit découvrabilité)** avant toute maquette Phase 4. Les résultats J5 alimentent la version finale de ce document.
+
+---
+
+## A. Amendements de validation (intégrés)
+
+Validés par le comité produit. **Non négociables avant Phase 4.**
+
+### Amendement 1 — Raisonner par missions, plus par fonctionnalités
+
+Le découpage fonctionnel (Agenda / Networking / Matchmaking / RDV / Polls / Annonces / Messages) **doit devenir invisible**. La navigation est organisée par **mission utilisateur du moment**, pas par module technique.
+
+| Rôle | Navigation par missions (canonique) |
+|---|---|
+| **Participant** | Mon événement · Mon agenda · Mon réseau · Mes rendez-vous · Mes informations |
+| **Staff** | Accueil opérationnel · Check-in · Participants · Support terrain · Statistiques |
+| **Org Admin** | Pilotage · Participants · Programme · Communication · Analytics |
+| **Super Admin** | Cockpit global · Organisations · Utilisateurs & rôles · Sécurité · Audit |
+| **Sponsor** *(MVP différable)* | Mon stand · Mes leads · Mes messages · Mes statistiques |
+
+> **Règle** : aucun libellé de menu ne porte le nom d'une table SQL ou d'une fonctionnalité technique. Tout libellé répond à *« ce que je viens faire »*, pas à *« quel module j'ouvre »*.
+
+### Amendement 2 — Cockpit obligatoire après authentification
+
+**Prérequis Phase 4.** Aucun utilisateur ne doit atterrir sur une liste, un menu ou un tableau de données.
+
+| Rôle | Cockpit obligatoire |
+|---|---|
+| Participant | Cockpit Participant |
+| Staff | Cockpit Staff |
+| Org Admin | Cockpit Organisation |
+| Super Admin | Cockpit Global |
+
+**Le cockpit répond à une seule question : *« Que dois-je faire maintenant ? »***
+
+Pas de KPI sans action. Pas de graphique en premier écran. Pas de menu déguisé en cockpit.
+
+### Amendement 3 — Réduction forte du nombre d'entrées de navigation
+
+| Aujourd'hui | Cible |
+|---|---|
+| 10 à 15 entrées | **4 à 6 entrées maximum** |
+| Navigation fonctionnelle (par module) | Navigation métier (par mission) |
+| Plusieurs écrans voisins | Écrans fusionnés |
+
+Fusions validées :
+
+- **Networking + Matchmaking + RDV → Réseau** (+ « Mes rendez-vous » comme mission distincte si volume utilisateur le justifie)
+- **Polls + Annonces → Communication**
+- **Agenda + Live + Attendance → Mon agenda**
+
+### Amendement 4 — J5 obligatoire avant toute Phase 4
+
+**Le risque principal n'est plus la sécurité ni le code. C'est la compréhension du produit par les utilisateurs.**
+
+Aucune maquette Premium, aucun composant V2 ne sera produit tant que J5 n'aura pas été exécuté et que ses résultats n'auront pas été intégrés à la version finale de ce document.
+
+Pool minimum : **5 participants + 3 staffs + 2 org_admin**.
+Protocole détaillé et scénarios chronométrés : §11 et `docs/sprint-0/05-decouvrabilite.md`.
 
 ---
 
 ## 0. Pourquoi ce document
 
-Les testeurs disent : *« la plateforme est bien, mais on se perd complètement »*.
-Ce verbatim n'est **pas** un problème de sécurité (Phase S terminée — 0 ERROR linter, 5 risques résiduels acceptés) ni un problème de design graphique. C'est un problème d'**architecture de l'information** :
+Verbatim testeurs : *« la plateforme est bien, mais on se perd complètement »*.
+
+Ce verbatim n'est **pas** un problème de sécurité (Phase S terminée — 0 ERROR, 5 risques résiduels acceptés) ni de design graphique. C'est un problème d'**architecture de l'information** :
 
 - 5 rôles définis en base, 2 seulement ont une home dédiée.
-- 13 entrées de navigation simultanées maximum côté admin.
+- 13 entrées de navigation simultanées côté admin.
 - 10 routes parallèles pour un même besoin métier côté participant.
-- Aucun cockpit orienté « que dois-je faire maintenant ? ».
+- Aucun cockpit orienté action.
 
-Tant que ce socle n'est pas redressé, un design premium amplifiera la confusion au lieu de la résoudre.
+Un design premium appliqué à une navigation confuse n'améliore rien.
 
 ---
 
 ## 1. Principes directeurs (non négociables)
 
-1. **Une home par rôle.** Cinq rôles ⇒ cinq points d'atterrissage différents après login. Fin du `/dashboard` unique.
-2. **4 à 6 entrées de navigation maximum** par rôle. Au-delà, on regroupe ou on déplace dans un sous-onglet.
-3. **Regrouper par intention métier, pas par table SQL.** « Réseau » remplace networking+matchmaking+RDV ; « Communication » remplace annonces+sondages.
-4. **Cockpit orienté actions.** Première vue = « N actions en attente », pas « 1 247 inscriptions ».
-5. **Aucune nouvelle table, aucune nouvelle policy RLS.** Tout réutilise les surfaces validées en Phase S.
-6. **Redirections obligatoires.** Tout renommage de route est doublé d'une redirection 301 (liens email / QR badges déjà émis).
+1. **Navigation par missions, pas par modules** (Amendement 1).
+2. **Cockpit obligatoire post-login pour chaque rôle** (Amendement 2).
+3. **4 à 6 entrées de navigation maximum par rôle** (Amendement 3).
+4. **Une home par rôle.** Fin du `/dashboard` unique.
+5. **Regrouper par intention métier, pas par table SQL.**
+6. **Cockpit = « Que dois-je faire maintenant ? »** — pas un dashboard de données.
+7. **Aucune nouvelle table, aucune nouvelle policy RLS.** Surfaces Phase S réutilisées.
+8. **Redirections 301 obligatoires** sur tout renommage (QR badges, liens email déjà émis).
+9. **J5 mesuré avant Phase 4** (Amendement 4). Pas de refonte fondée sur l'intuition.
 
 ---
 
-## 2. Rôles & périmètres (synthèse)
+## 2. Rôles & missions
 
-| Rôle | Première vue | Tâche principale | Statut UI actuel |
-|---|---|---|---|
-| **Participant** | `/e/:slug` (accueil événement enrichi) | Vivre l'événement | ✅ partiel (10 routes dispersées) |
-| **Staff** | `/staff/checkin` | Accueil terrain, scan badges | ❌ tombe sur `/dashboard` admin |
-| **Sponsor** | `/sponsor/stand` | Récupérer leads opt-in | ❌ aucune route |
-| **Org Admin** | `/org/cockpit` | Piloter ses événements | ⚠ dashboard données, pas actions |
-| **Super Admin** | `/admin/overview` | Gouvernance multi-org, sécurité | ⚠ vue identique à Org Admin |
+| Rôle | Cockpit | Missions de navigation |
+|---|---|---|
+| **Participant** | Cockpit Participant | Mon événement · Mon agenda · Mon réseau · Mes rendez-vous · Mes informations |
+| **Staff** | Cockpit Staff | Accueil opérationnel · Check-in · Participants · Support terrain · Statistiques |
+| **Sponsor** *(MVP)* | Cockpit Sponsor | Mon stand · Mes leads · Mes messages · Mes statistiques |
+| **Org Admin** | Cockpit Organisation | Pilotage · Participants · Programme · Communication · Analytics |
+| **Super Admin** | Cockpit Global | Cockpit · Organisations · Utilisateurs & rôles · Sécurité · Audit |
 
-Détail complet par domaine (voit / fait / interdit) : `docs/sprint-0/01-roles.md`.
+Détail droits / interdits : `docs/sprint-0/01-roles.md`.
 
 ---
 
-## 3. Sitemap cible
+## 3. Sitemap cible — vocabulaire missions
+
+> **Important** : la colonne « Mission » est la seule visible côté utilisateur. La colonne « Route cible » est interne. La colonne « Regroupe » liste les modules absorbés et **n'apparaît jamais dans l'UI**.
 
 ### 3.1 Participant — `/e/:slug/*`
 
-| Onglet | Route cible | Regroupe |
+| Mission | Route cible | Regroupe (invisible) |
 |---|---|---|
-| **Accueil** | `/e/:slug` | enrichie : prochaine session, badge, alertes, notifs |
-| **Mon agenda** | `/e/:slug/agenda` | `agenda` + `live` + `attendance` |
-| **Réseau** | `/e/:slug/reseau` | **fusion** `networking` + `matchmaking` + `rdv` (3 onglets internes) |
-| **Messages** | `/e/:slug/messages` | `messages` |
-| **Annonces** | `/e/:slug/annonces` | `annonces` + `poll` (sous-onglet « À voter ») |
-| **Mon profil** | `/e/:slug/profil` | profil + badge QR + documents (nouveau) |
+| **Mon événement** *(cockpit)* | `/e/:slug` | accueil enrichi : prochaine action, badge, alertes |
+| **Mon agenda** | `/e/:slug/agenda` | agenda + live + attendance |
+| **Mon réseau** | `/e/:slug/reseau` | networking + matchmaking |
+| **Mes rendez-vous** | `/e/:slug/rdv` | rdv + invitations + messagerie 1:1 entrante |
+| **Mes informations** | `/e/:slug/moi` | profil + badge QR + documents + préférences |
 
-Bottom-tab mobile : Accueil · Agenda · Réseau · Messages · Profil (5 entrées). Annonces accessible via badge de notification top bar.
+Communication (annonces + sondages) accessible via **badge notification permanent en top bar**, pas comme entrée de menu. Bottom-tab mobile : 5 missions ci-dessus.
 
 ### 3.2 Staff — `/staff/*`
 
-Check-in (home) · Participants (lecture) · Annonces (lecture) · Support (nouveau, placeholder).
+| Mission | Route cible |
+|---|---|
+| **Accueil opérationnel** *(cockpit)* | `/staff` |
+| **Check-in** | `/staff/checkin` |
+| **Participants** | `/staff/participants` |
+| **Support terrain** | `/staff/support` |
+| **Statistiques** | `/staff/stats` |
 
-### 3.3 Sponsor — `/sponsor/*` *(décision produit requise)*
+### 3.3 Sponsor — `/sponsor/*` *(MVP — décision produit attendue)*
 
-Mon stand · Mes leads · Messages · Statistiques. Peut être différé Phase 5 si arbitrage MVP.
+Mon stand · Mes leads · Mes messages · Mes statistiques. Différable Phase 5.
 
 ### 3.4 Org Admin — `/org/*`
 
-| Section | Cible | Regroupe |
+| Mission | Route cible | Regroupe (invisible) |
 |---|---|---|
-| **Cockpit** | `/org/cockpit` | `dashboard` refondu en actions (cf. §5) |
-| **Événements** | `/org/events` | `events`, `events.new`, `events.$id.{edit,sessions,registrations}` |
-| **Participants** | `/org/participants` | `participants` |
-| **Communication** | `/org/communication` | **fusion** `announcements` + `polls` |
-| **Mon organisation** | `/org/settings` | nouveau (policy S4b-C déjà OK) |
-| **Exports** | `/org/exports` | `exports` |
-
-Retiré de la nav Org Admin : `checkin` (→ Staff), `security-audit`, `admin.setup` (→ Super Admin).
+| **Pilotage** *(cockpit)* | `/org` | dashboard refondu actions |
+| **Participants** | `/org/participants` | participants + inscriptions + validations |
+| **Programme** | `/org/programme` | events + sessions + speakers |
+| **Communication** | `/org/communication` | **annonces + sondages** |
+| **Analytics** | `/org/analytics` | exports + statistiques |
+| *(secondaire)* **Mon organisation** | `/org/settings` | édition fiche org |
 
 ### 3.5 Super Admin — `/admin/*`
 
-Plateforme · Organisations · Utilisateurs & rôles · Sécurité · Audit trail · Bootstrap.
+Cockpit global · Organisations · Utilisateurs & rôles · Sécurité · Audit. Bandeau permanent « Mode plateforme » pour différencier visuellement du scope Org Admin.
 
 ---
 
-## 4. Résolution post-login (`/me/role`)
+## 4. Résolution post-login (`/me/role`) — Amendement 2
 
 ```text
-session OK → fetch user_roles
-  ├─ super_admin ──► /admin/overview
-  ├─ org_admin   ──► /org/cockpit
-  ├─ staff       ──► /staff/checkin
-  ├─ sponsor     ──► /sponsor/stand
-  └─ participant ──► /e/{prochain_event_inscrit}  ou  /events
+session OK → fetch user_roles → COCKPIT (jamais une liste, jamais un menu)
+  ├─ super_admin ──► /admin              (Cockpit Global)
+  ├─ org_admin   ──► /org                (Cockpit Organisation)
+  ├─ staff       ──► /staff              (Cockpit Staff — pas /checkin direct)
+  ├─ sponsor     ──► /sponsor            (Cockpit Sponsor)
+  └─ participant ──► /e/{prochain_event} (Cockpit Participant)
 ```
 
-Fin du « tout le monde sur `/dashboard` ».
+Fin du `/dashboard` unique. Fin de l'atterrissage sur une liste.
 
 ---
 
-## 5. Cockpit orienté actions
+## 5. Cockpit orienté actions — spec commune
 
-**Principe** : *« Vous avez N actions en attente »* — pas *« vous avez 1 247 inscriptions »*.
-Chaque carte = une action déclenchable en 1 clic. Compteurs basés sur requêtes existantes (RLS S4 déjà validée). Carte affichée uniquement si compteur > 0.
+**Principe** : *« Vous avez N actions en attente »* — pas *« vous avez 1 247 inscriptions »*. Carte affichée uniquement si compteur > 0.
 
-### Org Admin — exemple
+### Cockpit Organisation — exemple
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│ Bonjour {prénom} — Organisation : {org.name}            │
+│ Bonjour {prénom} — {org.name}                          │
 │ 3 actions en attente                                    │
 ├─────────────────────────────────────────────────────────┤
 │ ⚠  12 inscriptions à valider — SUTEL 2026   [Valider]  │
-│ ⚐  1 sondage prêt à publier — "Satisfaction" [Publier] │
+│ ⚐  1 sondage prêt à publier                  [Publier] │
 │ ✎  2 annonces en brouillon                  [Éditer]   │
 ├─────────────────────────────────────────────────────────┤
 │ Prochain événement : SUTEL 2026 — J-14 — 247/300       │
@@ -123,7 +189,23 @@ Chaque carte = une action déclenchable en 1 clic. Compteurs basés sur requête
 └─────────────────────────────────────────────────────────┘
 ```
 
-Anti-patterns explicitement bannis : cartes « X total » sans action, graphiques en premier écran, > 5 cartes simultanées, compteurs sans seuil.
+### Cockpit Participant — exemple
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│ Bonjour {prénom} — SUTEL 2026, jour 1                  │
+├─────────────────────────────────────────────────────────┤
+│ ⏰  Votre prochaine session dans 22 min                  │
+│    "Souveraineté numérique" — salle Atlas    [Y aller] │
+│ 💬 2 nouveaux messages                       [Lire]    │
+│ 🤝 1 invitation RDV en attente               [Répondre]│
+│ 📣 1 annonce non lue                         [Voir]    │
+├─────────────────────────────────────────────────────────┤
+│ [Mon badge QR]  [Mon agenda]  [Mon réseau]              │
+└─────────────────────────────────────────────────────────┘
+```
+
+Anti-patterns bannis : cartes « X total » sans action · graphiques en premier écran · > 5 cartes simultanées · compteurs sans seuil · menu déguisé en cockpit.
 
 Déclinaisons par rôle et requêtes sources : `docs/sprint-0/04-cockpit-actions.md`.
 
@@ -131,48 +213,43 @@ Déclinaisons par rôle et requêtes sources : `docs/sprint-0/04-cockpit-actions
 
 ## 6. Pages supprimées / fusionnées / créées
 
-### Supprimées (en tant que routes autonomes)
+### Supprimées en tant que routes autonomes
 
-- `matchmaking.$slug` → absorbée par `/e/:slug/reseau`
-- `rdv.$slug` → absorbée par `/e/:slug/reseau`
-- `attendance.$sessionId` → absorbée par `/e/:slug/agenda/live/:id`
-- `_authenticated/dashboard` → remplacée par `/org/cockpit` (rôle Org Admin) et `/admin/overview` (rôle Super Admin)
+`matchmaking.$slug` · `rdv.$slug` (fusion partielle, voir §3.1) · `attendance.$sessionId` · `_authenticated/dashboard` (remplacé par cockpits par rôle).
 
-### Fusionnées
+### Fusions (vocabulaire missions)
 
-| Cible | Sources |
+| Mission cible | Modules absorbés (invisibles UI) |
 |---|---|
-| `/e/:slug/reseau` | `networking` + `matchmaking` + `rdv` |
-| `/e/:slug/agenda` | `agenda` + `live` + `attendance` |
-| `/e/:slug/annonces` | `annonces` + `poll` |
-| `/org/communication` | `announcements` + `polls` |
+| Mon réseau | networking + matchmaking |
+| Mes rendez-vous | rdv + invitations |
+| Mon agenda | agenda + live + attendance |
+| Communication (Org Admin) | annonces + sondages |
+| Programme (Org Admin) | events + sessions + speakers |
+| Analytics (Org Admin) | exports + statistiques |
 
 ### Créées
 
-`/org/settings`, `/staff/support`, `/admin/overview`, `/admin/organizations`, `/admin/users`, `/admin/audit`, `/sponsor/{stand,leads,messages,stats}`.
+`/org/settings`, `/staff/support`, `/staff/stats`, `/admin` (cockpit global), `/admin/organizations`, `/admin/users`, `/admin/audit`, `/sponsor/{stand,leads,messages,stats}`.
 
-### Préfixées (déplacements simples)
+### Préfixées (déplacements de routes)
 
-`_authenticated/checkin` → `/staff/checkin`
-`_authenticated/events.*` → `/org/events/*`
-`_authenticated/participants` → `/org/participants`
-`_authenticated/exports` → `/org/exports`
-`_authenticated/security-audit` → `/admin/security`
-`_authenticated/admin.setup` → `/admin/bootstrap`
+`_authenticated/checkin` → `/staff/checkin` · `_authenticated/events.*` → `/org/programme/*` · `_authenticated/participants` → `/org/participants` · `_authenticated/exports` → `/org/analytics` · `_authenticated/security-audit` → `/admin/security` · `_authenticated/admin.setup` → `/admin/bootstrap`.
 
-Mapping exhaustif : `docs/sprint-0/03-navigation-cible.md` §« Mapping routes actuelles → cibles ».
+Mapping technique exhaustif : `docs/sprint-0/03-navigation-cible.md`.
 
 ---
 
 ## 7. Règles de navigation
 
-1. **Une seule barre de navigation visible à la fois.** Elle change selon le rôle, jamais selon la page.
-2. **Le préfixe d'URL signale le rôle** (`/e/`, `/staff/`, `/sponsor/`, `/org/`, `/admin/`). Pas d'ambiguïté possible.
-3. **Pas de menu « plus »** ou de tiroir caché côté Participant. Si une fonctionnalité n'a pas sa place dans les 5 onglets, elle est repensée ou supprimée.
-4. **Breadcrumb obligatoire** sur toutes les pages admin de profondeur ≥ 2 (`/org/events/:id/sessions`).
-5. **Retour visuel de scope** sur Super Admin : bandeau « Mode plateforme » permanent (sinon confusion Org Admin / Super Admin).
-6. **Badge de notification unique** dans la top bar par rôle (additionne annonces non lues, messages non lus, invitations RDV, sondages actifs). Plus de notifications dispersées.
-7. **Liens entrants legacy** : redirections 301 conservées 6 mois minimum (QR badges, liens email).
+1. **Vocabulaire missions uniquement** dans les libellés visibles (Amendement 1).
+2. **Une seule barre de navigation visible** par rôle. Elle change avec le rôle, jamais avec la page.
+3. **Préfixe d'URL signale le rôle** (`/e/`, `/staff/`, `/sponsor/`, `/org/`, `/admin/`).
+4. **Pas de menu « plus »** ni de tiroir caché côté Participant.
+5. **Breadcrumb obligatoire** sur les pages admin de profondeur ≥ 2.
+6. **Bandeau « Mode plateforme »** permanent sur Super Admin.
+7. **Badge de notification unique** dans la top bar par rôle (somme annonces + messages + RDV + sondages).
+8. **Redirections 301** conservées 6 mois minimum.
 
 ---
 
@@ -180,94 +257,171 @@ Mapping exhaustif : `docs/sprint-0/03-navigation-cible.md` §« Mapping routes a
 
 | Métrique | Avant | Après V2 |
 |---|:-:|:-:|
-| Routes participant événement | 10 | 6 (dont 5 onglets) |
-| Entrées nav simultanées max | 13 | 6 |
-| Rôles avec home dédiée | 2 / 5 | 5 / 5 |
-| Fusions de routes | — | 4 |
-| Routes créées | — | 8 (Sponsor ×4 + Admin ×4) |
-| Dashboards orientés actions | 0 | 2 (`/org/cockpit`, `/admin/overview`) |
+| Entrées nav simultanées max | 13 | **5** (Amendement 3) |
+| Rôles avec home dédiée | 2 / 5 | **5 / 5** |
+| Rôles avec cockpit obligatoire | 0 / 5 | **5 / 5** (Amendement 2) |
+| Routes participant événement | 10 | 5 (par missions) |
+| Libellés de menu portant un nom technique | ~8 | **0** (Amendement 1) |
+| Fusions de routes | — | 6 |
+| Cockpits actions livrés | 0 | 5 (Phase 4) |
 
 ---
 
-## 9. Backlog d'exécution (Phase 4)
+## 9. Backlog d'exécution Phase 4
+
+**Démarrage subordonné à l'exécution J5 et à l'intégration de ses résultats dans ce document.**
 
 ### P1 — Bloquant adoption
 
-P1-1 Refonte `/me/role` (redirection par rôle) · P1-2 Cockpit Org Admin actions · P1-3 Home Participant enrichie · P1-4 Fusion Réseau · P1-5 Fusion Communication · P1-6 Préfixage rôles + nav rôle-spécifique.
+P1-1 Refonte `/me/role` → cockpit par rôle (Amendement 2) · P1-2 Cockpit Organisation actions · P1-3 Cockpit Participant · P1-4 Fusions « Réseau » + « Communication » + « Programme » · P1-5 Préfixage rôles + nav rôle-spécifique par missions · P1-6 Renommage libellés (Amendement 1).
 
-### P2 — Combler les rôles incomplets
+### P2 — Combler rôles incomplets
 
-P2-1 `/org/settings` · P2-2 `/admin/organizations` · P2-3 `/admin/users` · P2-4 `/admin/audit` · P2-5 Cockpit Super Admin · P2-6 `/staff/support` · P2-7 Wizard préparation événement · P2-8 Centre notifications Participant.
+`/org/settings` · `/admin/organizations` · `/admin/users` · `/admin/audit` · Cockpit Super Admin · `/staff/support` · `/staff/stats` · Wizard préparation événement · Centre notifications Participant.
 
 ### P3 — Confort & Sponsor
 
-P3-1 Module Sponsor MVP (décision produit requise) · P3-2 Mes documents Participant · P3-3 Stats sponsor · P3-4 Empty states & onboarding · P3-5 Dark mode + polish responsive.
+Module Sponsor MVP *(décision produit requise)* · Mes documents Participant · Empty states & onboarding · Dark mode + polish responsive.
 
-Effort estimé et gaps couverts : `docs/sprint-0/06-backlog.md`.
+Effort estimé : `docs/sprint-0/06-backlog.md`.
 
 ---
 
-## 10. Métriques de validation produit
+## 10. Métriques de succès — référentiel V2
 
-| Indicateur | Baseline (à mesurer J5) | Cible post-Phase 4 |
+| Indicateur | Baseline (J5) | Cible post-Phase 4 |
 |---|---|---|
-| Clics pour tâche T1 Org Admin (valider une inscription) | à mesurer | ≤ 3 |
+| Clics cockpit → action métier | à mesurer | ≤ 3 |
 | Temps « publier une annonce » | à mesurer | ≤ 45 s |
+| Temps « envoyer un message à un participant » | à mesurer | ≤ 30 s |
+| Temps « faire un check-in » | à mesurer | ≤ 15 s |
 | Taux complétion « préparer un événement » | à mesurer | ≥ 80 % |
-| Verbatim « on se perd » dans tests utilisateurs | présent | absent |
-| Rôles avec home dédiée | 2 / 5 | 5 / 5 |
-
-Protocole de mesure : `docs/sprint-0/05-decouvrabilite.md` (audit sur build figé, à exécuter avant toute refonte).
+| Verbatim « on se perd » | présent | absent |
+| Hésitations utilisateur par tâche | à mesurer | ≤ 1 |
+| Rôles avec cockpit | 0 / 5 | 5 / 5 |
 
 ---
 
-## 11. Risques & points ouverts
+## 11. Protocole J5 — à exécuter avant Phase 4 (Amendement 4)
+
+**Mode** : test utilisateur chronométré sur build figé. Aucune modification de l'app pendant la campagne.
+
+### Pool *(amendement 4)*
+
+- **5 participants** (profils non techniques, jamais utilisé l'app)
+- **3 staffs**
+- **2 org_admin**
+- Sponsor & Super Admin : différés (parcours incomplets)
+
+### Setup
+
+- Session 30 min par testeur, partage d'écran enregistré.
+- Comptes pré-créés avec rôle attribué.
+- Observateur silencieux, aucune aide pendant la tâche.
+- Mesure manuelle : chronomètre + comptage clics + log des hésitations.
+
+### Scénarios chronométrés *(amendement 4)*
+
+| # | Scénario | Rôle(s) | Métriques |
+|---|---|---|---|
+| S1 | S'inscrire à un événement | Participant | temps, clics, blocages |
+| S2 | Retrouver son agenda et bookmarker une session | Participant | temps, clics, blocages |
+| S3 | Trouver un participant donné dans l'annuaire | Participant | temps, clics, hésitations |
+| S4 | Envoyer un message à ce participant | Participant | temps, clics, hésitations |
+| S5 | Répondre à un sondage en cours | Participant | temps, clics |
+| S6 | Faire un check-in d'un participant arrivé | Staff | temps, clics |
+| S7 | Marquer un participant manuellement présent | Staff | temps, clics |
+| S8 | Publier une annonce | Org Admin | temps, clics, blocages |
+| S9 | Valider 3 inscriptions en attente | Org Admin | temps, clics |
+| S10 | Préparer un nouvel événement de A à Z | Org Admin | temps, clics, taux abandon |
+
+### Grille de mesure
+
+| Métrique | Cible | Seuil rouge |
+|---|---|---|
+| Temps tâche simple (S1, S2, S5, S6) | ≤ 30 s | > 90 s |
+| Clics tâche simple | ≤ 3 | > 6 |
+| Taux complétion sans aide | ≥ 80 % | < 60 % |
+| Hésitations (« je ne sais pas où chercher ») | 0 | ≥ 2 |
+| Taux abandon S10 (préparer event) | < 20 % | > 40 % |
+
+### Livrable J5
+
+Rapport `docs/sprint-0/07-rapport-j5.md` (à produire après campagne) :
+
+- Pool effectif, durée totale.
+- Résultats par scénario : clics moy / temps moy / complétion / verbatims.
+- Top 5 frictions classées par gravité.
+- Recommandations re-priorisées vs §9 (P1/P2/P3).
+- Verbatims marquants.
+
+**Le rapport J5 alimente la version finale de ce document (V2.1) avant tout démarrage Phase 4.**
+
+Protocole détaillé : `docs/sprint-0/05-decouvrabilite.md`.
+
+---
+
+## 12. Risques & points ouverts
 
 | ID | Risque | Mitigation |
 |---|---|---|
-| R-UX1 | Renommage casse liens email / QR badges | Redirections 301 (router) — obligatoire P1-6 |
-| R-UX2 | Fusion Réseau désoriente utilisateurs habitués | Bandeau « Nouveauté » 30 jours |
-| R-UX3 | Sponsor sans spec produit | Arbitrage MVP requis avant P3-1 |
-| R-UX4 | Priorités fondées sur intuition, pas mesure | Exécuter J5 (audit découvrabilité) avant P1 |
-| R-UX5 | M4-D (rôles scopés par org) non livrée | `/admin/users` v1 reste global super-admin only |
-
----
-
-## 12. Décisions attendues du comité produit
-
-1. **Validation du sitemap V2** (§3) — go / no-go intégral.
-2. **Périmètre MVP Sponsor** (§3.3) — livré Phase 4 ou différé Phase 5 ?
-3. **Validation des fusions** (§6) — accord sur Réseau, Communication, Agenda+Live, Annonces+Polls ?
-4. **Calendrier J5** (audit découvrabilité) — pool de testeurs et date d'exécution.
-5. **Politique de redirection** — durée de maintien des redirections 301 (proposition : 6 mois).
+| R-UX1 | Renommage casse liens email / QR badges | Redirections 301 — obligatoire P1-5 |
+| R-UX2 | Fusions désorientent utilisateurs habitués | Bandeau « Nouveauté » 30 jours |
+| R-UX3 | Sponsor sans spec produit | Arbitrage MVP requis avant P3 |
+| R-UX4 | Priorités fondées sur intuition | **Levé par J5 — Amendement 4** |
+| R-UX5 | M4-D (rôles scopés par org) non livrée | `/admin/users` v1 super-admin only |
+| R-UX6 | Vocabulaire missions non testé | À valider explicitement pendant J5 (poser la question « où iriez-vous pour X ? ») |
 
 ---
 
 ## 13. Séquence retenue
 
 ```text
-Phase S (sécurité)         ✅ terminée — 5 risques résiduels acceptés
+Phase S (sécurité)                         ✅ terminée
         │
         ▼
-Sprint 0 — Architecture Produit V2  ◄── CE DOCUMENT (à valider)
+Sprint 0 — Architecture Produit V2          ✅ validée (sous réserve 4 amendements intégrés)
         │
         ▼
-Audit découvrabilité J5 sur build figé (baseline mesurée)
+J5 — Audit découvrabilité chronométré       ◄── PROCHAINE ÉTAPE
+   pool : 5 participants + 3 staffs + 2 org_admin
+   10 scénarios chronométrés
         │
         ▼
-Phase 4 — Refonte UX & navigation (P1 → P2 → P3)
+Architecture Produit V2.1                   intégration résultats J5
+   re-priorisation P1/P2/P3 sur mesures réelles
         │
         ▼
-Validation utilisateurs (re-mesure des métriques §10)
+Phase 4 — Refonte navigation & cockpits     P1 → P2 → P3
+   cockpits obligatoires par rôle
+   vocabulaire missions
+   4-6 entrées max par rôle
         │
         ▼
-Phase 4-bis — UX Premium (design système avancé, micro-interactions)
+Re-mesure (J5 bis) — validation cibles §10
+        │
+        ▼
+Phase 4-bis — UX Premium ANSUT Event
         │
         ▼
 Nouvelles fonctionnalités (Sponsor MVP, IA, etc.)
 ```
 
-**Aucune refonte graphique ne sera lancée tant que la navigation cible n'aura pas été validée par les utilisateurs sur la base de cette V2.**
+**Aucune maquette Premium ne sera produite tant que J5 n'a pas été exécuté et intégré.**
+
+---
+
+## 14. Décisions du comité — état
+
+| # | Décision | Statut |
+|---|---|---|
+| D1 | Sitemap V2 par missions (Amendement 1) | ✅ validée |
+| D2 | Cockpit obligatoire post-login (Amendement 2) | ✅ validée |
+| D3 | 4-6 entrées de navigation max (Amendement 3) | ✅ validée |
+| D4 | J5 préalable obligatoire à Phase 4 (Amendement 4) | ✅ validée |
+| D5 | Périmètre MVP Sponsor | ⏳ arbitrage attendu |
+| D6 | Calendrier J5 (pool + date) | ⏳ planification attendue |
+| D7 | Durée maintien redirections 301 (proposition 6 mois) | ⏳ attendue |
 
 ---
 
@@ -275,7 +429,8 @@ Nouvelles fonctionnalités (Sponsor MVP, IA, etc.)
 
 - `01-roles.md` — matrice rôles × domaines × droits (croisée RLS S4)
 - `02-parcours.md` — parcours actuels + 5 frictions transverses
-- `03-navigation-cible.md` — sitemap cible détaillé + mapping de routes
+- `03-navigation-cible.md` — sitemap technique + mapping de routes
 - `04-cockpit-actions.md` — spec cockpit + requêtes sources
-- `05-decouvrabilite.md` — protocole audit testeurs J5
-- `06-backlog.md` — backlog Phase 4 (P1/P2/P3) avec effort estimé
+- `05-decouvrabilite.md` — protocole J5 détaillé (à exécuter)
+- `06-backlog.md` — backlog Phase 4 P1/P2/P3
+- `07-rapport-j5.md` — *(à produire après campagne J5)*
