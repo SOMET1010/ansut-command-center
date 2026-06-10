@@ -71,7 +71,7 @@ for (const f of routeFiles) {
 
 // 2. Références dans le code — capture les `to: "/foo"` et `to="/foo"`,
 // ignore les template literals (`/foo/${x}`) qui ne sont pas du routing typé.
-const TO_REGEX = /\bto\s*[:=]\s*["']((?:\/)[^"'`?#${}]*)["']/g;
+const TO_REGEX = /\bto\s*[:=]\s*["'](\/[^"'`?#]*)["']/g;
 const refs = new Map(); // path → [files]
 for (const f of collectSourceFiles(SRC_DIR)) {
   const code = readFileSync(f, "utf8");
