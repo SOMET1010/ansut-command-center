@@ -50,11 +50,10 @@ function LoginPage() {
         if (!res.ok) {
           throw new Error(json.error_description || json.msg || json.error || "Connexion impossible");
         }
-        const user = persistPreviewSession(json);
-        const target = await pickPostLoginTarget(user.id, json.access_token);
+        persistPreviewSession(json);
         toast.success("Connexion réussie");
         // Hard reload pour que supabase initialise depuis localStorage
-        window.location.assign(target);
+        window.location.assign("/me/role");
         return;
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -130,27 +129,6 @@ function LoginPage() {
     localStorage.setItem(`sb-${projectRef}-auth-token`, JSON.stringify(session));
     return session.user;
   }
-
-  async function pickPostLoginTarget(userId: string, accessToken: string) {
-    try {
-      const res = await fetch(`/api/public/auth/roles?user_id=${encodeURIComponent(userId)}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (res.ok) {
-        const rows = (await res.json()) as { role: string }[];
-        const roles = rows.map((r) => r.role);
-        if (roles.includes("super_admin") || roles.includes("org_admin")) {
-          return "/dashboard";
-        }
-        if (roles.includes("staff")) return "/checkin";
-      }
-    } catch {
-      // ignore — fallback ci-dessous
-    }
-    return "/me/role";
-  }
-
-
   return (
     <AuthLayout
       eyebrow="SUTEL 2026"
