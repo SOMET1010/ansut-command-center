@@ -133,18 +133,9 @@ function LoginPage() {
 
   async function pickPostLoginTarget(userId: string, accessToken: string) {
     try {
-      const url = import.meta.env.VITE_SUPABASE_URL as string;
-      const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-      const res = await fetch(
-        `${url}/rest/v1/user_roles?user_id=eq.${userId}&select=role`,
-        {
-          headers: {
-            apikey: key,
-            Authorization: `Bearer ${accessToken}`,
-            Accept: "application/json",
-          },
-        },
-      );
+      const res = await fetch(`/api/public/auth/roles?user_id=${encodeURIComponent(userId)}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
       if (res.ok) {
         const rows = (await res.json()) as { role: string }[];
         const roles = rows.map((r) => r.role);
