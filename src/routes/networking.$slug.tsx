@@ -70,8 +70,9 @@ function NetworkingPage() {
 
   if (eventLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-3">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+        <p className="text-sm text-muted-foreground">Chargement de l'annuaire…</p>
       </div>
     );
   }
@@ -256,8 +257,9 @@ function DiscoverTab({ slug }: { slug: string }) {
       </p>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
+        <div className="flex flex-col items-center gap-2 py-12">
           <div className="animate-spin h-6 w-6 border-4 border-primary border-t-transparent rounded-full" />
+          <p className="text-xs text-muted-foreground">Chargement…</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-12">

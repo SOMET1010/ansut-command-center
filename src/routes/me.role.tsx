@@ -96,6 +96,13 @@ function MyRolePage() {
   }
 
   const isSuper = state.roles.includes("super_admin");
+  const isStaff = state.roles.length > 0;
+
+  // Participant (aucun rôle) → rediriger vers l'accueil. Les admins/staff voient la page.
+  if (state.status === "ready" && !isStaff && !isSuper) {
+    navigate({ to: "/" }).catch(() => {});
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
@@ -108,7 +115,7 @@ function MyRolePage() {
           )}
           <div>
             <h1 className="text-xl font-bold">
-              {isSuper ? "Vous êtes super_admin ✅" : "Compte standard"}
+              {isSuper ? "Vous êtes super_admin ✅" : "Vous êtes staff"}
             </h1>
             <p className="text-sm text-muted-foreground">{state.email}</p>
           </div>

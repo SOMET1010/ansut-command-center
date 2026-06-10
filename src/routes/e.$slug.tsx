@@ -87,6 +87,7 @@ function PublicEventPage() {
   const [done, setDone] = useState(false);
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [downloadingBadge, setDownloadingBadge] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [registrationCount, setRegistrationCount] = useState<number>(0);
   const [isFull, setIsFull] = useState(false);
@@ -228,6 +229,13 @@ function PublicEventPage() {
       }
     }
 
+    // Récupérer le statut de l'inscription pour affichage
+    if (token) {
+      const { data: reg } = await supabase.rpc("me_registration", { p_qr_token: token as string });
+      const row = Array.isArray(reg) ? reg[0] : reg;
+      if (row?.status) setRegistrationStatus(row.status as string);
+    }
+
     setDone(true);
   }
 
@@ -264,7 +272,7 @@ function PublicEventPage() {
                 to="/login"
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                {t("nav.admin")}
+                Espace organisateur
               </Link>
             )}
           </div>
@@ -365,10 +373,13 @@ function PublicEventPage() {
           ) : done ? (
             <div className="py-8 text-center">
               <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
-              <h2 className="mt-4 text-2xl font-semibold">Inscription confirmée</h2>
+              <h2 className="mt-4 text-2xl font-semibold">
+                {registrationStatus === "confirmed" ? "Inscription confirmée ✅" : "Demande envoyée ⏳"}
+              </h2>
               <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-                Votre badge est prêt ! Présentez-le à l'entrée de l'événement.
-                Une copie a été envoyée par email.
+                {registrationStatus === "confirmed"
+                  ? "Votre badge est prêt ! Présentez-le à l'entrée de l'événement. Une copie a été envoyée par email."
+                  : "Votre demande est en cours de validation. Vous recevrez un email de confirmation sous 24h."}
               </p>
               {qrToken && (
                 <>

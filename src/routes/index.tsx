@@ -53,7 +53,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Inscriptions, accréditations, badges QR, agenda, live polling et analytics en temps réel pour le Salon Universel des Télécommunications.",
+          "Inscriptions, badges QR, agenda, live polling et analytics en temps réel pour le Salon Universel des Télécommunications.",
       },
       { property: "og:title", content: "ANSUT EVENT — SUTEL 2026" },
       {
@@ -210,7 +210,7 @@ function Landing() {
               to="/signup"
               className="text-[13px] font-medium text-white/65 transition hover:text-white"
             >
-              S'inscrire
+              Obtenir mon badge
             </Link>
           </div>
 
@@ -230,7 +230,7 @@ function Landing() {
               className="rounded-full px-4 shadow-sm"
             >
               <Link to="/signup">
-                <span className="sm:hidden">S'inscrire</span>
+                <span className="sm:hidden">Badge</span>
                 <span className="hidden sm:inline">Créer un compte</span>
               </Link>
             </Button>
@@ -335,12 +335,12 @@ function Landing() {
                 >
                   {ev?.slug ? (
                     <Link to="/e/$slug" params={{ slug: ev.slug }}>
-                      Demander son accréditation
+                      Obtenir mon badge
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   ) : (
                     <Link to="/signup">
-                      Demander son accréditation
+                      Obtenir mon badge
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   )}

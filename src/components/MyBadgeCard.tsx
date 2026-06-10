@@ -223,10 +223,10 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label="Fermer"
-              className="absolute right-3 top-3 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900"
+              aria-label="Fermer et revenir"
+              className="absolute right-4 top-4 rounded-full p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900 active:scale-95 transition-all"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </button>
             <DialogTitle className="sr-only">Mon badge — {me.full_name}</DialogTitle>
             <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
