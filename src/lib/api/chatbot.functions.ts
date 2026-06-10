@@ -156,10 +156,12 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
       };
     }
 
-    // Construire le contexte de l'événement
+    // Construire le contexte de l'événement. Les identifiants WiFi sont
+    // volontairement exclus du prompt : ils sont sensibles (réservés au
+    // staff via get_event_wifi) et ne doivent pas être divulgués par le
+    // chatbot, qui est accessible aux visiteurs anonymes.
     let contextInfo = `\n\nContexte de l'événement actuel:\n- Nom: ${eventContext.eventName}`;
     if (eventContext.venue) contextInfo += `\n- Lieu: ${eventContext.venue}`;
-    if (eventContext.wifiSsid)
       contextInfo += `\n- WiFi: Réseau "${eventContext.wifiSsid}", Mot de passe: "${eventContext.wifiPassword}"`;
     if (eventContext.sessions && eventContext.sessions.length > 0) {
       contextInfo += `\n- Sessions au programme:`;
