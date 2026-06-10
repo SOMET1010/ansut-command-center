@@ -352,20 +352,10 @@ function PublicEventPage() {
                 {event.description}
               </p>
             )}
-            {/* WiFi QR Code */}
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {(event as any).wifi_ssid && (
-              <div className="mt-8">
-                <WifiQrCode
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  ssid={(event as any).wifi_ssid}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  password={(event as any).wifi_password || ""}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  encryption={(event as any).wifi_encryption || "WPA"}
-                />
-              </div>
-            )}
+            {/* WiFi : retiré du parcours public. Les identifiants WiFi sont restreints
+                au staff/admin (RPC get_event_wifi) ; ils ne doivent jamais être visibles
+                par un visiteur anonyme. À exposer aux participants inscrits via une
+                future RPC dédiée si besoin. */}
             {/* CARTE FORMULAIRE */}
             <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10">
 
