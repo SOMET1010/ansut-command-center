@@ -5,6 +5,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Bell, AlertTriangle, Info, Clock, MapPin, Pin, RefreshCw } from "lucide-react";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 
 export const Route = createFileRoute("/annonces/$slug")({
   head: () => ({ meta: [{ title: "Annonces — ANSUT EVENT" }] }),
@@ -154,6 +155,7 @@ function AnnoncesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <ParticipantBottomNav slug={slug} />
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-white/95 backdrop-blur-sm">
         <div className="mx-auto max-w-2xl px-4 py-4">

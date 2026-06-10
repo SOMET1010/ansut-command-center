@@ -37,13 +37,13 @@ describe("Cockpit breadcrumb — getCockpitBreadcrumbLabel", () => {
   // Real route files under src/routes/_authenticated/ — keep this table in sync
   // when adding/removing a cockpit page.
   const ALL_COCKPIT_URLS: Array<[url: string, label: string]> = [
-    ["/dashboard", "Tableau de bord"],
+    ["/dashboard", "Cockpit"],
     ["/events", "Événements"],
     ["/events/new", "Événements"],
     ["/events/abc-123/edit", "Événements"],
     ["/events/abc-123/registrations", "Événements"],
     ["/participants", "Participants"],
-    ["/polls", "Live Polling"],
+    ["/polls", "Sondages"],
     ["/checkin", "Check-in"],
     ["/admin/setup", "Administration"],
   ];
@@ -72,12 +72,12 @@ describe("Cockpit breadcrumb — getCockpitBreadcrumbLabel", () => {
     ];
     const labels = sequence.map(getCockpitBreadcrumbLabel);
     expect(labels).toEqual([
-      "Tableau de bord",
+      "Cockpit",
       "Événements",
       "Événements",
       "Événements",
       "Participants",
-      "Live Polling",
+      "Sondages",
       "Check-in",
       "Administration",
     ]);

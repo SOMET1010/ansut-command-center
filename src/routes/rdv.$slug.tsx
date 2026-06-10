@@ -16,6 +16,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 
 export const Route = createFileRoute("/rdv/$slug")({
   head: () => ({ meta: [{ title: "Mes RDV — ANSUT EVENT" }] }),
@@ -212,6 +213,7 @@ function RdvPage() {
   // Page principale
   return (
     <div className="min-h-screen bg-slate-50">
+      <ParticipantBottomNav slug={slug} />
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-white/95 backdrop-blur-sm">
         <div className="mx-auto max-w-3xl px-4 py-4">

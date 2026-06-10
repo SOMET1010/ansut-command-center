@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AnsutLogo } from "@/components/ansut/Logo";
 import { MessageCircle, Send, ArrowLeft, Users, Search, Check, CheckCheck } from "lucide-react";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 
 /* ─── Types ─── */
 type Participant = {
@@ -131,6 +132,7 @@ function MessagesPage() {
 
   return (
     <PageShell slug={slug}>
+      <ParticipantBottomNav slug={slug} />
       <div className="flex h-[calc(100dvh-64px)] overflow-hidden">
         {/* Sidebar conversations (masquée sur mobile si conversation active) */}
         <div

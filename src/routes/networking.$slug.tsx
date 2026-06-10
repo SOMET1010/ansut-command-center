@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { ChatBot } from "@/components/ChatBot";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -122,6 +123,7 @@ function NetworkingDirectory() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <ParticipantBottomNav slug={slug} />
       {/* En-tête */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4">
