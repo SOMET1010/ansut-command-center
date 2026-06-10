@@ -4,12 +4,33 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell, AlertTriangle, Info, Clock, MapPin, Pin, RefreshCw } from "lucide-react";
+import {
+  Bell,
+  AlertTriangle,
+  Info,
+  Clock,
+  MapPin,
+  Pin,
+  RefreshCw,
+  Wifi,
+  Phone,
+  Bus,
+  UtensilsCrossed,
+  BedDouble,
+  Vote,
+  ChevronRight,
+  CalendarDays,
+} from "lucide-react";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 
+/**
+ * Sprint B — Salon = centre d'informations pratiques.
+ * Contrainte : 0 nouvelle table, 0 nouveau rôle, 0 nouveau flux métier.
+ * Réutilisation stricte de l'existant : events, event_announcements, live_polls.
+ */
 export const Route = createFileRoute("/annonces/$slug")({
-  head: () => ({ meta: [{ title: "Annonces — ANSUT EVENT" }] }),
-  component: AnnoncesPage,
+  head: () => ({ meta: [{ title: "Salon — ANSUT EVENT" }] }),
+  component: SalonPage,
 });
 
 type Announcement = {
@@ -29,6 +50,13 @@ type Event = {
   starts_at: string;
   ends_at: string;
   location: string | null;
+};
+
+type ActivePoll = {
+  id: string;
+  question: string;
+  poll_type: string;
+  session_id: string;
 };
 
 const TYPE_CONFIG: Record<string, { icon: typeof Info; label: string; color: string; bg: string }> =
@@ -65,15 +93,15 @@ const TYPE_CONFIG: Record<string, { icon: typeof Info; label: string; color: str
     },
   };
 
-function AnnoncesPage() {
+function SalonPage() {
   const { slug } = Route.useParams();
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const [event, setEvent] = useState<Event | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [activePolls, setActivePolls] = useState<ActivePoll[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  // Charger l'événement
   useEffect(() => {
     async function loadEvent() {
       const { data } = await supabase
@@ -82,50 +110,63 @@ function AnnoncesPage() {
         .eq("slug", slug)
         .eq("status", "published")
         .maybeSingle();
-      if (data) {
-        setEvent(data);
-      } else {
-        // Évite le spinner infini quand l'événement n'existe pas.
-        setLoading(false);
-      }
+      if (data) setEvent(data);
+      else setLoading(false);
     }
     loadEvent();
   }, [slug]);
 
-  // Charger les annonces et rafraîchir toutes les 10 secondes
   useEffect(() => {
     if (!event) return;
 
-    async function loadAnnouncements() {
+    async function loadData() {
       const now = new Date().toISOString();
-      const { data } = await supabase
+
+      // Annonces
+      const { data: ann } = await supabase
         .from("event_announcements")
         .select("id, title, content, announcement_type, is_pinned, published_at, expires_at")
         .eq("event_id", event!.id)
         .lte("published_at", now)
         .order("is_pinned", { ascending: false })
         .order("published_at", { ascending: false });
-
-      if (data) {
-        // Filtrer les annonces expirées côté client
-        const active = data.filter((a) => !a.expires_at || new Date(a.expires_at) > new Date());
-        setAnnouncements(active);
+      if (ann) {
+        setAnnouncements(
+          ann.filter((a) => !a.expires_at || new Date(a.expires_at) > new Date()),
+        );
       }
+
+      // Sondages actifs — bornés aux sessions de l'événement.
+      const { data: sessions } = await supabase
+        .from("event_sessions")
+        .select("id")
+        .eq("event_id", event!.id);
+      const sessionIds = (sessions ?? []).map((s) => s.id);
+      if (sessionIds.length > 0) {
+        const { data: polls } = await supabase
+          .from("live_polls")
+          .select("id, question, poll_type, session_id")
+          .in("session_id", sessionIds)
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true });
+        setActivePolls(polls ?? []);
+      } else {
+        setActivePolls([]);
+      }
+
       setLoading(false);
       setLastRefresh(new Date());
     }
 
-    loadAnnouncements();
-    const interval = setInterval(loadAnnouncements, 10000);
+    loadData();
+    const interval = setInterval(loadData, 15000);
     return () => clearInterval(interval);
   }, [event]);
 
-  function formatTime(dateStr: string) {
+  function formatRelative(dateStr: string) {
     const date = new Date(dateStr);
     const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMin = Math.floor(diffMs / 60000);
-
+    const diffMin = Math.floor((now.getTime() - date.getTime()) / 60000);
     if (diffMin < 1) return "À l'instant";
     if (diffMin < 60) return `Il y a ${diffMin} min`;
     const diffH = Math.floor(diffMin / 60);
@@ -138,7 +179,15 @@ function AnnoncesPage() {
     });
   }
 
-  // Événement non trouvé
+  function formatEventDates(start: string, end: string) {
+    const s = new Date(start);
+    const e = new Date(end);
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    const sameDay = s.toDateString() === e.toDateString();
+    return sameDay ? fmt(s) : `${fmt(s)} → ${fmt(e)}`;
+  }
+
   if (!loading && !event) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
@@ -156,87 +205,236 @@ function AnnoncesPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <ParticipantBottomNav slug={slug} />
+
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-white/95 backdrop-blur-sm">
         <div className="mx-auto max-w-2xl px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-bold text-foreground">Annonces</h1>
+              <h1 className="text-lg font-bold text-foreground">Salon</h1>
               {event && <p className="text-sm text-muted-foreground">{event.name}</p>}
             </div>
             <div className="flex items-center gap-3">
               <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <RefreshCw className="h-3 w-3" />
-                {lastRefresh.toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
+              {lastRefresh && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <RefreshCw className="h-3 w-3" />
+                  {lastRefresh.toLocaleTimeString("fr-FR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Contenu */}
-      <main id="main-content" className="mx-auto max-w-2xl px-4 py-6">
+      <main id="main-content" className="mx-auto max-w-2xl px-4 py-6 space-y-6">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
           </div>
-        ) : announcements.length === 0 ? (
-          <div className="rounded-xl border-2 border-dashed border-border py-16 text-center">
-            <Bell className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-            <p className="font-medium text-muted-foreground">Aucune annonce pour le moment</p>
-            <p className="mt-1 text-sm text-muted-foreground/70">
-              Les annonces de l'organisateur apparaîtront ici en temps réel
-            </p>
-          </div>
         ) : (
-          <div className="space-y-4">
-            {announcements.map((ann) => {
-              const config = TYPE_CONFIG[ann.announcement_type] || TYPE_CONFIG.info;
-              const Icon = config.icon;
-
-              return (
-                <article
-                  key={ann.id}
-                  className={`rounded-xl border p-4 transition ${config.bg} ${
-                    ann.is_pinned ? "ring-2 ring-primary/20" : ""
-                  }`}
+          <>
+            {/* ───── 1. Infos pratiques ───── */}
+            <section aria-labelledby="infos-pratiques">
+              <h2
+                id="infos-pratiques"
+                className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Informations pratiques
+              </h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {/* Wi-Fi */}
+                <InfoCard
+                  icon={Wifi}
+                  iconClass="text-sky-600 bg-sky-50"
+                  title="Wi-Fi"
                 >
-                  {/* Header de l'annonce */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className={`rounded-lg p-1.5 ${config.color}`}>
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <span className={`text-xs font-medium ${config.color}`}>
-                          {config.label}
-                        </span>
-                        {ann.is_pinned && <Pin className="ml-1 inline h-3 w-3 text-primary" />}
-                      </div>
-                    </div>
-                    <time className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatTime(ann.published_at)}
-                    </time>
-                  </div>
-
-                  {/* Contenu */}
-                  <h2 className="mt-3 font-semibold text-foreground">{ann.title}</h2>
-                  <p className="mt-1.5 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
-                    {ann.content}
+                  <p>
+                    Le code Wi-Fi est communiqué à l'accueil et affiché sur les panneaux
+                    d'information du site.
                   </p>
-                </article>
-              );
-            })}
-          </div>
+                </InfoCard>
+
+                {/* Horaires & lieu */}
+                <InfoCard
+                  icon={CalendarDays}
+                  iconClass="text-primary bg-primary/10"
+                  title="Horaires & lieu"
+                >
+                  {event && (
+                    <>
+                      <p className="font-medium text-foreground">
+                        {formatEventDates(event.starts_at, event.ends_at)}
+                      </p>
+                      {event.location && (
+                        <p className="mt-1 flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 shrink-0" />
+                          <span>{event.location}</span>
+                        </p>
+                      )}
+                    </>
+                  )}
+                </InfoCard>
+
+                {/* Contact assistance */}
+                <InfoCard
+                  icon={Phone}
+                  iconClass="text-emerald-600 bg-emerald-50"
+                  title="Contact assistance"
+                >
+                  <p>
+                    Pour toute question pendant l'événement, rendez-vous au comptoir
+                    d'accueil ou utilisez l'assistant en bas à droite de votre écran.
+                  </p>
+                </InfoCard>
+
+                {/* Transport */}
+                <InfoCard
+                  icon={Bus}
+                  iconClass="text-indigo-600 bg-indigo-50"
+                  title="Transport"
+                >
+                  <p>
+                    Navettes, taxis et accès au site : les informations sont mises à jour
+                    par l'organisation dans les annonces ci-dessous.
+                  </p>
+                </InfoCard>
+
+                {/* Restauration */}
+                <InfoCard
+                  icon={UtensilsCrossed}
+                  iconClass="text-amber-600 bg-amber-50"
+                  title="Restauration"
+                >
+                  <p>
+                    Pauses café, déjeuners et cocktails sont signalés dans le programme.
+                    Les zones de restauration sont indiquées sur le site.
+                  </p>
+                </InfoCard>
+
+                {/* Hébergement */}
+                <InfoCard
+                  icon={BedDouble}
+                  iconClass="text-rose-600 bg-rose-50"
+                  title="Hébergement"
+                >
+                  <p>
+                    Pour les hôtels partenaires et conditions de réservation, contactez
+                    l'organisation à l'accueil.
+                  </p>
+                </InfoCard>
+              </div>
+            </section>
+
+            {/* ───── 2. Annonces organisateur ───── */}
+            <section aria-labelledby="annonces">
+              <h2
+                id="annonces"
+                className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Annonces organisateur
+              </h2>
+              {announcements.length === 0 ? (
+                <div className="rounded-xl border-2 border-dashed border-border py-10 text-center">
+                  <Bell className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Aucune annonce pour le moment
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground/70">
+                    Les annonces apparaîtront ici en temps réel
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {announcements.map((ann) => {
+                    const config = TYPE_CONFIG[ann.announcement_type] || TYPE_CONFIG.info;
+                    const Icon = config.icon;
+                    return (
+                      <article
+                        key={ann.id}
+                        className={`rounded-xl border p-4 transition ${config.bg} ${
+                          ann.is_pinned ? "ring-2 ring-primary/20" : ""
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className={`rounded-lg p-1.5 ${config.color}`}>
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <span className={`text-xs font-medium ${config.color}`}>
+                                {config.label}
+                              </span>
+                              {ann.is_pinned && (
+                                <Pin className="ml-1 inline h-3 w-3 text-primary" />
+                              )}
+                            </div>
+                          </div>
+                          <time className="text-xs text-muted-foreground whitespace-nowrap">
+                            {formatRelative(ann.published_at)}
+                          </time>
+                        </div>
+                        <h3 className="mt-3 font-semibold text-foreground">{ann.title}</h3>
+                        <p className="mt-1.5 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
+                          {ann.content}
+                        </p>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+            {/* ───── 3. Sondages actifs ───── */}
+            <section aria-labelledby="sondages">
+              <h2
+                id="sondages"
+                className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Sondages en cours
+              </h2>
+              {activePolls.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-border py-6 text-center">
+                  <Vote className="mx-auto mb-2 h-7 w-7 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">
+                    Aucun sondage actif pour le moment
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {activePolls.map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        to="/poll/$pollId"
+                        params={{ pollId: p.id }}
+                        className="flex items-center gap-3 rounded-xl border bg-white p-4 transition hover:border-primary/40 hover:bg-primary/5"
+                      >
+                        <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                          <Vote className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-foreground">
+                            {p.question}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Cliquez pour participer
+                          </p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </>
         )}
 
-        {/* Footer */}
-        <footer className="mt-8 border-t pt-4 text-center text-xs text-muted-foreground">
-          <p>Mise à jour automatique toutes les 10 secondes</p>
+        <footer className="border-t pt-4 text-center text-xs text-muted-foreground">
+          <p>Mise à jour automatique toutes les 15 secondes</p>
           {event && (
             <div className="mt-2 flex flex-wrap justify-center gap-4">
               <Link to="/agenda/$slug" params={{ slug }} className="text-primary hover:underline">
@@ -247,18 +445,42 @@ function AnnoncesPage() {
                 params={{ slug }}
                 className="text-primary hover:underline"
               >
-                Annuaire
+                Participants
               </Link>
               <Link to="/e/$slug" params={{ slug }} className="text-primary hover:underline">
-                Inscription
+                Accueil
               </Link>
             </div>
           )}
         </footer>
       </main>
 
-      {/* Chatbot IA flottant */}
       {event && <ChatBot eventName={event.name} eventSlug={slug} language={language} />}
+    </div>
+  );
+}
+
+/* ───── Sous-composant ───── */
+function InfoCard({
+  icon: Icon,
+  iconClass,
+  title,
+  children,
+}: {
+  icon: typeof Info;
+  iconClass: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-xl border bg-white p-4">
+      <div className="flex items-center gap-2">
+        <div className={`rounded-lg p-1.5 ${iconClass}`}>
+          <Icon className="h-4 w-4" />
+        </div>
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+      </div>
+      <div className="mt-2 text-xs leading-relaxed text-muted-foreground">{children}</div>
     </div>
   );
 }
