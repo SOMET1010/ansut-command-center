@@ -138,11 +138,11 @@ function NetworkingDirectory() {
             <div className="flex items-center gap-3">
               <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
               <Link
-                to="/annonces/$slug"
+                to="/e/$slug"
                 params={{ slug }}
                 className="text-xs font-medium text-muted-foreground hover:text-primary"
               >
-                {t("nav.announcements")}
+                {t("nav.home")}
               </Link>
               <Link
                 to="/agenda/$slug"
