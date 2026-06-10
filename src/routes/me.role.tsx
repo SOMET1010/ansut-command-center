@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ShieldCheck, ShieldAlert, RefreshCw, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { isLovablePreview } from "@/lib/auth-preview";
 
 export const Route = createFileRoute("/me/role")({
   head: () => ({ meta: [{ title: "Mon rôle — ANSUT EVENT" }] }),
@@ -20,9 +21,9 @@ function MyRolePage() {
 
   async function load() {
     setState({ status: "loading" });
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = isLovablePreview()
+      ? (await supabase.auth.getSession()).data.session?.user
+      : (await supabase.auth.getUser()).data.user;
     if (!user) {
       setState({ status: "anonymous" });
       return;

@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnsutLogo } from "@/components/ansut/Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { isLovablePreview } from "@/lib/auth-preview";
 import {
   COCKPIT_VISIBLE_NAV_SECTIONS,
   getCockpitBreadcrumbChain,
@@ -40,8 +41,10 @@ export const Route = createFileRoute("/_authenticated")({
   // sous-arbre et on gate avec un beforeLoad côté client.
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) {
+    const user = isLovablePreview()
+      ? (await supabase.auth.getSession()).data.session?.user
+      : (await supabase.auth.getUser()).data.user;
+    if (!user) {
       throw redirect({ to: "/login" });
     }
   },
