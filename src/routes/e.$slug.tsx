@@ -557,7 +557,7 @@ function PublicEventPage() {
                     disabled={submitting}
                     className="h-12 w-full rounded-full px-8 text-base font-semibold sm:w-auto"
                   >
-                    {submitting ? "Envoi en cours..." : "Confirmer mon inscription"}
+                    {submitting ? "Envoi en cours..." : "S'inscrire à cet événement"}
                   </Button>
                   <p className="mt-3 text-xs text-muted-foreground">
                     En confirmant, vous acceptez le traitement de vos données par l'ANSUT pour la
