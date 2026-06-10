@@ -79,13 +79,21 @@ export function EventHomeDashboard({
   const [next, setNext] = useState<Session | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [myCategory, setMyCategory] = useState<string | null>(null);
+  // Tick : recalcule statut/countdown chaque minute
+  const [nowTs, setNowTs] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNowTs(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const nowIso = new Date().toISOString();
 
-      const [currRes, nextRes, annRes, partRes] = await Promise.all([
+      const [currRes, nextRes, annRes, partRes, meRes] = await Promise.all([
         supabase
           .from("event_sessions")
           .select("id, title, starts_at, ends_at, location, track")
@@ -110,39 +118,79 @@ export function EventHomeDashboard({
           .order("published_at", { ascending: false })
           .limit(3),
         supabase.rpc("list_event_networking", { p_slug: slug }),
+        supabase.rpc("me_registration", { p_qr_token: qrToken }),
       ]);
 
       if (cancelled) return;
       setCurrent(((currRes.data ?? [])[0] as Session) ?? null);
       setNext(((nextRes.data ?? [])[0] as Session) ?? null);
       if (annRes.data) setAnnouncements(annRes.data as Announcement[]);
-      if (partRes.data)
-        setParticipants((partRes.data as Participant[]).slice(0, 3));
+
+      // Identifier ma catégorie pour prioriser le réseau
+      const meRow = Array.isArray(meRes.data) ? meRes.data[0] : meRes.data;
+      const myCat: string | null = meRow?.participant_category ?? null;
+      const myId: string | null = meRow?.id ?? null;
+      setMyCategory(myCat);
+
+      if (partRes.data) {
+        const all = (partRes.data as Participant[]).filter(
+          (p) => !myId || p.id !== myId,
+        );
+        // Priorité : même catégorie d'abord
+        const sorted = myCat
+          ? [...all].sort((a, b) => {
+              const aMatch = a.participant_category === myCat ? 1 : 0;
+              const bMatch = b.participant_category === myCat ? 1 : 0;
+              return bMatch - aMatch;
+            })
+          : all;
+        setParticipants(sorted.slice(0, 3));
+      }
     })();
     return () => {
       cancelled = true;
     };
-  }, [eventId, slug]);
+  }, [eventId, slug, qrToken]);
+
+  // Si rien en cours mais prochaine session dans ≤ 60 min, promouvoir au hero
+  const minutesUntilNext = next
+    ? Math.round((new Date(next.starts_at).getTime() - nowTs) / 60_000)
+    : null;
+  const promoteNext =
+    !current && next && minutesUntilNext !== null && minutesUntilNext <= 60;
 
   return (
     <div className="space-y-5">
-      {/* Bloc 1 — MAINTENANT (élément dominant) */}
-      <NowBlock eventName={eventName} session={current} slug={slug} />
+      {/* Bloc 1 — MAINTENANT */}
+      <NowBlock
+        eventName={eventName}
+        current={current}
+        upcoming={promoteNext ? next : null}
+        minutesUntilUpcoming={promoteNext ? minutesUntilNext : null}
+        slug={slug}
+      />
 
-      {/* Bloc 2 — ENSUITE */}
-      <NextBlock session={next} slug={slug} hasCurrent={!!current} />
+      {/* Bloc 2 — ENSUITE (masqué si la prochaine est déjà dans le hero) */}
+      {!promoteNext && (
+        <NextBlock session={next} slug={slug} hasCurrent={!!current} />
+      )}
 
       {/* Bloc 3 — ALERTES */}
       <AlertsBlock announcements={announcements} slug={slug} />
 
       {/* Bloc 4 — RÉSEAU */}
-      <NetworkBlock participants={participants} slug={slug} />
+      <NetworkBlock
+        participants={participants}
+        slug={slug}
+        sameCategory={!!myCategory}
+      />
 
       {/* Bloc 5 — BADGE (repliable) */}
       <BadgeBlock qrToken={qrToken} />
     </div>
   );
 }
+
 
 function NowBlock({
   eventName,
