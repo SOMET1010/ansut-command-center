@@ -52,6 +52,7 @@ type Participant = {
   position: string | null;
   photo_url: string | null;
   participant_category: string;
+  interests?: string[] | null;
 };
 
 const TZ = "Africa/Abidjan";
@@ -126,24 +127,29 @@ export function EventHomeDashboard({
       setNext(((nextRes.data ?? [])[0] as Session) ?? null);
       if (annRes.data) setAnnouncements(annRes.data as Announcement[]);
 
-      // Identifier ma catégorie pour prioriser le réseau
+      // Identifier mon profil pour prioriser le réseau
       const meRow = Array.isArray(meRes.data) ? meRes.data[0] : meRes.data;
       const myCat: string | null = meRow?.participant_category ?? null;
       const myId: string | null = meRow?.id ?? null;
+      const myOrg: string | null = meRow?.organization ?? null;
+      const myInterests: string[] = Array.isArray(meRow?.interests)
+        ? (meRow.interests as string[])
+        : [];
       setMyCategory(myCat);
 
       if (partRes.data) {
         const all = (partRes.data as Participant[]).filter(
           (p) => !myId || p.id !== myId,
         );
-        // Priorité : même catégorie d'abord
-        const sorted = myCat
-          ? [...all].sort((a, b) => {
-              const aMatch = a.participant_category === myCat ? 1 : 0;
-              const bMatch = b.participant_category === myCat ? 1 : 0;
-              return bMatch - aMatch;
-            })
-          : all;
+        // Priorité : même org > même catégorie > même centre d'intérêt > récents
+        const score = (p: Participant) => {
+          let s = 0;
+          if (myOrg && p.organization && p.organization.toLowerCase() === myOrg.toLowerCase()) s += 1000;
+          if (myCat && p.participant_category === myCat) s += 100;
+          if (myInterests.length && p.interests?.some((i) => myInterests.includes(i))) s += 10;
+          return s;
+        };
+        const sorted = [...all].sort((a, b) => score(b) - score(a));
         setParticipants(sorted.slice(0, 3));
       }
     })();
