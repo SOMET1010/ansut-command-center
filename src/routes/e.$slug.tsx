@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
@@ -220,6 +221,7 @@ function PublicEventPage() {
 
   return (
     <div className="min-h-dvh bg-background">
+      <ParticipantBottomNav slug={slug} />
       {/* HEADER officiel ANSUT */}
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-4">

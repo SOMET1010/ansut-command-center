@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 import { ChatBot } from "@/components/ChatBot";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -221,6 +222,7 @@ function AgendaPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <ParticipantBottomNav slug={slug} />
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 py-4">

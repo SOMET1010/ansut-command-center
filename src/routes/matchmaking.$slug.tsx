@@ -16,6 +16,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
+import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
 
 export const Route = createFileRoute("/matchmaking/$slug")({
   head: () => ({ meta: [{ title: "Matchmaking — ANSUT EVENT" }] }),
