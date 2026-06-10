@@ -42,6 +42,7 @@ Question additionnelle obligatoire en fin de chaque scénario : *« Si vous devi
 
 | # | Scénario | Rôle |
 |---|---|---|
+| **S0** | **Règle des 5 boutons** (Amendement 5) — *« Vous arrivez à SUTEL. Citez les 5 boutons dont vous avez besoin sur l'écran d'accueil. »* — papier avant ouverture de l'app. Comparer aux 5 entrées D8. | Participant |
 | S1 | S'inscrire à un événement | Participant |
 | S2 | Retrouver son agenda et bookmarker une session | Participant |
 | S3 | Trouver un participant donné dans l'annuaire | Participant |
@@ -52,6 +53,7 @@ Question additionnelle obligatoire en fin de chaque scénario : *« Si vous devi
 | S8 | Publier une annonce | Org Admin |
 | S9 | Valider 3 inscriptions en attente | Org Admin |
 | S10 | Préparer un nouvel événement de A à Z | Org Admin |
+
 
 ## Grille de mesure
 
