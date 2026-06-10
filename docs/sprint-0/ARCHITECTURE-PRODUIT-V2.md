@@ -419,9 +419,12 @@ Nouvelles fonctionnalités (Sponsor MVP, IA, etc.)
 | D2 | Cockpit obligatoire post-login (Amendement 2) | ✅ validée |
 | D3 | 4-6 entrées de navigation max (Amendement 3) | ✅ validée |
 | D4 | J5 préalable obligatoire à Phase 4 (Amendement 4) | ✅ validée |
-| D5 | Périmètre MVP Sponsor | ⏳ arbitrage attendu |
-| D6 | Calendrier J5 (pool + date) | ⏳ planification attendue |
-| D7 | Durée maintien redirections 301 (proposition 6 mois) | ⏳ attendue |
+| D5 | **Périmètre MVP Sponsor** — **reporté Phase 5.** MVP limité à Participant / Staff / Org Admin / Super Admin. Justification : aucune UI Sponsor existante, aucun testeur Sponsor en J5, aucun flux métier validé, risque de complexification prématurée. | ✅ validée |
+| D6 | **Calendrier J5** — 10 utilisateurs réels max (5 P + 3 S + 2 OA), **1 demi-journée**, **45–60 min/utilisateur**. Mesures obligatoires : temps · clics · taux de réussite · abandon · écran de blocage · compréhension vocabulaire. Question additionnelle obligatoire en fin de chaque scénario : *« Si vous deviez retrouver cette fonction demain, où iriez-vous spontanément ? »* | ✅ validée |
+| D7 | **Durée redirections** — 301 permanentes **6 mois**, bannière discrète *« Cette rubrique a été déplacée »* pendant **les 2 premiers mois**, suppression définitive **à 6 mois**. | ✅ validée |
+
+**Toutes les décisions comité sont prises. Aucun blocage résiduel avant J5.**
+
 
 ---
 
