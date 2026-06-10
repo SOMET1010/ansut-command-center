@@ -236,9 +236,16 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
             {me.organization && (
               <p className="mt-0.5 text-sm text-slate-500">{me.organization}</p>
             )}
-            <span className="mt-2 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              {categoryLabel(me.participant_category)}
-            </span>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                {categoryLabel(me.participant_category)}
+              </span>
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ${TONE_CLASSES[status.tone]}`}
+              >
+                {status.label}
+              </span>
+            </div>
             <div className="mt-6 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
               {qrLargeDataUrl ? (
                 <img
