@@ -73,12 +73,26 @@ function todayBoundsAbidjan() {
 export function EventHomeDashboard({
   eventId,
   slug,
-  isCheckedIn,
+  qrToken,
 }: {
   eventId: string;
   slug: string;
-  isCheckedIn: boolean;
+  qrToken: string;
 }) {
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .rpc("me_registration", { p_qr_token: qrToken })
+      .then(({ data }) => {
+        if (cancelled) return;
+        const row = Array.isArray(data) ? data[0] : data;
+        if (row?.status === "checked_in") setIsCheckedIn(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [qrToken]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
