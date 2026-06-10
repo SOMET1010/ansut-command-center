@@ -16,8 +16,6 @@ interface ChatBotProps {
     starts_at?: string;
     location?: string;
   }>;
-  wifiSsid?: string;
-  wifiPassword?: string;
   venue?: string;
   language?: "fr" | "en" | "ar" | "pt";
 }
@@ -40,8 +38,6 @@ export function ChatBot({
   eventName,
   eventSlug,
   sessions,
-  wifiSsid,
-  wifiPassword,
   venue,
   language = "fr",
 }: ChatBotProps) {
@@ -84,8 +80,6 @@ export function ChatBot({
             eventName,
             eventSlug,
             sessions,
-            wifiSsid,
-            wifiPassword,
             venue,
           },
           language,

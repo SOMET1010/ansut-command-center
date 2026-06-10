@@ -65,8 +65,6 @@ const chatInputSchema = z.object({
       )
       .max(50)
       .optional(),
-    wifiSsid: safeText(64).optional(),
-    wifiPassword: safeText(128).optional(),
     venue: safeText(200).optional(),
   }),
   language: z.enum(["fr", "en", "ar", "pt"]).default("fr"),
@@ -127,12 +125,10 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { messages, eventContext, language } = data;
 
-    // Rate-limit par IP pour limiter l'abus de l'API OpenAI
+    // Rate-limit par IP (cf-connecting-ip uniquement — x-forwarded-for est
+    // facilement spoofable et ne doit pas être utilisé en fallback).
     const req = getRequest();
-    const ip =
-      req?.headers.get("cf-connecting-ip") ??
-      req?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = req?.headers.get("cf-connecting-ip") ?? "unknown";
     if (isRateLimited(ip)) {
       return {
         reply:
@@ -160,11 +156,13 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
       };
     }
 
-    // Construire le contexte de l'événement
+    // Construire le contexte de l'événement. Les identifiants WiFi sont
+    // volontairement exclus du prompt : ils sont sensibles (réservés au
+    // staff via get_event_wifi) et ne doivent pas être divulgués par le
+    // chatbot, qui est accessible aux visiteurs anonymes.
     let contextInfo = `\n\nContexte de l'événement actuel:\n- Nom: ${eventContext.eventName}`;
     if (eventContext.venue) contextInfo += `\n- Lieu: ${eventContext.venue}`;
-    if (eventContext.wifiSsid)
-      contextInfo += `\n- WiFi: Réseau "${eventContext.wifiSsid}", Mot de passe: "${eventContext.wifiPassword}"`;
+      
     if (eventContext.sessions && eventContext.sessions.length > 0) {
       contextInfo += `\n- Sessions au programme:`;
       for (const s of eventContext.sessions.slice(0, 10)) {
