@@ -1,8 +1,9 @@
 # Architecture Produit V2 — Document de référence
 
-**Statut** : **validée sous réserve des 4 amendements de validation comité (cf. §A).** Aucune ligne de code modifiée.
+**Statut** : **validée sous réserve des 5 amendements de validation comité (cf. §A).** Aucune ligne de code modifiée.
 **Périmètre** : sortie Sprint 0. Pré-requis avant toute Phase 4 (UX Premium) et toute nouvelle fonctionnalité.
 **Prochaine étape obligatoire** : **exécution J5 (audit découvrabilité)** avant toute maquette Phase 4. Les résultats J5 alimentent la version finale de ce document.
+
 
 ---
 
@@ -62,6 +63,37 @@ Aucune maquette Premium, aucun composant V2 ne sera produit tant que J5 n'aura p
 Pool minimum : **5 participants + 3 staffs + 2 org_admin**.
 Protocole détaillé et scénarios chronométrés : §11 et `docs/sprint-0/05-decouvrabilite.md`.
 
+### Amendement 5 — Benchmark applications de salon (Whova / Eventee / Brella / Swapcard)
+
+**Référentiel de comparaison inconscient des utilisateurs.** Les participants SUTEL ne comparent pas ANSUT Event à un ERP ou un outil interne — ils le comparent aux apps qu'ils utilisent en salon et conférence : **Whova, Eventee, Brella, Swapcard**.
+
+Ces apps ne montrent **jamais** : Agenda · Polls · Networking · Matchmaking · RDV · Annonces. Elles montrent **toujours** : Accueil · Programme · Réseau · Salon · Profil.
+
+**Règle des 5 boutons.** Avant toute refonte graphique, répondre à : *« Si je suis un participant qui vient d'arriver à SUTEL, quels sont les 5 boutons maximum dont j'ai besoin ? »* Si la réponse comporte plus de 5 entrées, l'architecture n'est pas prête.
+
+#### Sitemap SUTEL — version « salon » (canonique, remplace §3)
+
+| Rôle | 5 entrées maximum (vocabulaire utilisateur final) |
+|---|---|
+| **Participant** | **Accueil · Programme · Réseau · Salon · Mon Profil** |
+| **Staff** | **Accueil · Check-in · Participants · Support · Statistiques** |
+| **Org Admin** | **Cockpit · Participants · Programme · Communication · Paramètres** |
+| **Super Admin** | **Cockpit Global · Événements · Organisations · Utilisateurs · Administration** |
+
+Différences clés vs sitemap missions précédent (§3) :
+
+- *« Mon événement »* → **Accueil** (vocabulaire app salon, pas vocabulaire technique).
+- *« Mon agenda »* → **Programme** (le participant cherche *le* programme du salon, pas *son* agenda).
+- *« Mon réseau » + « Mes rendez-vous »* → **Réseau** (une seule entrée, RDV en sous-page).
+- *« Mes informations »* → **Mon Profil** (cohérent avec Whova/Swapcard).
+- **Nouveau : Salon** = plan + exposants + sponsors + infos pratiques (absent de §3, indispensable événement physique).
+- Org Admin : *Analytics* fusionné dans *Cockpit* — 5 entrées strictes.
+
+Cette structure **prime sur §3** pour la Phase 4 SUTEL. §3 reste référence pour la généralisation multi-événements post-SUTEL.
+
+---
+
+
 ---
 
 ## 0. Pourquoi ce document
@@ -83,13 +115,15 @@ Un design premium appliqué à une navigation confuse n'améliore rien.
 
 1. **Navigation par missions, pas par modules** (Amendement 1).
 2. **Cockpit obligatoire post-login pour chaque rôle** (Amendement 2).
-3. **4 à 6 entrées de navigation maximum par rôle** (Amendement 3).
+3. **5 entrées de navigation maximum par rôle** (Amendement 5 — durci, prime sur Amendement 3 qui parlait de 4-6).
 4. **Une home par rôle.** Fin du `/dashboard` unique.
-5. **Regrouper par intention métier, pas par table SQL.**
+5. **Vocabulaire « app de salon »** (Whova/Eventee/Brella/Swapcard), pas vocabulaire interne (Amendement 5).
 6. **Cockpit = « Que dois-je faire maintenant ? »** — pas un dashboard de données.
 7. **Aucune nouvelle table, aucune nouvelle policy RLS.** Surfaces Phase S réutilisées.
 8. **Redirections 301 obligatoires** sur tout renommage (QR badges, liens email déjà émis).
 9. **J5 mesuré avant Phase 4** (Amendement 4). Pas de refonte fondée sur l'intuition.
+10. **Règle des 5 boutons** validée avant toute maquette (Amendement 5).
+
 
 ---
 
@@ -434,13 +468,15 @@ Nouvelles fonctionnalités (Sponsor MVP, IA, etc.)
 |---|---|---|
 | D1 | Sitemap V2 par missions (Amendement 1) | ✅ validée |
 | D2 | Cockpit obligatoire post-login (Amendement 2) | ✅ validée |
-| D3 | 4-6 entrées de navigation max (Amendement 3) | ✅ validée |
+| D3 | 4-6 entrées de navigation max (Amendement 3) — **durci par D8 à 5 max** | ✅ validée |
 | D4 | J5 préalable obligatoire à Phase 4 (Amendement 4) | ✅ validée |
-| D5 | **Périmètre MVP Sponsor** — **reporté Phase 5.** MVP limité à Participant / Staff / Org Admin / Super Admin. Justification : aucune UI Sponsor existante, aucun testeur Sponsor en J5, aucun flux métier validé, risque de complexification prématurée. | ✅ validée |
-| D6 | **Calendrier J5** — pool minimal **5 P + 3 S + 2 OA** (réels ou assimilés ANSUT), **1 demi-journée** (08h30 brief → 13h00 fin), événement réaliste **SUTEL** ou équivalent. Mesures : temps · clics · réussite · abandon · blocage · vocabulaire. Question fin de scénario : *« Où iriez-vous demain ? »*. **Critères Go Phase 4** : 0 critique · ≥ 80 % réussite · temps ≤ seuils · consensus nav ≥ 7/10. | ✅ validée |
-| D7 | **Durée redirections** — 301 permanentes **6 mois**, bannière discrète *« Cette rubrique a été déplacée »* pendant **les 2 premiers mois**, suppression définitive **à 6 mois**. | ✅ validée |
+| D5 | **Périmètre MVP Sponsor** — **reporté Phase 5.** MVP limité à Participant / Staff / Org Admin / Super Admin. | ✅ validée |
+| D6 | **Calendrier J5** — pool minimal **5 P + 3 S + 2 OA** (réels ou assimilés ANSUT), **1 demi-journée**, événement réaliste **SUTEL**. Critères Go Phase 4 : 0 critique · ≥ 80 % réussite · temps ≤ seuils · consensus nav ≥ 7/10. | ✅ validée |
+| D7 | **Durée redirections** — 301 permanentes **6 mois**, bannière discrète **2 premiers mois**, suppression **à 6 mois**. | ✅ validée |
+| D8 | **Sitemap SUTEL « salon » (Amendement 5)** — référentiel Whova/Eventee/Brella/Swapcard. **5 entrées strictes par rôle**. Participant : Accueil · Programme · Réseau · Salon · Mon Profil. Staff : Accueil · Check-in · Participants · Support · Statistiques. Org Admin : Cockpit · Participants · Programme · Communication · Paramètres. Super Admin : Cockpit Global · Événements · Organisations · Utilisateurs · Administration. **Règle des 5 boutons** à valider en J5 (S0 dédié : *« Citez les 5 boutons dont vous avez besoin »*). | ✅ validée |
 
 **Toutes les décisions comité sont prises. Aucun blocage résiduel avant J5.**
+
 
 
 ---
