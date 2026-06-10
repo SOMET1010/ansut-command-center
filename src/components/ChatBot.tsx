@@ -80,8 +80,6 @@ export function ChatBot({
             eventName,
             eventSlug,
             sessions,
-            wifiSsid,
-            wifiPassword,
             venue,
           },
           language,
