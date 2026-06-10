@@ -1,25 +1,44 @@
 # J5 — Audit de découvrabilité
 
-Protocole prêt à exécuter dès que le pool de testeurs est confirmé. À faire sur **build figé** (avant toute refonte Phase 4) pour mesurer le baseline.
+Protocole prêt à exécuter dès que le pool minimal est constitué. À faire sur **build figé** (gel développement actif jusqu'aux résultats J5). Objectif : **identifier les points de friction**, pas la représentativité statistique.
 
-## Pool cible — amendé comité produit
+## Pool minimal — validé comité produit
 
-- **5 participants + 3 staffs + 2 org_admin** (10 testeurs)
-- Sponsor & Super Admin : différés (parcours incomplets actuellement)
-- Profils non techniques, n'ayant **jamais** utilisé l'app
+Pas de blocage sur la constitution parfaite. Le J5 peut être lancé dès que sont réunis :
 
+- **5 participants** réels ou assimilés
+- **3 agents ANSUT** pouvant jouer le rôle Staff
+- **2 utilisateurs métier** capables de jouer Org Admin
 
-## Protocole
+Sponsor & Super Admin : différés (parcours incomplets).
 
-### Setup
-- Session 30 min par testeur, partage d'écran
-- Build figé sur preview, comptes pré-créés avec rôle attribué
-- Observateur silencieux, pas d'aide
-- Outils : chronomètre, comptage clics manuel, enregistrement écran
+> **Recommandation** : utiliser un événement déjà connu de l'équipe (**SUTEL 2026** ou événement de test complet) pour que les scénarios soient réalistes — pas de données factices.
 
-### Scénarios chronométrés — amendés comité produit
+## Planning recommandé — demi-journée unique (semaine prochaine)
 
-Mesurer pour chaque scénario : **temps d'exécution · nombre de clics · taux de réussite · abandon · écran de blocage · compréhension vocabulaire**. Question additionnelle obligatoire en fin de chaque scénario : *« Si vous deviez retrouver cette fonction demain, où iriez-vous spontanément ? »* (révèle immédiatement les erreurs d'architecture / vocabulaire missions).
+| Heure | Activité | Durée |
+|---|---|---|
+| 08h30 | Brief testeurs (objectifs, consigne « pas d'aide », consentement enregistrement) | 30 min |
+| 09h00 | **Session Participant** (5 personnes, scénarios S1–S5) | 1h30 |
+| 10h30 | **Session Staff** (3 personnes, scénarios S6–S7) | 45 min |
+| 11h15 | **Session Org Admin** (2 personnes, scénarios S8–S10) | 45 min |
+| 12h00 | Consolidation à chaud (observateurs) | 1h |
+| 13h00 | Fin | — |
+
+Mode parallèle accepté si plusieurs observateurs disponibles, sinon séquentiel comme ci-dessus.
+
+## Setup
+
+- Comptes pré-créés avec rôle attribué, événement réaliste (SUTEL ou équivalent)
+- Build figé sur preview pendant toute la campagne — **aucune modification de l'app**
+- Observateur silencieux, partage d'écran enregistré, **pas d'aide pendant la tâche**
+- Outils : chronomètre, comptage clics manuel, log des hésitations
+
+## Scénarios chronométrés
+
+Mesurer pour chaque scénario : **temps · clics · taux de réussite · abandon · écran de blocage · compréhension vocabulaire**.
+
+Question additionnelle obligatoire en fin de chaque scénario : *« Si vous deviez retrouver cette fonction demain, où iriez-vous spontanément ? »*
 
 | # | Scénario | Rôle |
 |---|---|---|
@@ -34,43 +53,47 @@ Mesurer pour chaque scénario : **temps d'exécution · nombre de clics · taux 
 | S9 | Valider 3 inscriptions en attente | Org Admin |
 | S10 | Préparer un nouvel événement de A à Z | Org Admin |
 
-
 ## Grille de mesure
 
 | Métrique | Cible | Seuil rouge |
 |---|---|---|
-| Clics pour tâche simple (T1 chaque rôle) | ≤ 3 | > 6 |
-| Temps tâche simple | ≤ 30s | > 90s |
-| Taux de complétion sans aide | ≥ 80% | < 60% |
-| Taux d'abandon sur T4 Org Admin (préparer event) | < 20% | > 40% |
-| Tâches où testeur dit "je ne sais pas où chercher" | 0 | ≥ 2 |
+| Clics tâche simple | ≤ 3 | > 6 |
+| Temps tâche simple | ≤ 30 s | > 90 s |
+| Taux de complétion sans aide | ≥ 80 % | < 60 % |
+| Taux d'abandon S10 (préparer event) | < 20 % | > 40 % |
+| Tâches « je ne sais pas où chercher » | 0 | ≥ 2 |
 
-## Livrable rapport (template)
+## Livrables obligatoires — `07-rapport-j5.md`
 
-```markdown
-## Audit découvrabilité — {date}
+Le rapport doit **obligatoirement** contenir les 8 sections suivantes :
 
-### Pool
-- N testeurs, profils, durée totale
+1. **Top 10 des blocages observés** (écran, tâche, nb de testeurs touchés)
+2. **Top 10 des écrans où les utilisateurs hésitent** (durée d'hésitation > 5 s, regards perdus)
+3. **Fonctions les plus difficiles à retrouver** (réponses à *« où iriez-vous demain ? »* divergentes)
+4. **Terminologies incomprises** (libellés de menu, boutons, statuts mal interprétés)
+5. **Temps moyen par scénario** (S1 à S10)
+6. **Nombre moyen de clics par scénario** (S1 à S10)
+7. **Carte thermique des parcours** (séquence d'écrans visités par testeur, points chauds = retours arrière)
+8. **Recommandations classées** :
+   - 🔴 **Critique** — bloque la complétion d'un parcours principal
+   - 🟠 **Majeure** — dégrade fortement le temps ou les clics, mais le testeur finit
+   - 🟡 **Mineure** — friction de confort, à traiter en finition
 
-### Résultats par tâche
-| Rôle | Tâche | Clics moy | Temps moy | Complétion | Verbatims |
-|---|---|---|---|---|---|
+## Critères de passage en Phase 4
 
-### Top 5 frictions
-1. {friction} — {N testeurs touchés} — gravité {1-3}
-2. ...
+Le passage en Phase 4 est conditionné à **4 critères cumulatifs** :
 
-### Recommandations Phase 4 (priorisées)
-- P1 : ...
-- P2 : ...
+| # | Critère | Seuil |
+|---|---|---|
+| C1 | Aucun blocage **critique** non résolu | 0 critique ouvert |
+| C2 | Taux de scénarios réussis sans assistance | ≥ 80 % |
+| C3 | Temps moyen acceptable sur les parcours principaux (S1, S6, S8) | ≤ seuils §Grille |
+| C4 | Consensus des testeurs sur la compréhension de la navigation | majoritaire (≥ 7/10) |
 
-### Verbatims marquants
-> "..."
-```
+**Si un seul de ces critères n'est pas atteint** → mise à jour obligatoire de `ARCHITECTURE-PRODUIT-V2.md` en **V2.1** avant tout démarrage Phase 4. Pas de refonte graphique tant que V2.1 n'est pas re-validée.
 
-## Action immédiate
+## Statut développement
 
-Le rapport J5 alimente directement [`06-backlog.md`](./06-backlog.md) en priorisant les frictions mesurées vs estimées.
+**Le développement reste gelé jusqu'à obtention du rapport J5 et arbitrage Go/No-Go Phase 4.**
 
-**Tant que le protocole n'est pas exécuté, le backlog reste basé sur les gaps J2 (estimés, non mesurés).**
+La date du J5 est désormais le seul jalon bloquant avant la réorganisation produit.
