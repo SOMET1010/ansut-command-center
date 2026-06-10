@@ -23,6 +23,7 @@ import { Route as PollPollIdRouteImport } from './routes/poll.$pollId'
 import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
 import { Route as MessagesSlugRouteImport } from './routes/messages.$slug'
 import { Route as MeRoleRouteImport } from './routes/me.role'
+import { Route as MeSlugRouteImport } from './routes/me.$slug'
 import { Route as MatchmakingSlugRouteImport } from './routes/matchmaking.$slug'
 import { Route as LiveSessionIdRouteImport } from './routes/live.$sessionId'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
@@ -113,6 +114,11 @@ const MessagesSlugRoute = MessagesSlugRouteImport.update({
 const MeRoleRoute = MeRoleRouteImport.update({
   id: '/me/role',
   path: '/me/role',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeSlugRoute = MeSlugRouteImport.update({
+  id: '/me/$slug',
+  path: '/me/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MatchmakingSlugRoute = MatchmakingSlugRouteImport.update({
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
   '/matchmaking/$slug': typeof MatchmakingSlugRoute
+  '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
@@ -286,6 +293,7 @@ export interface FileRoutesByTo {
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
   '/matchmaking/$slug': typeof MatchmakingSlugRoute
+  '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
@@ -324,6 +332,7 @@ export interface FileRoutesById {
   '/e/$slug': typeof ESlugRoute
   '/live/$sessionId': typeof LiveSessionIdRoute
   '/matchmaking/$slug': typeof MatchmakingSlugRoute
+  '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
@@ -362,6 +371,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/live/$sessionId'
     | '/matchmaking/$slug'
+    | '/me/$slug'
     | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/live/$sessionId'
     | '/matchmaking/$slug'
+    | '/me/$slug'
     | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
@@ -435,6 +446,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/live/$sessionId'
     | '/matchmaking/$slug'
+    | '/me/$slug'
     | '/me/role'
     | '/messages/$slug'
     | '/networking/$slug'
@@ -465,6 +477,7 @@ export interface RootRouteChildren {
   ESlugRoute: typeof ESlugRoute
   LiveSessionIdRoute: typeof LiveSessionIdRoute
   MatchmakingSlugRoute: typeof MatchmakingSlugRoute
+  MeSlugRoute: typeof MeSlugRoute
   MeRoleRoute: typeof MeRoleRoute
   MessagesSlugRoute: typeof MessagesSlugRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
@@ -572,6 +585,13 @@ declare module '@tanstack/react-router' {
       path: '/me/role'
       fullPath: '/me/role'
       preLoaderRoute: typeof MeRoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/$slug': {
+      id: '/me/$slug'
+      path: '/me/$slug'
+      fullPath: '/me/$slug'
+      preLoaderRoute: typeof MeSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/matchmaking/$slug': {
@@ -786,6 +806,7 @@ const rootRouteChildren: RootRouteChildren = {
   ESlugRoute: ESlugRoute,
   LiveSessionIdRoute: LiveSessionIdRoute,
   MatchmakingSlugRoute: MatchmakingSlugRoute,
+  MeSlugRoute: MeSlugRoute,
   MeRoleRoute: MeRoleRoute,
   MessagesSlugRoute: MessagesSlugRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
