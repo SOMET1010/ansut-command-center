@@ -274,6 +274,7 @@ function PublicEventPage() {
       </header>
 
       <main id="main-content" className="mx-auto max-w-4xl px-6 py-10">
+        {qrToken && <MyBadgeCard qrToken={qrToken} />}
         {event.cover_url && (
           <img
             src={event.cover_url}
