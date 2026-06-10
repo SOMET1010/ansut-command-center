@@ -345,19 +345,36 @@ Effort estimé : `docs/sprint-0/06-backlog.md`.
 | Hésitations (« je ne sais pas où chercher ») | 0 | ≥ 2 |
 | Taux abandon S10 (préparer event) | < 20 % | > 40 % |
 
-### Livrable J5
+### Livrable J5 — `07-rapport-j5.md` (8 sections obligatoires)
 
-Rapport `docs/sprint-0/07-rapport-j5.md` (à produire après campagne) :
+1. Top 10 des blocages observés
+2. Top 10 des écrans où les utilisateurs hésitent
+3. Fonctions les plus difficiles à retrouver (réponses *« où iriez-vous demain ? »*)
+4. Terminologies incomprises
+5. Temps moyen par scénario (S1–S10)
+6. Nombre moyen de clics par scénario (S1–S10)
+7. Carte thermique des parcours (séquences d'écrans, retours arrière)
+8. Recommandations classées : 🔴 Critique · 🟠 Majeure · 🟡 Mineure
 
-- Pool effectif, durée totale.
-- Résultats par scénario : clics moy / temps moy / complétion / verbatims.
-- Top 5 frictions classées par gravité.
-- Recommandations re-priorisées vs §9 (P1/P2/P3).
-- Verbatims marquants.
+### Critères Go Phase 4 (cumulatifs)
 
-**Le rapport J5 alimente la version finale de ce document (V2.1) avant tout démarrage Phase 4.**
+| # | Critère | Seuil |
+|---|---|---|
+| C1 | Blocages critiques non résolus | 0 |
+| C2 | Scénarios réussis sans assistance | ≥ 80 % |
+| C3 | Temps moyen parcours principaux (S1, S6, S8) | ≤ seuils grille |
+| C4 | Consensus testeurs sur compréhension nav | ≥ 7 / 10 |
 
-Protocole détaillé : `docs/sprint-0/05-decouvrabilite.md`.
+Si un seul critère manque → **V2.1 obligatoire** avant Phase 4.
+
+### Planning recommandé — demi-journée
+
+08h30 brief · 09h00 Participant (×5) · 10h30 Staff (×3) · 11h15 Org Admin (×2) · 12h00 consolidation · 13h00 fin.
+
+Protocole détaillé, pool minimal (5 P + 3 S + 2 OA), événement réaliste (SUTEL) : `docs/sprint-0/05-decouvrabilite.md`.
+
+**Le développement reste gelé jusqu'à publication du rapport J5 et arbitrage Go/No-Go.**
+
 
 ---
 
