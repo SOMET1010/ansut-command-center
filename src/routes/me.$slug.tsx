@@ -43,14 +43,18 @@ type Me = {
   status: string | null;
 };
 
+// Aligné sur le référentiel d'inscription (src/routes/e.$slug.tsx ll.502-509
+// et src/routes/networking.$slug.tsx CATEGORIES). Un participant inscrit
+// comme "operator" doit voir "Opérateur télécom" sur son badge, pas un
+// label badge déconnecté du formulaire d'inscription.
 const CATEGORY_LABELS: Record<string, string> = {
-  exhibitor: "Exposant",
-  sponsor: "Sponsor",
-  speaker: "Intervenant",
-  vip: "VIP",
-  press: "Presse",
-  staff: "Staff",
-  visitor: "Visiteur",
+  fsu: "Fonds de Service Universel",
+  regulator: "Régulateur",
+  operator: "Opérateur télécom",
+  partner: "Partenaire financier",
+  startup: "Startup / Innovation",
+  international_org: "Organisation internationale",
+  government: "Gouvernement",
   other: "Participant",
 };
 
