@@ -16,8 +16,6 @@ interface ChatBotProps {
     starts_at?: string;
     location?: string;
   }>;
-  wifiSsid?: string;
-  wifiPassword?: string;
   venue?: string;
   language?: "fr" | "en" | "ar" | "pt";
 }
