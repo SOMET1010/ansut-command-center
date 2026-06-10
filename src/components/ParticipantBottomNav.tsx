@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, CalendarDays, Users, Building2, User } from "lucide-react";
+import { Home, CalendarDays, Users, Info, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -52,8 +52,8 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       matches: (p) => p.startsWith(`/networking/${slug}`),
     },
     {
-      label: "Salon",
-      icon: Building2,
+      label: "Infos pratiques",
+      icon: Info,
       to: `/salon/${slug}`,
       matches: (p) => p.startsWith(`/salon/${slug}`),
     },
@@ -70,7 +70,7 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       aria-label="Navigation participant"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md shadow-[0_-2px_8px_rgba(0,0,0,0.04)]"
     >
-      <ul className="mx-auto grid max-w-2xl grid-cols-4">
+      <ul className="mx-auto grid max-w-2xl grid-cols-5">
         {items.map((it) => {
           const active = it.matches(pathname);
           const Icon = it.icon;

@@ -367,38 +367,43 @@ function PublicEventPage() {
               <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
               <h2 className="mt-4 text-2xl font-semibold">Inscription confirmée</h2>
               <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-                Merci ! Téléchargez votre badge ci-dessous et présentez-le à l'entrée de
-                l'événement. Une copie vous a également été envoyée par email.
+                Votre badge est prêt ! Présentez-le à l'entrée de l'événement.
+                Une copie a été envoyée par email.
               </p>
               {qrToken && (
-                <div className="mt-8 flex flex-col items-center gap-4">
-                  <Button
-                    size="lg"
-                    className="h-12 px-8 text-base"
-                    disabled={downloadingBadge}
-                    onClick={async () => {
-                      setDownloadingBadge(true);
-                      try {
-                        await downloadBadge(qrToken);
-                      } catch (err) {
-                        toast.error(err instanceof Error ? err.message : "Erreur badge");
-                      } finally {
-                        setDownloadingBadge(false);
-                      }
-                    }}
-                  >
-                    <IdCard className="mr-2 h-5 w-5" />
-                    {downloadingBadge ? "Génération du badge..." : "Télécharger mon badge"}
-                  </Button>
-                  <Link
-                    to="/networking/$slug"
-                    params={{ slug }}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-                  >
-                    <Users className="h-4 w-4" />
-                    Découvrir les autres participants
-                  </Link>
-                </div>
+                <>
+                  {/* Badge visible immédiatement — pas besoin de télécharger pour scanner */}
+                  <div className="mt-6 flex justify-center">
+                    <MyBadgeCard qrToken={qrToken} />
+                  </div>
+                  <div className="mt-6 flex flex-col items-center gap-3">
+                    <Button
+                      size="lg"
+                      className="h-12 px-8 text-base"
+                      disabled={downloadingBadge}
+                      onClick={async () => {
+                        setDownloadingBadge(true);
+                        try {
+                          await downloadBadge(qrToken);
+                        } catch (err) {
+                          toast.error(err instanceof Error ? err.message : "Erreur badge");
+                        } finally {
+                          setDownloadingBadge(false);
+                        }
+                      }}
+                    >
+                      <IdCard className="mr-2 h-5 w-5" />
+                      {downloadingBadge ? "Génération..." : "Télécharger en PDF"}
+                    </Button>
+                    <Link
+                      to="/me/$slug"
+                      params={{ slug }}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                    >
+                      Aller à mon profil
+                    </Link>
+                  </div>
+                </>
               )}
             </div>
           ) : (
