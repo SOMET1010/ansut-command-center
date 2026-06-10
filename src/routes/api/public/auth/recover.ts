@@ -1,11 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-} as const;
+import { corsHeaders } from "@/lib/api/cors";
 
 const Schema = z.object({
   email: z.string().email().max(320),
@@ -15,8 +10,10 @@ const Schema = z.object({
 export const Route = createFileRoute("/api/public/auth/recover")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
+      OPTIONS: async ({ request }) =>
+        new Response(null, { status: 204, headers: corsHeaders(request, "POST, OPTIONS") }),
       POST: async ({ request }) => {
+        const cors = corsHeaders(request, "POST, OPTIONS");
         try {
           const body = await request.json();
           const { email, redirectTo } = Schema.parse(body);
@@ -37,18 +34,18 @@ export const Route = createFileRoute("/api/public/auth/recover")({
             const text = await res.text();
             return new Response(text || JSON.stringify({ error: "recover_failed" }), {
               status: res.status,
-              headers: { "Content-Type": "application/json", ...CORS },
+              headers: { "Content-Type": "application/json", ...cors },
             });
           }
           return new Response(JSON.stringify({ ok: true }), {
             status: 200,
-            headers: { "Content-Type": "application/json", ...CORS },
+            headers: { "Content-Type": "application/json", ...cors },
           });
         } catch (err) {
           const message = err instanceof Error ? err.message : "invalid_request";
           return new Response(JSON.stringify({ error: message }), {
             status: 400,
-            headers: { "Content-Type": "application/json", ...CORS },
+            headers: { "Content-Type": "application/json", ...cors },
           });
         }
       },
