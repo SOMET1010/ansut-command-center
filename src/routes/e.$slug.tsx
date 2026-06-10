@@ -588,7 +588,10 @@ function PublicEventPage() {
             </>
           )}
         </div>
+          </>
+        )}
       </main>
+
 
       <footer className="border-t border-border bg-muted py-6">
         <div className="mx-auto max-w-4xl px-6 text-center text-xs text-muted-foreground">
