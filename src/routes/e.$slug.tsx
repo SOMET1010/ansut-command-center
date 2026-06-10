@@ -134,9 +134,19 @@ function PublicEventPage() {
     loadEvent();
   }, [slug]);
 
-  // Lot 2 : rehydrater le badge si le participant est déjà inscrit (token persisté).
+  // Lot 2 : rehydrater le badge si le participant est déjà inscrit.
+  // Sources, par ordre de priorité :
+  //   1. URL ?token=... (récupération depuis l'email sur un nouvel appareil)
+  //   2. localStorage (appareil déjà utilisé pour l'inscription)
+  // Au prochain rendu, le token URL est aussi persisté pour les visites suivantes.
   useEffect(() => {
     if (typeof window === "undefined") return;
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    if (urlToken && /^[0-9a-f-]{20,}$/i.test(urlToken)) {
+      window.localStorage.setItem(`${BADGE_STORAGE_PREFIX}${slug}`, urlToken);
+      setQrToken(urlToken);
+      return;
+    }
     const stored = window.localStorage.getItem(`${BADGE_STORAGE_PREFIX}${slug}`);
     if (stored) setQrToken(stored);
   }, [slug]);
