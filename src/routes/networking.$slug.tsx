@@ -343,15 +343,6 @@ function ParticipantCard({ participant: p, slug }: { participant: Participant; s
             <Linkedin className="h-4 w-4" />
           </a>
         )}
-        <Link
-          to="/messages/$slug"
-          params={{ slug }}
-          search={{ to: p.id, token: "" }}
-          className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-colors"
-        >
-          <MessageCircle className="h-3.5 w-3.5" />
-          Contacter
-        </Link>
       </div>
     </div>
   );
