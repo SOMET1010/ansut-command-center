@@ -18,7 +18,7 @@ const EMAIL = process.env.E2E_TEST_EMAIL;
 const PASSWORD = process.env.E2E_TEST_PASSWORD;
 
 const COCKPIT_STEPS = [
-  { path: "/dashboard", label: "Tableau de bord" },
+  { path: "/dashboard", label: "Cockpit" },
   { path: "/events", label: "Événements" },
   { path: "/participants", label: "Participants" },
   { path: "/checkin", label: "Check-in" },
