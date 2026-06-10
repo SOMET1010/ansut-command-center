@@ -256,12 +256,12 @@ function NowBlock({
           </div>
           <div className="mt-5">
             <Link
-              to="/live/$sessionId"
-              params={{ sessionId: featured.id }}
+              to="/agenda/$slug"
+              params={{ slug }}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
             >
               <Radio className="h-4 w-4" />
-              Rejoindre
+              Voir le programme
             </Link>
           </div>
         </>
