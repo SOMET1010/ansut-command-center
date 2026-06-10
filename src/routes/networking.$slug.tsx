@@ -219,22 +219,7 @@ function NetworkingDirectory() {
         )}
       </main>
 
-      {/* Matchmaking CTA */}
-      <div className="max-w-5xl mx-auto px-4 mt-8">
-        <Link
-          to="/matchmaking/$slug"
-          params={{ slug }}
-          className="flex items-center justify-between gap-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-5 transition hover:border-primary/50 hover:bg-primary/10"
-        >
-          <div>
-            <h3 className="font-semibold text-foreground">Matchmaking intelligent</h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              Découvrez les participants qui partagent vos centres d'intérêt et prenez RDV
-            </p>
-          </div>
-          <Sparkles className="h-8 w-8 flex-shrink-0 text-primary" />
-        </Link>
-      </div>
+      {/* Matchmaking CTA retiré — route /matchmaking supprimée */}
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white mt-8">
