@@ -1,19 +1,17 @@
 import { useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, CalendarDays, Users, MessageSquare, User } from "lucide-react";
+import { Home, CalendarDays, Users, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
  * Lot 1 — Navigation Participant (Phase 4.1).
- * 5 entrées strictes ("règle des 5 boutons"), vocabulaire "app de salon"
- * (Whova / Eventee / Brella / Swapcard).
+ * Vocabulaire "app de salon" (Whova / Eventee / Brella / Swapcard).
  *
- * Mapping vers les routes existantes (aucun écran modifié) :
+ * Mapping vers les routes existantes (post-cleanup) :
  *   Accueil      → /e/$slug
- *   Programme    → /agenda/$slug          (regroupe live & attendance)
- *   Participants → /networking/$slug      (regroupe networking · matchmaking · rdv · messages)
- *   Salon        → /annonces/$slug        (regroupe annonces · polls)
- *   Mon Profil   → /me/role
+ *   Programme    → /agenda/$slug          (regroupe sessions & check-in)
+ *   Participants → /networking/$slug      (regroupe networking · annonces · sondages)
+ *   Mon Profil   → /me/$slug
  *
  * Position fixed bottom — l'insertion dans le JSX n'a pas d'importance.
  * Padding-bottom appliqué sur <body> pour éviter le recouvrement.
@@ -46,26 +44,13 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       icon: CalendarDays,
       to: `/agenda/${slug}`,
       matches: (p) =>
-        p.startsWith(`/agenda/${slug}`) ||
-        p.startsWith(`/live/`) ||
-        p.startsWith(`/attendance/`),
+        p.startsWith(`/agenda/${slug}`) || p.startsWith(`/attendance/`),
     },
     {
       label: "Participants",
       icon: Users,
       to: `/networking/${slug}`,
-      matches: (p) =>
-        p.startsWith(`/networking/${slug}`) ||
-        p.startsWith(`/matchmaking/${slug}`) ||
-        p.startsWith(`/rdv/${slug}`) ||
-        p.startsWith(`/messages/${slug}`),
-    },
-    {
-      label: "Salon",
-      icon: MessageSquare,
-      to: `/annonces/${slug}`,
-      matches: (p) =>
-        p.startsWith(`/annonces/${slug}`) || p.startsWith(`/poll/`),
+      matches: (p) => p.startsWith(`/networking/${slug}`),
     },
     {
       label: "Mon Profil",
@@ -80,7 +65,7 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       aria-label="Navigation participant"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md shadow-[0_-2px_8px_rgba(0,0,0,0.04)]"
     >
-      <ul className="mx-auto grid max-w-2xl grid-cols-5">
+      <ul className="mx-auto grid max-w-2xl grid-cols-4">
         {items.map((it) => {
           const active = it.matches(pathname);
           const Icon = it.icon;
@@ -106,3 +91,4 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
     </nav>
   );
 }
+

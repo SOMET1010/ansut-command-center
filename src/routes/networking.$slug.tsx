@@ -14,8 +14,6 @@ import {
   Building2,
   Linkedin,
   User,
-  MessageCircle,
-  Sparkles,
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -219,22 +217,7 @@ function NetworkingDirectory() {
         )}
       </main>
 
-      {/* Matchmaking CTA */}
-      <div className="max-w-5xl mx-auto px-4 mt-8">
-        <Link
-          to="/matchmaking/$slug"
-          params={{ slug }}
-          className="flex items-center justify-between gap-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-5 transition hover:border-primary/50 hover:bg-primary/10"
-        >
-          <div>
-            <h3 className="font-semibold text-foreground">Matchmaking intelligent</h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              Découvrez les participants qui partagent vos centres d'intérêt et prenez RDV
-            </p>
-          </div>
-          <Sparkles className="h-8 w-8 flex-shrink-0 text-primary" />
-        </Link>
-      </div>
+      {/* Matchmaking CTA retiré — route /matchmaking supprimée */}
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white mt-8">
@@ -358,15 +341,6 @@ function ParticipantCard({ participant: p, slug }: { participant: Participant; s
             <Linkedin className="h-4 w-4" />
           </a>
         )}
-        <Link
-          to="/messages/$slug"
-          params={{ slug }}
-          search={{ to: p.id, token: "" }}
-          className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-full transition-colors"
-        >
-          <MessageCircle className="h-3.5 w-3.5" />
-          Contacter
-        </Link>
       </div>
     </div>
   );

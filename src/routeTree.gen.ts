@@ -18,17 +18,11 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForbiddenRouteImport } from './routes/forbidden'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RdvSlugRouteImport } from './routes/rdv.$slug'
-import { Route as PollPollIdRouteImport } from './routes/poll.$pollId'
 import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
-import { Route as MessagesSlugRouteImport } from './routes/messages.$slug'
 import { Route as MeRoleRouteImport } from './routes/me.role'
 import { Route as MeSlugRouteImport } from './routes/me.$slug'
-import { Route as MatchmakingSlugRouteImport } from './routes/matchmaking.$slug'
-import { Route as LiveSessionIdRouteImport } from './routes/live.$sessionId'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AttendanceSessionIdRouteImport } from './routes/attendance.$sessionId'
-import { Route as AnnoncesSlugRouteImport } from './routes/annonces.$slug'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
 import { Route as AuthenticatedSecurityAuditRouteImport } from './routes/_authenticated/security-audit'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
@@ -91,24 +85,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RdvSlugRoute = RdvSlugRouteImport.update({
-  id: '/rdv/$slug',
-  path: '/rdv/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PollPollIdRoute = PollPollIdRouteImport.update({
-  id: '/poll/$pollId',
-  path: '/poll/$pollId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NetworkingSlugRoute = NetworkingSlugRouteImport.update({
   id: '/networking/$slug',
   path: '/networking/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MessagesSlugRoute = MessagesSlugRouteImport.update({
-  id: '/messages/$slug',
-  path: '/messages/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeRoleRoute = MeRoleRouteImport.update({
@@ -121,16 +100,6 @@ const MeSlugRoute = MeSlugRouteImport.update({
   path: '/me/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MatchmakingSlugRoute = MatchmakingSlugRouteImport.update({
-  id: '/matchmaking/$slug',
-  path: '/matchmaking/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LiveSessionIdRoute = LiveSessionIdRouteImport.update({
-  id: '/live/$sessionId',
-  path: '/live/$sessionId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ESlugRoute = ESlugRouteImport.update({
   id: '/e/$slug',
   path: '/e/$slug',
@@ -139,11 +108,6 @@ const ESlugRoute = ESlugRouteImport.update({
 const AttendanceSessionIdRoute = AttendanceSessionIdRouteImport.update({
   id: '/attendance/$sessionId',
   path: '/attendance/$sessionId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnnoncesSlugRoute = AnnoncesSlugRouteImport.update({
-  id: '/annonces/$slug',
-  path: '/annonces/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendaSlugRoute = AgendaSlugRouteImport.update({
@@ -251,17 +215,11 @@ export interface FileRoutesByFullPath {
   '/polls': typeof AuthenticatedPollsRoute
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
-  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
-  '/live/$sessionId': typeof LiveSessionIdRoute
-  '/matchmaking/$slug': typeof MatchmakingSlugRoute
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
-  '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
-  '/poll/$pollId': typeof PollPollIdRoute
-  '/rdv/$slug': typeof RdvSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -288,17 +246,11 @@ export interface FileRoutesByTo {
   '/polls': typeof AuthenticatedPollsRoute
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
-  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
-  '/live/$sessionId': typeof LiveSessionIdRoute
-  '/matchmaking/$slug': typeof MatchmakingSlugRoute
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
-  '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
-  '/poll/$pollId': typeof PollPollIdRoute
-  '/rdv/$slug': typeof RdvSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -327,17 +279,11 @@ export interface FileRoutesById {
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/_authenticated/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
-  '/annonces/$slug': typeof AnnoncesSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRoute
-  '/live/$sessionId': typeof LiveSessionIdRoute
-  '/matchmaking/$slug': typeof MatchmakingSlugRoute
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
-  '/messages/$slug': typeof MessagesSlugRoute
   '/networking/$slug': typeof NetworkingSlugRoute
-  '/poll/$pollId': typeof PollPollIdRoute
-  '/rdv/$slug': typeof RdvSlugRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -366,17 +312,11 @@ export interface FileRouteTypes {
     | '/polls'
     | '/security-audit'
     | '/agenda/$slug'
-    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
-    | '/live/$sessionId'
-    | '/matchmaking/$slug'
     | '/me/$slug'
     | '/me/role'
-    | '/messages/$slug'
     | '/networking/$slug'
-    | '/poll/$pollId'
-    | '/rdv/$slug'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -403,17 +343,11 @@ export interface FileRouteTypes {
     | '/polls'
     | '/security-audit'
     | '/agenda/$slug'
-    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
-    | '/live/$sessionId'
-    | '/matchmaking/$slug'
     | '/me/$slug'
     | '/me/role'
-    | '/messages/$slug'
     | '/networking/$slug'
-    | '/poll/$pollId'
-    | '/rdv/$slug'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -441,17 +375,11 @@ export interface FileRouteTypes {
     | '/_authenticated/polls'
     | '/_authenticated/security-audit'
     | '/agenda/$slug'
-    | '/annonces/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
-    | '/live/$sessionId'
-    | '/matchmaking/$slug'
     | '/me/$slug'
     | '/me/role'
-    | '/messages/$slug'
     | '/networking/$slug'
-    | '/poll/$pollId'
-    | '/rdv/$slug'
     | '/_authenticated/admin/setup'
     | '/_authenticated/events/new'
     | '/_authenticated/events/$id/edit'
@@ -472,17 +400,11 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   AgendaSlugRoute: typeof AgendaSlugRoute
-  AnnoncesSlugRoute: typeof AnnoncesSlugRoute
   AttendanceSessionIdRoute: typeof AttendanceSessionIdRoute
   ESlugRoute: typeof ESlugRoute
-  LiveSessionIdRoute: typeof LiveSessionIdRoute
-  MatchmakingSlugRoute: typeof MatchmakingSlugRoute
   MeSlugRoute: typeof MeSlugRoute
   MeRoleRoute: typeof MeRoleRoute
-  MessagesSlugRoute: typeof MessagesSlugRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
-  PollPollIdRoute: typeof PollPollIdRoute
-  RdvSlugRoute: typeof RdvSlugRoute
   ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
   ApiPublicAuthTokenRoute: typeof ApiPublicAuthTokenRoute
 }
@@ -552,32 +474,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rdv/$slug': {
-      id: '/rdv/$slug'
-      path: '/rdv/$slug'
-      fullPath: '/rdv/$slug'
-      preLoaderRoute: typeof RdvSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/poll/$pollId': {
-      id: '/poll/$pollId'
-      path: '/poll/$pollId'
-      fullPath: '/poll/$pollId'
-      preLoaderRoute: typeof PollPollIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/networking/$slug': {
       id: '/networking/$slug'
       path: '/networking/$slug'
       fullPath: '/networking/$slug'
       preLoaderRoute: typeof NetworkingSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/messages/$slug': {
-      id: '/messages/$slug'
-      path: '/messages/$slug'
-      fullPath: '/messages/$slug'
-      preLoaderRoute: typeof MessagesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/me/role': {
@@ -594,20 +495,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/matchmaking/$slug': {
-      id: '/matchmaking/$slug'
-      path: '/matchmaking/$slug'
-      fullPath: '/matchmaking/$slug'
-      preLoaderRoute: typeof MatchmakingSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/live/$sessionId': {
-      id: '/live/$sessionId'
-      path: '/live/$sessionId'
-      fullPath: '/live/$sessionId'
-      preLoaderRoute: typeof LiveSessionIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/e/$slug': {
       id: '/e/$slug'
       path: '/e/$slug'
@@ -620,13 +507,6 @@ declare module '@tanstack/react-router' {
       path: '/attendance/$sessionId'
       fullPath: '/attendance/$sessionId'
       preLoaderRoute: typeof AttendanceSessionIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/annonces/$slug': {
-      id: '/annonces/$slug'
-      path: '/annonces/$slug'
-      fullPath: '/annonces/$slug'
-      preLoaderRoute: typeof AnnoncesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agenda/$slug': {
@@ -801,17 +681,11 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   AgendaSlugRoute: AgendaSlugRoute,
-  AnnoncesSlugRoute: AnnoncesSlugRoute,
   AttendanceSessionIdRoute: AttendanceSessionIdRoute,
   ESlugRoute: ESlugRoute,
-  LiveSessionIdRoute: LiveSessionIdRoute,
-  MatchmakingSlugRoute: MatchmakingSlugRoute,
   MeSlugRoute: MeSlugRoute,
   MeRoleRoute: MeRoleRoute,
-  MessagesSlugRoute: MessagesSlugRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
-  PollPollIdRoute: PollPollIdRoute,
-  RdvSlugRoute: RdvSlugRoute,
   ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,
   ApiPublicAuthTokenRoute: ApiPublicAuthTokenRoute,
 }
