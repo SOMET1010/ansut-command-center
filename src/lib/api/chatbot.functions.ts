@@ -125,12 +125,10 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { messages, eventContext, language } = data;
 
-    // Rate-limit par IP pour limiter l'abus de l'API OpenAI
+    // Rate-limit par IP (cf-connecting-ip uniquement — x-forwarded-for est
+    // facilement spoofable et ne doit pas être utilisé en fallback).
     const req = getRequest();
-    const ip =
-      req?.headers.get("cf-connecting-ip") ??
-      req?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
+    const ip = req?.headers.get("cf-connecting-ip") ?? "unknown";
     if (isRateLimited(ip)) {
       return {
         reply:
