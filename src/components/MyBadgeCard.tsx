@@ -167,9 +167,21 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
           {me.organization && (
             <p className="mt-0.5 truncate text-sm text-muted-foreground">{me.organization}</p>
           )}
-          <span className="mt-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
-            {categoryLabel(me.participant_category)}
-          </span>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+              {categoryLabel(me.participant_category)}
+            </span>
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ring-1 ${TONE_CLASSES[status.tone]}`}
+            >
+              {status.label}
+            </span>
+          </div>
+          {isCancelled && (
+            <p className="mt-2 text-[11px] font-medium text-rose-700">
+              Ce badge n'est plus valide. Contactez l'organisation ANSUT.
+            </p>
+          )}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               size="sm"
