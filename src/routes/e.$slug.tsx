@@ -15,6 +15,9 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
+import { MyBadgeCard } from "@/components/MyBadgeCard";
+
+const BADGE_STORAGE_PREFIX = "ansut:badge:";
 
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
@@ -131,6 +134,13 @@ function PublicEventPage() {
     loadEvent();
   }, [slug]);
 
+  // Lot 2 : rehydrater le badge si le participant est déjà inscrit (token persisté).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(`${BADGE_STORAGE_PREFIX}${slug}`);
+    if (stored) setQrToken(stored);
+  }, [slug]);
+
   function updateField<K extends keyof typeof form>(key: K, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
@@ -185,6 +195,9 @@ function PublicEventPage() {
       return;
     }
     setQrToken(token as string);
+    if (typeof window !== "undefined" && token) {
+      window.localStorage.setItem(`${BADGE_STORAGE_PREFIX}${slug}`, token as string);
+    }
 
     // Confirmation multi-canal (best-effort, ne bloque pas l'UI).
     // Le serveur regénère destinataire + contenu depuis le qr_token.
@@ -261,6 +274,7 @@ function PublicEventPage() {
       </header>
 
       <main id="main-content" className="mx-auto max-w-4xl px-6 py-10">
+        {qrToken && <MyBadgeCard qrToken={qrToken} />}
         {event.cover_url && (
           <img
             src={event.cover_url}
