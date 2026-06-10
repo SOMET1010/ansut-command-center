@@ -15,6 +15,9 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { sendRegistrationConfirmation } from "@/lib/notifications.functions";
 import { downloadBadge } from "@/lib/badges";
 import { ParticipantBottomNav } from "@/components/ParticipantBottomNav";
+import { MyBadgeCard } from "@/components/MyBadgeCard";
+
+const BADGE_STORAGE_PREFIX = "ansut:badge:";
 
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
@@ -129,6 +132,13 @@ function PublicEventPage() {
       setLoading(false);
     }
     loadEvent();
+  }, [slug]);
+
+  // Lot 2 : rehydrater le badge si le participant est déjà inscrit (token persisté).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(`${BADGE_STORAGE_PREFIX}${slug}`);
+    if (stored) setQrToken(stored);
   }, [slug]);
 
   function updateField<K extends keyof typeof form>(key: K, value: string) {
