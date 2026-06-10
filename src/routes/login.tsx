@@ -64,7 +64,31 @@ function LoginPage() {
     }
     setLoading(false);
     toast.success("Connexion réussie");
-    navigate({ to: "/dashboard" });
+    // Lot 1 Phase 4.1 — redirection post-login par rôle.
+    // super_admin / org_admin → /dashboard (Cockpit)
+    // staff                   → /checkin
+    // participant / autre     → /me/role (qui affichera son contexte)
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let target: "/dashboard" | "/checkin" | "/me/role" = "/me/role";
+      if (user) {
+        const { data: rolesRows } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id);
+        const roles = (rolesRows ?? []).map((r) => r.role as string);
+        if (roles.includes("super_admin") || roles.includes("org_admin")) {
+          target = "/dashboard";
+        } else if (roles.includes("staff")) {
+          target = "/checkin";
+        }
+      }
+      navigate({ to: target });
+    } catch {
+      navigate({ to: "/dashboard" });
+    }
   }
 
   return (
