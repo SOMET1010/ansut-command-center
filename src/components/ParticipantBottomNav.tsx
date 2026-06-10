@@ -1,16 +1,15 @@
 import { useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, CalendarDays, Users, User } from "lucide-react";
+import { Home, CalendarDays, Users, Building2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Lot 1 — Navigation Participant (Phase 4.1).
- * Vocabulaire "app de salon" (Whova / Eventee / Brella / Swapcard).
+ * Navigation Participant — 5 entrées (Phase 4.1, finale).
  *
- * Mapping vers les routes existantes (post-cleanup) :
  *   Accueil      → /e/$slug
- *   Programme    → /agenda/$slug          (regroupe sessions & check-in)
- *   Participants → /networking/$slug      (regroupe networking · annonces · sondages)
+ *   Programme    → /agenda/$slug          (sessions & check-in)
+ *   Participants → /networking/$slug      (Découvrir · Messages · Rendez-vous)
+ *   Salon        → /salon/$slug           (Infos pratiques · Annonces · Sondages)
  *   Mon Profil   → /me/$slug
  *
  * Position fixed bottom — l'insertion dans le JSX n'a pas d'importance.
@@ -53,10 +52,16 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       matches: (p) => p.startsWith(`/networking/${slug}`),
     },
     {
+      label: "Salon",
+      icon: Building2,
+      to: `/salon/${slug}`,
+      matches: (p) => p.startsWith(`/salon/${slug}`),
+    },
+    {
       label: "Mon Profil",
       icon: User,
       to: `/me/${slug}`,
-      matches: (p) => p.startsWith(`/me/${slug}`) || p === "/me/role",
+      matches: (p) => p.startsWith(`/me/${slug}`),
     },
   ];
 

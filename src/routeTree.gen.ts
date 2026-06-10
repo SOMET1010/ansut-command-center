@@ -18,6 +18,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForbiddenRouteImport } from './routes/forbidden'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SalonSlugRouteImport } from './routes/salon.$slug'
 import { Route as NetworkingSlugRouteImport } from './routes/networking.$slug'
 import { Route as MeRoleRouteImport } from './routes/me.role'
 import { Route as MeSlugRouteImport } from './routes/me.$slug'
@@ -83,6 +84,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalonSlugRoute = SalonSlugRouteImport.update({
+  id: '/salon/$slug',
+  path: '/salon/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NetworkingSlugRoute = NetworkingSlugRouteImport.update({
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
+  '/salon/$slug': typeof SalonSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -251,6 +258,7 @@ export interface FileRoutesByTo {
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
+  '/salon/$slug': typeof SalonSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
+  '/salon/$slug': typeof SalonSlugRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/me/$slug'
     | '/me/role'
     | '/networking/$slug'
+    | '/salon/$slug'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/me/$slug'
     | '/me/role'
     | '/networking/$slug'
+    | '/salon/$slug'
     | '/admin/setup'
     | '/events/new'
     | '/events/$id/edit'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/me/$slug'
     | '/me/role'
     | '/networking/$slug'
+    | '/salon/$slug'
     | '/_authenticated/admin/setup'
     | '/_authenticated/events/new'
     | '/_authenticated/events/$id/edit'
@@ -405,6 +417,7 @@ export interface RootRouteChildren {
   MeSlugRoute: typeof MeSlugRoute
   MeRoleRoute: typeof MeRoleRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
+  SalonSlugRoute: typeof SalonSlugRoute
   ApiPublicAuthRecoverRoute: typeof ApiPublicAuthRecoverRoute
   ApiPublicAuthTokenRoute: typeof ApiPublicAuthTokenRoute
 }
@@ -472,6 +485,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salon/$slug': {
+      id: '/salon/$slug'
+      path: '/salon/$slug'
+      fullPath: '/salon/$slug'
+      preLoaderRoute: typeof SalonSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/networking/$slug': {
@@ -686,6 +706,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeSlugRoute: MeSlugRoute,
   MeRoleRoute: MeRoleRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
+  SalonSlugRoute: SalonSlugRoute,
   ApiPublicAuthRecoverRoute: ApiPublicAuthRecoverRoute,
   ApiPublicAuthTokenRoute: ApiPublicAuthTokenRoute,
 }
