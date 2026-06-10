@@ -63,6 +63,37 @@ Aucune maquette Premium, aucun composant V2 ne sera produit tant que J5 n'aura p
 Pool minimum : **5 participants + 3 staffs + 2 org_admin**.
 Protocole détaillé et scénarios chronométrés : §11 et `docs/sprint-0/05-decouvrabilite.md`.
 
+### Amendement 5 — Benchmark applications de salon (Whova / Eventee / Brella / Swapcard)
+
+**Référentiel de comparaison inconscient des utilisateurs.** Les participants SUTEL ne comparent pas ANSUT Event à un ERP ou un outil interne — ils le comparent aux apps qu'ils utilisent en salon et conférence : **Whova, Eventee, Brella, Swapcard**.
+
+Ces apps ne montrent **jamais** : Agenda · Polls · Networking · Matchmaking · RDV · Annonces. Elles montrent **toujours** : Accueil · Programme · Réseau · Salon · Profil.
+
+**Règle des 5 boutons.** Avant toute refonte graphique, répondre à : *« Si je suis un participant qui vient d'arriver à SUTEL, quels sont les 5 boutons maximum dont j'ai besoin ? »* Si la réponse comporte plus de 5 entrées, l'architecture n'est pas prête.
+
+#### Sitemap SUTEL — version « salon » (canonique, remplace §3)
+
+| Rôle | 5 entrées maximum (vocabulaire utilisateur final) |
+|---|---|
+| **Participant** | **Accueil · Programme · Réseau · Salon · Mon Profil** |
+| **Staff** | **Accueil · Check-in · Participants · Support · Statistiques** |
+| **Org Admin** | **Cockpit · Participants · Programme · Communication · Paramètres** |
+| **Super Admin** | **Cockpit Global · Événements · Organisations · Utilisateurs · Administration** |
+
+Différences clés vs sitemap missions précédent (§3) :
+
+- *« Mon événement »* → **Accueil** (vocabulaire app salon, pas vocabulaire technique).
+- *« Mon agenda »* → **Programme** (le participant cherche *le* programme du salon, pas *son* agenda).
+- *« Mon réseau » + « Mes rendez-vous »* → **Réseau** (une seule entrée, RDV en sous-page).
+- *« Mes informations »* → **Mon Profil** (cohérent avec Whova/Swapcard).
+- **Nouveau : Salon** = plan + exposants + sponsors + infos pratiques (absent de §3, indispensable événement physique).
+- Org Admin : *Analytics* fusionné dans *Cockpit* — 5 entrées strictes.
+
+Cette structure **prime sur §3** pour la Phase 4 SUTEL. §3 reste référence pour la généralisation multi-événements post-SUTEL.
+
+---
+
+
 ---
 
 ## 0. Pourquoi ce document
