@@ -194,13 +194,29 @@ export function EventHomeDashboard({
 
 function NowBlock({
   eventName,
-  session,
+  current,
+  upcoming,
+  minutesUntilUpcoming,
   slug,
 }: {
   eventName: string;
-  session: Session | null;
+  current: Session | null;
+  upcoming: Session | null;
+  minutesUntilUpcoming: number | null;
   slug: string;
 }) {
+  // Statut + session à afficher
+  const featured = current ?? upcoming;
+  const statusLabel = current
+    ? "En cours"
+    : upcoming && minutesUntilUpcoming !== null
+      ? minutesUntilUpcoming <= 0
+        ? "Commence maintenant"
+        : minutesUntilUpcoming === 1
+          ? "Commence dans 1 min"
+          : `Commence dans ${minutesUntilUpcoming} min`
+      : null;
+
   return (
     <section
       aria-labelledby="home-now-heading"
@@ -210,36 +226,38 @@ function NowBlock({
         <span>{eventName}</span>
       </div>
 
-      {session ? (
+      {featured && statusLabel ? (
         <>
-          <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground/90">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-            </span>
-            En cours maintenant
+          <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground/95">
+            {current && (
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+              </span>
+            )}
+            {statusLabel}
           </div>
           <h2
             id="home-now-heading"
             className="mt-2 text-xl font-bold leading-tight sm:text-2xl"
           >
-            {session.title}
+            {featured.title}
           </h2>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-primary-foreground/90">
-            {session.location && (
+            {featured.location && (
               <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4" /> {session.location}
+                <MapPin className="h-4 w-4" /> {featured.location}
               </span>
             )}
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {formatTime(session.starts_at)} – {formatTime(session.ends_at)}
+              {formatTime(featured.starts_at)} – {formatTime(featured.ends_at)}
             </span>
           </div>
           <div className="mt-5">
             <Link
               to="/live/$sessionId"
-              params={{ sessionId: session.id }}
+              params={{ sessionId: featured.id }}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
             >
               <Radio className="h-4 w-4" />
@@ -273,6 +291,7 @@ function NowBlock({
     </section>
   );
 }
+
 
 function NextBlock({
   session,
