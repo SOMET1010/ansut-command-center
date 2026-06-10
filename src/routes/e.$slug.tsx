@@ -260,86 +260,49 @@ function PublicEventPage() {
           </Link>
           <div className="flex items-center gap-3">
             <LanguageSwitcher language={language} onLanguageChange={setLanguage} compact />
-            <Link
-              to="/annonces/$slug"
-              params={{ slug }}
-              className="text-xs font-medium text-muted-foreground hover:text-primary"
-            >
-              {t("nav.announcements")}
-            </Link>
-            <Link
-              to="/agenda/$slug"
-              params={{ slug }}
-              className="text-xs font-medium text-muted-foreground hover:text-primary"
-            >
-              {t("nav.program")}
-            </Link>
-            <Link
-              to="/login"
-              className="text-xs font-medium text-muted-foreground hover:text-primary"
-            >
-              {t("nav.admin")}
-            </Link>
+            {!qrToken && (
+              <Link
+                to="/login"
+                className="text-xs font-medium text-muted-foreground hover:text-primary"
+              >
+                {t("nav.admin")}
+              </Link>
+            )}
           </div>
         </div>
       </header>
 
       <main id="main-content" className="mx-auto max-w-4xl px-6 py-10">
         {qrToken ? (
-          /* Accueil inscrit — événement d'abord, badge ensuite */
+          /* Accueil inscrit — événement d'abord, badge en accès secondaire */
           <>
-            {/* 1. Bandeau de bienvenue (élément dominant) */}
-            <section
-              aria-labelledby="welcome-heading"
-              className="rounded-3xl bg-gradient-to-br from-primary to-primary/80 px-6 py-8 text-primary-foreground shadow-[var(--shadow-card)] sm:px-8 sm:py-10"
-            >
-              <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary-foreground/80">
-                Bienvenue
-              </div>
-              <h1 id="welcome-heading" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-                {event.name}
-              </h1>
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-primary-foreground/90">
-                <span className="inline-flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" />
-                  {new Date(event.starts_at).toLocaleDateString("fr-FR", {
-                    dateStyle: "long",
-                    timeZone: "Africa/Abidjan",
-                  })}
-                </span>
-                {event.location && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4" /> {event.location}
-                  </span>
-                )}
-              </div>
-            </section>
+            <EventHomeDashboard
+              eventId={event.id}
+              eventName={event.name}
+              slug={slug}
+              qrToken={qrToken}
+            />
 
-            {/* 2. Prochaine session + annonces + accès rapides */}
-            <div className="mt-8">
-              <EventHomeDashboard eventId={event.id} slug={slug} qrToken={qrToken} />
-            </div>
-
-            {/* 3. Mon badge — accès secondaire repliable */}
-            <details className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-              <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-foreground select-none">
-                <IdCard className="h-4 w-4 text-primary" />
-                Mon badge
-                <span className="ml-auto text-xs font-normal text-muted-foreground">
-                  Toucher pour afficher
-                </span>
-              </summary>
-              <div className="mt-4">
-                <MyBadgeCard qrToken={qrToken} />
-              </div>
-            </details>
-
-            {/* 4. À propos — repliable */}
+            {/* À propos — repliable */}
             <details className="mt-4 rounded-2xl border border-border bg-card p-5">
               <summary className="cursor-pointer text-sm font-semibold text-foreground select-none">
                 À propos de l’événement
               </summary>
               <div className="mt-4 space-y-3">
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    {new Date(event.starts_at).toLocaleDateString("fr-FR", {
+                      dateStyle: "long",
+                      timeZone: "Africa/Abidjan",
+                    })}
+                  </span>
+                  {event.location && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-primary" /> {event.location}
+                    </span>
+                  )}
+                </div>
                 {event.description && (
                   <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">
                     {event.description}
