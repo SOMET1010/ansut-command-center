@@ -468,13 +468,15 @@ Nouvelles fonctionnalités (Sponsor MVP, IA, etc.)
 |---|---|---|
 | D1 | Sitemap V2 par missions (Amendement 1) | ✅ validée |
 | D2 | Cockpit obligatoire post-login (Amendement 2) | ✅ validée |
-| D3 | 4-6 entrées de navigation max (Amendement 3) | ✅ validée |
+| D3 | 4-6 entrées de navigation max (Amendement 3) — **durci par D8 à 5 max** | ✅ validée |
 | D4 | J5 préalable obligatoire à Phase 4 (Amendement 4) | ✅ validée |
-| D5 | **Périmètre MVP Sponsor** — **reporté Phase 5.** MVP limité à Participant / Staff / Org Admin / Super Admin. Justification : aucune UI Sponsor existante, aucun testeur Sponsor en J5, aucun flux métier validé, risque de complexification prématurée. | ✅ validée |
-| D6 | **Calendrier J5** — pool minimal **5 P + 3 S + 2 OA** (réels ou assimilés ANSUT), **1 demi-journée** (08h30 brief → 13h00 fin), événement réaliste **SUTEL** ou équivalent. Mesures : temps · clics · réussite · abandon · blocage · vocabulaire. Question fin de scénario : *« Où iriez-vous demain ? »*. **Critères Go Phase 4** : 0 critique · ≥ 80 % réussite · temps ≤ seuils · consensus nav ≥ 7/10. | ✅ validée |
-| D7 | **Durée redirections** — 301 permanentes **6 mois**, bannière discrète *« Cette rubrique a été déplacée »* pendant **les 2 premiers mois**, suppression définitive **à 6 mois**. | ✅ validée |
+| D5 | **Périmètre MVP Sponsor** — **reporté Phase 5.** MVP limité à Participant / Staff / Org Admin / Super Admin. | ✅ validée |
+| D6 | **Calendrier J5** — pool minimal **5 P + 3 S + 2 OA** (réels ou assimilés ANSUT), **1 demi-journée**, événement réaliste **SUTEL**. Critères Go Phase 4 : 0 critique · ≥ 80 % réussite · temps ≤ seuils · consensus nav ≥ 7/10. | ✅ validée |
+| D7 | **Durée redirections** — 301 permanentes **6 mois**, bannière discrète **2 premiers mois**, suppression **à 6 mois**. | ✅ validée |
+| D8 | **Sitemap SUTEL « salon » (Amendement 5)** — référentiel Whova/Eventee/Brella/Swapcard. **5 entrées strictes par rôle**. Participant : Accueil · Programme · Réseau · Salon · Mon Profil. Staff : Accueil · Check-in · Participants · Support · Statistiques. Org Admin : Cockpit · Participants · Programme · Communication · Paramètres. Super Admin : Cockpit Global · Événements · Organisations · Utilisateurs · Administration. **Règle des 5 boutons** à valider en J5 (S0 dédié : *« Citez les 5 boutons dont vous avez besoin »*). | ✅ validée |
 
 **Toutes les décisions comité sont prises. Aucun blocage résiduel avant J5.**
+
 
 
 ---
