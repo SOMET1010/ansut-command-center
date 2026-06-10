@@ -79,13 +79,21 @@ export function EventHomeDashboard({
   const [next, setNext] = useState<Session | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [myCategory, setMyCategory] = useState<string | null>(null);
+  // Tick : recalcule statut/countdown chaque minute
+  const [nowTs, setNowTs] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNowTs(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const nowIso = new Date().toISOString();
 
-      const [currRes, nextRes, annRes, partRes] = await Promise.all([
+      const [currRes, nextRes, annRes, partRes, meRes] = await Promise.all([
         supabase
           .from("event_sessions")
           .select("id, title, starts_at, ends_at, location, track")
@@ -110,33 +118,72 @@ export function EventHomeDashboard({
           .order("published_at", { ascending: false })
           .limit(3),
         supabase.rpc("list_event_networking", { p_slug: slug }),
+        supabase.rpc("me_registration", { p_qr_token: qrToken }),
       ]);
 
       if (cancelled) return;
       setCurrent(((currRes.data ?? [])[0] as Session) ?? null);
       setNext(((nextRes.data ?? [])[0] as Session) ?? null);
       if (annRes.data) setAnnouncements(annRes.data as Announcement[]);
-      if (partRes.data)
-        setParticipants((partRes.data as Participant[]).slice(0, 3));
+
+      // Identifier ma catégorie pour prioriser le réseau
+      const meRow = Array.isArray(meRes.data) ? meRes.data[0] : meRes.data;
+      const myCat: string | null = meRow?.participant_category ?? null;
+      const myId: string | null = meRow?.id ?? null;
+      setMyCategory(myCat);
+
+      if (partRes.data) {
+        const all = (partRes.data as Participant[]).filter(
+          (p) => !myId || p.id !== myId,
+        );
+        // Priorité : même catégorie d'abord
+        const sorted = myCat
+          ? [...all].sort((a, b) => {
+              const aMatch = a.participant_category === myCat ? 1 : 0;
+              const bMatch = b.participant_category === myCat ? 1 : 0;
+              return bMatch - aMatch;
+            })
+          : all;
+        setParticipants(sorted.slice(0, 3));
+      }
     })();
     return () => {
       cancelled = true;
     };
-  }, [eventId, slug]);
+  }, [eventId, slug, qrToken]);
+
+  // Si rien en cours mais prochaine session dans ≤ 60 min, promouvoir au hero
+  const minutesUntilNext = next
+    ? Math.round((new Date(next.starts_at).getTime() - nowTs) / 60_000)
+    : null;
+  const promoteNext =
+    !current && next && minutesUntilNext !== null && minutesUntilNext <= 60;
 
   return (
     <div className="space-y-5">
-      {/* Bloc 1 — MAINTENANT (élément dominant) */}
-      <NowBlock eventName={eventName} session={current} slug={slug} />
+      {/* Bloc 1 — MAINTENANT */}
+      <NowBlock
+        eventName={eventName}
+        current={current}
+        upcoming={promoteNext ? next : null}
+        minutesUntilUpcoming={promoteNext ? minutesUntilNext : null}
+        slug={slug}
+      />
 
-      {/* Bloc 2 — ENSUITE */}
-      <NextBlock session={next} slug={slug} hasCurrent={!!current} />
+      {/* Bloc 2 — ENSUITE (masqué si la prochaine est déjà dans le hero) */}
+      {!promoteNext && (
+        <NextBlock session={next} slug={slug} hasCurrent={!!current} />
+      )}
 
       {/* Bloc 3 — ALERTES */}
       <AlertsBlock announcements={announcements} slug={slug} />
 
       {/* Bloc 4 — RÉSEAU */}
-      <NetworkBlock participants={participants} slug={slug} />
+      <NetworkBlock
+        participants={participants}
+        slug={slug}
+        sameCategory={!!myCategory}
+      />
 
       {/* Bloc 5 — BADGE (repliable) */}
       <BadgeBlock qrToken={qrToken} />
@@ -144,15 +191,32 @@ export function EventHomeDashboard({
   );
 }
 
+
 function NowBlock({
   eventName,
-  session,
+  current,
+  upcoming,
+  minutesUntilUpcoming,
   slug,
 }: {
   eventName: string;
-  session: Session | null;
+  current: Session | null;
+  upcoming: Session | null;
+  minutesUntilUpcoming: number | null;
   slug: string;
 }) {
+  // Statut + session à afficher
+  const featured = current ?? upcoming;
+  const statusLabel = current
+    ? "En cours"
+    : upcoming && minutesUntilUpcoming !== null
+      ? minutesUntilUpcoming <= 0
+        ? "Commence maintenant"
+        : minutesUntilUpcoming === 1
+          ? "Commence dans 1 min"
+          : `Commence dans ${minutesUntilUpcoming} min`
+      : null;
+
   return (
     <section
       aria-labelledby="home-now-heading"
@@ -162,36 +226,38 @@ function NowBlock({
         <span>{eventName}</span>
       </div>
 
-      {session ? (
+      {featured && statusLabel ? (
         <>
-          <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground/90">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-            </span>
-            En cours maintenant
+          <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground/95">
+            {current && (
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+              </span>
+            )}
+            {statusLabel}
           </div>
           <h2
             id="home-now-heading"
             className="mt-2 text-xl font-bold leading-tight sm:text-2xl"
           >
-            {session.title}
+            {featured.title}
           </h2>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-primary-foreground/90">
-            {session.location && (
+            {featured.location && (
               <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4" /> {session.location}
+                <MapPin className="h-4 w-4" /> {featured.location}
               </span>
             )}
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {formatTime(session.starts_at)} – {formatTime(session.ends_at)}
+              {formatTime(featured.starts_at)} – {formatTime(featured.ends_at)}
             </span>
           </div>
           <div className="mt-5">
             <Link
               to="/live/$sessionId"
-              params={{ sessionId: session.id }}
+              params={{ sessionId: featured.id }}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
             >
               <Radio className="h-4 w-4" />
@@ -225,6 +291,7 @@ function NowBlock({
     </section>
   );
 }
+
 
 function NextBlock({
   session,
@@ -311,11 +378,16 @@ function AlertsBlock({
 function NetworkBlock({
   participants,
   slug,
+  sameCategory,
 }: {
   participants: Participant[];
   slug: string;
+  sameCategory: boolean;
 }) {
   if (participants.length === 0) return null;
+  const label = sameCategory
+    ? `${participants.length} personnes de votre catégorie`
+    : `${participants.length} personnes à découvrir`;
   return (
     <Link
       to="/networking/$slug"
@@ -325,7 +397,7 @@ function NetworkBlock({
       <div className="flex items-center justify-between gap-3">
         <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           <Users className="mr-1 inline h-3.5 w-3.5 text-primary" />
-          {participants.length} personnes à découvrir
+          {label}
         </div>
         <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
       </div>
