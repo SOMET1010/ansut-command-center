@@ -1,8 +1,9 @@
 # Architecture Produit V2 — Document de référence
 
-**Statut** : **validée sous réserve des 4 amendements de validation comité (cf. §A).** Aucune ligne de code modifiée.
+**Statut** : **validée sous réserve des 5 amendements de validation comité (cf. §A).** Aucune ligne de code modifiée.
 **Périmètre** : sortie Sprint 0. Pré-requis avant toute Phase 4 (UX Premium) et toute nouvelle fonctionnalité.
 **Prochaine étape obligatoire** : **exécution J5 (audit découvrabilité)** avant toute maquette Phase 4. Les résultats J5 alimentent la version finale de ce document.
+
 
 ---
 
