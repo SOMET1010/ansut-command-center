@@ -19,6 +19,7 @@ type MeRegistration = {
   full_name: string;
   organization: string | null;
   participant_category: string | null;
+  status: string | null;
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -37,26 +38,68 @@ function categoryLabel(c: string | null | undefined) {
   return CATEGORY_LABELS[c] ?? c.charAt(0).toUpperCase() + c.slice(1);
 }
 
+const STATUS_META: Record<
+  string,
+  { label: string; tone: "ok" | "info" | "warn" | "danger" }
+> = {
+  confirmed: { label: "Confirmé", tone: "ok" },
+  checked_in: { label: "Check-in effectué", tone: "info" },
+  pending: { label: "En attente de validation", tone: "warn" },
+  cancelled: { label: "Inscription annulée", tone: "danger" },
+};
+
+function statusMeta(s: string | null | undefined) {
+  if (!s) return { label: "Statut inconnu", tone: "warn" as const };
+  return STATUS_META[s] ?? { label: s, tone: "warn" as const };
+}
+
+const TONE_CLASSES: Record<"ok" | "info" | "warn" | "danger", string> = {
+  ok: "bg-emerald-100 text-emerald-800 ring-emerald-200",
+  info: "bg-sky-100 text-sky-800 ring-sky-200",
+  warn: "bg-amber-100 text-amber-800 ring-amber-200",
+  danger: "bg-rose-100 text-rose-800 ring-rose-200",
+};
+
+// Cache offline-first : la dernière identité connue est rejouée instantanément
+// (les Wi-Fi/4G de salon sont souvent saturés). On rafraîchit ensuite si le réseau répond.
+const CACHE_PREFIX = "ansut:badge:data:";
+
+function readCache(qrToken: string): MeRegistration | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(`${CACHE_PREFIX}${qrToken}`);
+    return raw ? (JSON.parse(raw) as MeRegistration) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(qrToken: string, data: MeRegistration) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(`${CACHE_PREFIX}${qrToken}`, JSON.stringify(data));
+  } catch {
+    /* quota or private mode — ignore */
+  }
+}
+
 export function MyBadgeCard({ qrToken }: { qrToken: string }) {
-  const [me, setMe] = useState<MeRegistration | null>(null);
+  const [me, setMe] = useState<MeRegistration | null>(() => readCache(qrToken));
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [qrLargeDataUrl, setQrLargeDataUrl] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       const { data, error } = await supabase.rpc("me_registration", { p_qr_token: qrToken });
       if (cancelled) return;
-      if (error || !data || (Array.isArray(data) && data.length === 0)) {
-        setMe(null);
-      } else {
-        const row = Array.isArray(data) ? data[0] : data;
-        setMe(row as MeRegistration);
+      if (!error && data && (!Array.isArray(data) || data.length > 0)) {
+        const row = (Array.isArray(data) ? data[0] : data) as MeRegistration;
+        setMe(row);
+        writeCache(qrToken, row);
       }
-      setLoading(false);
     }
     load();
     return () => {
@@ -74,7 +117,29 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
     QRCode.toDataURL(qrToken, { ...opts, width: 560 }).then(setQrLargeDataUrl).catch(console.error);
   }, [qrToken]);
 
-  if (loading || !me) return null;
+  // Wake Lock : empêche l'écran de s'éteindre quand le QR est affiché en plein écran.
+  // C'est ce qui rapproche le plus le web d'un « mode badge » natif.
+  useEffect(() => {
+    if (!open || typeof navigator === "undefined") return;
+    type WakeLockSentinel = { release: () => Promise<void> };
+    type WakeLockAPI = { request: (type: "screen") => Promise<WakeLockSentinel> };
+    const wl = (navigator as unknown as { wakeLock?: WakeLockAPI }).wakeLock;
+    if (!wl) return;
+    let sentinel: WakeLockSentinel | null = null;
+    wl.request("screen").then((s) => {
+      sentinel = s;
+    }).catch(() => {
+      /* user gesture missing or unsupported — silent fallback */
+    });
+    return () => {
+      sentinel?.release().catch(() => undefined);
+    };
+  }, [open]);
+
+  if (!me) return null;
+
+  const status = statusMeta(me.status);
+  const isCancelled = me.status === "cancelled";
 
   return (
     <section
