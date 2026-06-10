@@ -23,14 +23,19 @@ const IGNORED_FILES = new Set([
   "README.md",
 ]);
 
-/** Convertit un chemin de fichier route en path TanStack ("/e/$slug"). */
+/** Convertit un chemin de fichier route en path TanStack runtime ("/e/$slug"). */
 function fileToRoutePath(relPath) {
   let p = relPath.replace(/\\/g, "/").replace(/\.(tsx?|jsx?)$/, "");
-  // Convention folder OR dot-separated → segments
   p = p.replace(/\./g, "/");
-  if (p.endsWith("/index")) p = p.slice(0, -"/index".length) || "/";
-  if (!p.startsWith("/")) p = "/" + p;
-  return p;
+  // Retire les segments de layout / pathless ("_authenticated", "_app", …) :
+  // ils n'apparaissent pas dans l'URL runtime.
+  p = p
+    .split("/")
+    .filter((seg) => seg && !seg.startsWith("_"))
+    .join("/");
+  if (p === "" || p === "index") return "/";
+  if (p.endsWith("/index")) p = p.slice(0, -"/index".length);
+  return "/" + p;
 }
 
 function walk(dir, acc = []) {
