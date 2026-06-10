@@ -1,0 +1,182 @@
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
+import { IdCard, Maximize2, Download, X } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { downloadBadge } from "@/lib/badges";
+
+/**
+ * Phase 4 — Lot 2 : « Mon badge » en tête d'Accueil.
+ * Source unique : RPC `me_registration(qr_token)` qui lit `event_registrations`
+ * (la même source utilisée par check-in, networking et rdv).
+ * Le QR encode le `qr_token` brut, format attendu par le scanner d'accueil.
+ */
+
+type MeRegistration = {
+  id: string;
+  full_name: string;
+  organization: string | null;
+  participant_category: string | null;
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  exhibitor: "Exposant",
+  sponsor: "Sponsor",
+  speaker: "Intervenant",
+  vip: "VIP",
+  press: "Presse",
+  staff: "Staff",
+  visitor: "Visiteur",
+  other: "Participant",
+};
+
+function categoryLabel(c: string | null | undefined) {
+  if (!c) return "Participant";
+  return CATEGORY_LABELS[c] ?? c.charAt(0).toUpperCase() + c.slice(1);
+}
+
+export function MyBadgeCard({ qrToken }: { qrToken: string }) {
+  const [me, setMe] = useState<MeRegistration | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  const [qrLargeDataUrl, setQrLargeDataUrl] = useState<string>("");
+  const [open, setOpen] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const { data, error } = await supabase.rpc("me_registration", { p_qr_token: qrToken });
+      if (cancelled) return;
+      if (error || !data || (Array.isArray(data) && data.length === 0)) {
+        setMe(null);
+      } else {
+        const row = Array.isArray(data) ? data[0] : data;
+        setMe(row as MeRegistration);
+      }
+      setLoading(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [qrToken]);
+
+  useEffect(() => {
+    const opts = {
+      margin: 1,
+      color: { dark: "#0f172a", light: "#ffffff" },
+      errorCorrectionLevel: "M" as const,
+    };
+    QRCode.toDataURL(qrToken, { ...opts, width: 220 }).then(setQrDataUrl).catch(console.error);
+    QRCode.toDataURL(qrToken, { ...opts, width: 560 }).then(setQrLargeDataUrl).catch(console.error);
+  }, [qrToken]);
+
+  if (loading || !me) return null;
+
+  return (
+    <section
+      aria-label="Mon badge"
+      className="mb-8 overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-[var(--shadow-card)]"
+    >
+      <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
+        <div className="shrink-0 self-center rounded-xl bg-white p-3 shadow-sm">
+          {qrDataUrl ? (
+            <img src={qrDataUrl} alt="Mon QR Code" className="h-32 w-32" />
+          ) : (
+            <div className="flex h-32 w-32 items-center justify-center text-xs text-muted-foreground">
+              QR…
+            </div>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+            <IdCard className="h-3.5 w-3.5" />
+            Mon badge
+          </div>
+          <h2 className="mt-1.5 truncate text-xl font-bold tracking-tight text-foreground">
+            {me.full_name}
+          </h2>
+          {me.organization && (
+            <p className="mt-0.5 truncate text-sm text-muted-foreground">{me.organization}</p>
+          )}
+          <span className="mt-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+            {categoryLabel(me.participant_category)}
+          </span>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => setOpen(true)}
+              className="gap-1.5"
+            >
+              <Maximize2 className="h-4 w-4" /> Agrandir
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading}
+              onClick={async () => {
+                setDownloading(true);
+                try {
+                  await downloadBadge(qrToken);
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Erreur badge");
+                } finally {
+                  setDownloading(false);
+                }
+              }}
+              className="gap-1.5"
+            >
+              <Download className="h-4 w-4" />
+              {downloading ? "Génération…" : "Télécharger le PDF"}
+            </Button>
+          </div>
+          <p className="mt-3 text-[11px] text-muted-foreground">
+            Présentez ce QR Code à l'entrée pour le check-in.
+          </p>
+        </div>
+      </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md p-0 sm:max-w-lg">
+          <div className="relative flex flex-col items-center bg-white p-6 sm:p-8 text-center text-slate-900">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Fermer"
+              className="absolute right-3 top-3 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <DialogTitle className="sr-only">Mon badge — {me.full_name}</DialogTitle>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Mon badge
+            </div>
+            <h3 className="mt-2 text-2xl font-bold">{me.full_name}</h3>
+            {me.organization && (
+              <p className="mt-0.5 text-sm text-slate-500">{me.organization}</p>
+            )}
+            <span className="mt-2 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              {categoryLabel(me.participant_category)}
+            </span>
+            <div className="mt-6 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+              {qrLargeDataUrl ? (
+                <img
+                  src={qrLargeDataUrl}
+                  alt="Mon QR Code agrandi"
+                  className="h-72 w-72 sm:h-80 sm:w-80"
+                />
+              ) : null}
+            </div>
+            <p className="mt-4 text-xs text-slate-500">
+              Augmentez la luminosité de votre écran pour faciliter le scan.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+}
