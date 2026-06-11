@@ -18,7 +18,7 @@ import {
   Facebook,
   Youtube,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
 import { cn } from "@/lib/utils";
