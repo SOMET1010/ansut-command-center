@@ -415,6 +415,9 @@ function Landing() {
         </div>
       </section>
 
+      {/* BADGE QR — Générateur dynamique */}
+      <BadgeQrSection eventSlug={ev?.slug} />
+
       {/* FOOTER */}
       <footer className="text-sm text-white" style={{ backgroundColor: GREEN_DARK }}>
         <div className="mx-auto max-w-7xl px-6 py-10">
