@@ -223,23 +223,37 @@ function Landing() {
               </p>
 
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Link
-                  to={ev?.slug ? "/e/$slug" : "/signup"}
-                  params={ev?.slug ? { slug: ev.slug } : undefined}
-                  className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
-                  style={{ backgroundColor: GOLD }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
-                >
-                  Obtenir mon badge
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                {ev?.slug ? (
+                  <Link
+                    to="/e/$slug"
+                    params={{ slug: ev.slug }}
+                    className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
+                    style={{ backgroundColor: GOLD }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
+                  >
+                    Obtenir mon badge
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                ) : (
+                  <Link
+                    to="/signup"
+                    className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
+                    style={{ backgroundColor: GOLD }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
+                  >
+                    Obtenir mon badge
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                )}
                 <ProgrammeLink
-                  className="inline-flex items-center rounded-xl border-2 bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors"
+                  className="inline-flex items-center rounded-xl border-2 border-[#C9A24C] bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors hover:bg-[#C9A24C]/10"
                 >
                   <span style={{ color: GOLD }}>Consulter le programme</span>
                 </ProgrammeLink>
               </div>
+
             </div>
 
             <aside className="relative lg:col-span-5">
