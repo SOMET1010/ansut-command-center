@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EventLayout } from "@/components/EventLayout";
-import { WifiQrCode } from "@/components/WifiQrCode";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Wifi, Megaphone, Vote, Pin } from "lucide-react";
+import { MapPin, Megaphone, Vote, Pin } from "lucide-react";
 
 export const Route = createFileRoute("/e/$slug/annonces")({
   head: () => ({ meta: [{ title: "Infos pratiques — SUTEL 2026 | ANSUT EVENT" }] }),
@@ -18,7 +17,7 @@ function AnnoncesPage() {
     queryFn: async () => {
       const { data: event, error } = await supabase
         .from("events")
-        .select("id, name, slug, starts_at, ends_at, location, wifi_ssid, wifi_password, wifi_encryption")
+        .select("id, name, slug, starts_at, ends_at, location")
         .eq("slug", slug)
         .eq("status", "published")
         .single();
