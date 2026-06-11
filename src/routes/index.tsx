@@ -256,7 +256,7 @@ function Landing() {
 
             </div>
 
-            <aside className="relative lg:col-span-5">
+            <aside className="relative md:col-span-5">
               <div className="relative overflow-hidden rounded-3xl shadow-[0_20px_60px_-20px_rgba(31,77,58,0.3)]">
                 <img
                   src={heroImage}
