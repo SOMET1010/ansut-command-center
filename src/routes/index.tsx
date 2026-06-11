@@ -23,34 +23,7 @@ import {
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
 import { cn } from "@/lib/utils";
-
-// Wordmark vert spécifique à la landing (le logo officiel bleu jure avec la palette).
-function GreenWordmark({ color = "#1F4D3A", light = false }: { color?: string; light?: boolean }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <span
-        className="flex h-9 w-9 items-center justify-center rounded-full"
-        style={{ backgroundColor: light ? "rgba(255,255,255,0.15)" : `${color}14` }}
-      >
-        <span className="grid grid-cols-3 gap-[2px]">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <span
-              key={i}
-              className="h-1 w-1 rounded-full"
-              style={{ backgroundColor: light ? "#ffffff" : color, opacity: 0.85 - (i % 3) * 0.15 }}
-            />
-          ))}
-        </span>
-      </span>
-      <span
-        className="text-xl font-bold tracking-tight"
-        style={{ color: light ? "#ffffff" : color, fontFamily: "'Instrument Serif', serif" }}
-      >
-        ANSUT
-      </span>
-    </div>
-  );
-}
+import { AnsutLogo } from "@/components/ansut/Logo";
 
 // Palette maquette : vert foncé + or sur fond crème.
 const GREEN = "#1F4D3A";
@@ -160,7 +133,7 @@ function Landing() {
       >
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <GreenWordmark />
+            <AnsutLogo size="md" />
           </Link>
 
           <div className="hidden items-center gap-10 md:flex">
@@ -428,7 +401,7 @@ function Landing() {
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
             {/* Col 1 : logo + tagline + social */}
             <div>
-              <GreenWordmark light />
+              <AnsutLogo size="md" />
               <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
                 L'Agence Nationale du Service Universel des Télécommunications — Côte d'Ivoire.
               </p>
