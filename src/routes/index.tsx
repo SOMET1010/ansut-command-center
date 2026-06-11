@@ -991,15 +991,29 @@ function BadgeField({
   label,
   value,
   onChange,
+  onBlur,
   placeholder,
   type = "text",
+  error,
+  maxLength,
+  autoComplete,
+  inputMode,
+  spellCheck,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   type?: string;
+  error?: string;
+  maxLength?: number;
+  autoComplete?: string;
+  inputMode?: "text" | "email" | "url" | "numeric" | "tel" | "search" | "none" | "decimal";
+  spellCheck?: boolean;
 }) {
+  const hasError = Boolean(error);
+  const errorId = `${label.replace(/\s+/g, "-").toLowerCase()}-error`;
   return (
     <div>
       <label
@@ -1012,10 +1026,25 @@ function BadgeField({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         placeholder={placeholder}
-        className="w-full rounded-xl border-2 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-[color:var(--gold,#C9A24C)]"
-        style={{ borderColor: `${GREEN}1f`, color: GREEN }}
+        maxLength={maxLength}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        spellCheck={spellCheck}
+        aria-invalid={hasError}
+        aria-describedby={hasError ? errorId : undefined}
+        className="w-full rounded-xl border-2 bg-white px-4 py-2.5 text-sm outline-none transition-colors"
+        style={{
+          borderColor: hasError ? "#B3261E" : `${GREEN}1f`,
+          color: GREEN,
+        }}
       />
+      {hasError && (
+        <p id={errorId} className="mt-1.5 text-xs" style={{ color: "#B3261E" }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
