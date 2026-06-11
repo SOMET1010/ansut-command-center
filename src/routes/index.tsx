@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Sparkles,
   Clock,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/newsletter-form";
@@ -267,14 +268,14 @@ function Landing() {
           <div className="grid items-end gap-16 lg:grid-cols-12">
             {/* LEFT */}
             <div className="lg:col-span-7">
-              {/* Eyebrow */}
-              <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
+              {/* Eyebrow — premier élément visuel, espacé de la nav */}
+              <div className="flex items-center gap-3 pt-8 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
                 <span className="h-px w-10 bg-secondary" />
                 <span>IIIe édition · Salon Universel des Télécommunications</span>
               </div>
 
               {/* Headline — editorial */}
-              <h1 className="mt-6 font-display text-[44px] font-bold leading-[0.98] tracking-[-0.025em] sm:text-6xl lg:text-[88px]">
+              <h1 className="mt-8 font-display text-[44px] font-bold leading-[0.98] tracking-[-0.025em] sm:text-6xl lg:text-[88px]">
                 SUTEL{" "}
                 <span
                   style={{ fontFamily: "'Instrument Serif', serif" }}
@@ -294,15 +295,15 @@ function Landing() {
                 <span className="text-white/85"> des télécommunications.</span>
               </h1>
 
-              <p className="mt-8 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
                 Le SUTEL réunit les acteurs africains du service universel des télécommunications
                 — agences FSU, régulateurs, opérateurs et partenaires institutionnels — pour
                 trois jours de plénières, ateliers et mises en relation. Plateforme officielle
                 de gestion des inscriptions, accréditations et du programme.
               </p>
 
-              {/* Meta line */}
-              <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-white/10 py-5 text-sm">
+              {/* Meta line — séparateur visuel fort */}
+              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-white/10 py-5 text-sm">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Dates</div>
                   <div className="mt-1 font-semibold text-white">
@@ -333,7 +334,7 @@ function Landing() {
                 );
                 if (daysLeft <= 0) return null;
                 return (
-                  <div className="mt-6 flex items-center gap-3 rounded-full border border-secondary/30 bg-secondary/10 px-5 py-2.5 w-fit">
+                  <div className="mt-8 flex items-center gap-3 rounded-full border border-secondary/30 bg-secondary/10 px-5 py-2.5 w-fit">
                     <Clock className="h-4 w-4 shrink-0 text-secondary" />
                     <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-secondary">
                       J-{daysLeft} avant le SUTEL 2026
@@ -342,7 +343,8 @@ function Landing() {
                 );
               })()}
 
-              <div className="mt-10 flex flex-wrap gap-3">
+              {/* CTAs — primary dominant, secondary plus léger */}
+              <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button
                   asChild
                   size="lg"
@@ -363,9 +365,9 @@ function Landing() {
                 </Button>
                 <Button
                   asChild
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full border-white/25 bg-transparent px-8 py-6 text-[15px] font-semibold text-white backdrop-blur-sm hover:border-white/60 hover:bg-white/5 hover:text-white"
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-[13px] font-medium text-white/80 backdrop-blur-sm hover:border-white/40 hover:bg-white/10 hover:text-white"
                 >
                   <ProgrammeLink>
                     <PlayCircle className="mr-2 h-4 w-4" />
@@ -375,67 +377,63 @@ function Landing() {
               </div>
             </div>
 
-            {/* RIGHT — Programme du jour, institutional card */}
+            {/* RIGHT — Stat block institutionnel */}
             <aside className="lg:col-span-5">
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-                <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
-                      Programme
-                    </div>
-                    <h2 className="mt-1 text-base font-semibold text-white">Sessions à venir</h2>
+                <div className="mb-5 border-b border-white/10 pb-4">
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
+                    À retenir
                   </div>
-                  <ProgrammeLink className="text-xs font-semibold text-secondary hover:underline">
-                    Voir tout →
-                  </ProgrammeLink>
                 </div>
 
-                <ul className="space-y-2">
-                  {data.agenda.length === 0 && (
-                    <li className="flex min-h-[220px] flex-col items-center justify-center rounded-xl border border-dashed border-white/15 p-6 text-center">
-                      <Calendar className="mb-3 h-7 w-7 text-white/30" />
-                      <p className="text-sm text-white/55">
-                        Le programme officiel sera publié prochainement.
-                      </p>
-                    </li>
-                  )}
-                  {data.agenda.map((item) => {
-                    const r = formatRange(item.starts_at, item.ends_at);
-                    return (
-                      <li
-                        key={item.id}
-                        className="flex gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 transition-colors hover:border-white/15 hover:bg-white/[0.05]"
-                      >
-                        <div className="flex w-12 shrink-0 flex-col text-[11px] font-semibold tabular-nums">
-                          <span className="text-white">{r.start}</span>
-                          <span className="text-white/40">{r.end}</span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <span className="inline-block rounded bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-secondary">
-                            Conférence
-                          </span>
-                          <p className="mt-1 line-clamp-2 text-sm font-medium leading-snug text-white">
-                            {item.name}
-                          </p>
-                          {item.location && (
-                            <p className="mt-0.5 text-xs text-white/45">{item.location}</p>
-                          )}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
+                <div className="space-y-5">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
+                      <MapPin className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Lieu</div>
+                      <p className="mt-0.5 font-semibold text-white">{ev?.location ?? "Abidjan, Côte d'Ivoire"}</p>
+                    </div>
+                  </div>
 
-                <Button
-                  asChild
-                  variant="outline"
-                  className="mt-5 w-full rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
-                >
-                  <ProgrammeLink>
-                    Programme complet
-                    <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                  </ProgrammeLink>
-                </Button>
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
+                      <Calendar className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Dates</div>
+                      <p className="mt-0.5 font-semibold text-white">15 – 17 septembre 2026</p>
+                      <p className="mt-0.5 text-xs text-white/55">3 jours de conférences</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
+                      <Users className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Participants</div>
+                      <p className="mt-0.5 font-semibold text-white">1 200+ attendus</p>
+                      <p className="mt-0.5 text-xs text-white/55">Agences FSU · Régulateurs · Opérateurs</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
+                      <Mic className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Format</div>
+                      <p className="mt-0.5 font-semibold text-white">Plénières · Ateliers · Networking</p>
+                      <p className="mt-0.5 text-xs text-white/55">Sous l'égide de l'UAT</p>
+                    </div>
+                  </div>
+                </div>
+
+                <ProgrammeLink className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:underline">
+                  Consulter le programme complet →
+                </ProgrammeLink>
               </div>
 
               {/* Key figures strip */}
@@ -475,6 +473,7 @@ function Landing() {
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, idx) => {
+              const isCenter = idx === 1;
               const ctaClass =
                 "mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary transition-all hover:gap-3";
               const cta =
@@ -492,16 +491,30 @@ function Landing() {
               return (
                 <div
                   key={f.title}
-                  className="group relative flex flex-col rounded-3xl border border-border bg-muted p-8 transition-all hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]"
+                  className={cn(
+                    "group relative flex flex-col rounded-3xl border p-8 transition-all hover:-translate-y-1",
+                    isCenter
+                      ? "border-secondary/40 bg-secondary/5 shadow-lg shadow-secondary/10"
+                      : "border-border bg-muted hover:border-primary/30 hover:bg-card hover:shadow-[var(--shadow-card)]",
+                  )}
                 >
-                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-card text-primary shadow-sm transition-transform group-hover:scale-110">
+                  {/* Badge Essentiel pour la card centrale */}
+                  {isCenter && (
+                    <span className="absolute -top-3 right-6 rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white">
+                      Essentiel
+                    </span>
+                  )}
+                  <div className={cn(
+                    "mb-6 flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110",
+                    isCenter ? "bg-secondary/15 text-secondary" : "bg-card text-primary",
+                  )}>
                     <f.icon className="h-7 w-7" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">{f.title}</h3>
                   <ul className="mt-4 flex-1 space-y-2.5 text-sm text-muted-foreground">
                     {f.items.map((it) => (
                       <li key={it} className="flex items-start gap-3">
-                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span className={cn("mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full", isCenter ? "bg-secondary" : "bg-primary")} />
                         <span>{it}</span>
                       </li>
                     ))}
@@ -611,7 +624,7 @@ function Landing() {
               Agence Nationale du Service Universel des Télécommunications
             </div>
           </div>
-          <div className="flex gap-8 font-medium">
+          <div className="flex flex-wrap gap-6 md:gap-8 font-medium">
             <Link to="/mentions-legales" className="hover:text-white">
               Mentions légales
             </Link>
@@ -620,6 +633,14 @@ function Landing() {
             </Link>
             <a href="mailto:support@ansut.ci" className="hover:text-white">
               Support
+            </a>
+            <a
+              href="https://uat-africa.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white"
+            >
+              UAT
             </a>
           </div>
         </div>
