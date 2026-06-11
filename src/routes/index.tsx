@@ -11,6 +11,7 @@ import {
   MapPin,
   ArrowRight,
   Sparkles,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/newsletter-form";
@@ -324,6 +325,22 @@ function Landing() {
                   <div className="mt-1 font-semibold text-white">ANSUT</div>
                 </div>
               </div>
+
+              {/* Countdown — only shown when event is in the future */}
+              {ev?.starts_at && (() => {
+                const daysLeft = Math.ceil(
+                  (new Date(ev.starts_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                );
+                if (daysLeft <= 0) return null;
+                return (
+                  <div className="mt-6 flex items-center gap-3 rounded-full border border-secondary/30 bg-secondary/10 px-5 py-2.5 w-fit">
+                    <Clock className="h-4 w-4 shrink-0 text-secondary" />
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-secondary">
+                      J-{daysLeft} avant le SUTEL 2026
+                    </span>
+                  </div>
+                );
+              })()}
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <Button
