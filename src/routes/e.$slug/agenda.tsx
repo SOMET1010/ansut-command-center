@@ -144,7 +144,7 @@ function AgendaPage() {
   async function toggleBookmark(sessionId: string) {
     if (!myParticipant) return;
     const isBookmarked = bookmarks.includes(sessionId);
-    await supabase.rpc("toggle_session_bookmark", {
+    await supabase.rpc("toggle_my_bookmark", {
       p_qr_token: myToken,
       p_session_id: sessionId,
       p_add: !isBookmarked,
