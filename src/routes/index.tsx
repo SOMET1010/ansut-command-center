@@ -418,7 +418,7 @@ function Landing() {
       {/* FOOTER */}
       <footer className="text-sm text-white" style={{ backgroundColor: GREEN_DARK }}>
         <div className="mx-auto max-w-7xl px-6 py-10">
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {/* Col 1 : logo + tagline + social */}
             <div>
               <GreenWordmark light />
