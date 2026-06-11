@@ -187,7 +187,7 @@ function Landing() {
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden pb-20 pt-40 lg:pb-28 lg:pt-44" style={{ color: GREEN }}>
+      <section className="relative overflow-hidden pb-12 pt-32 lg:pb-16 lg:pt-36" style={{ color: GREEN }}>
         <div
           className="pointer-events-none absolute -left-20 top-1/2 h-96 w-96 -translate-y-1/2 opacity-[0.06]"
           style={{ background: `radial-gradient(circle, ${GREEN} 0%, transparent 60%)` }}
