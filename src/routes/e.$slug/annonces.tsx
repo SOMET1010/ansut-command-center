@@ -111,20 +111,8 @@ function AnnoncesPage() {
           </div>
         </section>
 
-        {/* Wi-Fi */}
-        {event.wifi_ssid && (
-          <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-            <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              <Wifi className="h-4 w-4 text-primary" />
-              Wi-Fi
-            </h2>
-            <WifiQrCode
-              ssid={event.wifi_ssid}
-              password={event.wifi_password ?? undefined}
-              encryption={event.wifi_encryption ?? "WPA"}
-            />
-          </section>
-        )}
+
+
 
         {/* Annonces */}
         <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
