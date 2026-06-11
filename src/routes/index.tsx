@@ -694,3 +694,224 @@ function SocialIcon({
     </a>
   );
 }
+
+function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
+  const [fullName, setFullName] = useState("");
+  const [organization, setOrganization] = useState("");
+  const [role, setRole] = useState("Participant");
+  const [email, setEmail] = useState("");
+  const [qrSrc, setQrSrc] = useState<string>("");
+
+  const origin =
+    typeof window !== "undefined" && window.location?.origin
+      ? window.location.origin
+      : "https://ansut-craft-kit.lovable.app";
+
+  const payload = JSON.stringify({
+    event: "SUTEL 2026",
+    slug: eventSlug ?? "sutel-2026",
+    name: fullName || "Invité ANSUT",
+    org: organization || "—",
+    role,
+    email: email || "—",
+    url: `${origin}/signup`,
+    ts: Date.now(),
+  });
+
+  useEffect(() => {
+    QRCode.toDataURL(payload, {
+      margin: 1,
+      width: 360,
+      errorCorrectionLevel: "M",
+      color: { dark: GREEN, light: "#ffffff" },
+    })
+      .then(setQrSrc)
+      .catch(() => setQrSrc(""));
+  }, [payload]);
+
+  const handleDownload = () => {
+    if (!qrSrc) return;
+    const a = document.createElement("a");
+    a.href = qrSrc;
+    a.download = `badge-sutel-${(fullName || "invite").toLowerCase().replace(/\s+/g, "-")}.png`;
+    a.click();
+  };
+
+  return (
+    <section className="pb-16 pt-4">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: GOLD }}>
+            Aperçu instantané
+          </p>
+          <h2
+            className="mt-3 text-3xl font-bold tracking-tight sm:text-5xl"
+            style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
+          >
+            Générez votre badge QR
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm" style={{ color: `${GREEN}b3` }}>
+            Visualisez votre badge en temps réel. Renseignez vos informations pour voir votre QR code se mettre à jour instantanément.
+          </p>
+        </div>
+
+        <div
+          className="mt-10 grid gap-6 overflow-hidden rounded-3xl bg-white p-6 sm:p-8 lg:grid-cols-2 lg:gap-10"
+          style={{ boxShadow: "0 4px 24px -10px rgba(31,77,58,0.15)" }}
+        >
+          {/* Formulaire */}
+          <div className="flex flex-col gap-4">
+            <BadgeField
+              label="Nom complet"
+              value={fullName}
+              onChange={setFullName}
+              placeholder="Aïcha Koné"
+            />
+            <BadgeField
+              label="Organisation"
+              value={organization}
+              onChange={setOrganization}
+              placeholder="ANSUT"
+            />
+            <div>
+              <label
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider"
+                style={{ color: `${GREEN}99` }}
+              >
+                Rôle
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {["Participant", "Exposant", "Intervenant", "Presse"].map((r) => {
+                  const active = r === role;
+                  return (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      className="rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors"
+                      style={{
+                        borderColor: active ? GREEN : `${GREEN}33`,
+                        backgroundColor: active ? GREEN : "transparent",
+                        color: active ? "#ffffff" : GREEN,
+                      }}
+                    >
+                      {r}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <BadgeField
+              label="Email"
+              value={email}
+              onChange={setEmail}
+              placeholder="vous@exemple.ci"
+              type="email"
+            />
+
+            <div className="mt-2 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={!qrSrc}
+                className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50"
+                style={{ backgroundColor: GOLD }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
+              >
+                Télécharger le QR
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </button>
+              <Link
+                to="/signup"
+                className="inline-flex items-center rounded-xl border-2 px-5 py-2.5 text-sm font-semibold transition-colors"
+                style={{ borderColor: GOLD, color: GOLD }}
+              >
+                Valider l'inscription
+              </Link>
+            </div>
+          </div>
+
+          {/* Aperçu Badge */}
+          <div
+            className="flex items-center justify-center rounded-2xl p-6 sm:p-8"
+            style={{ backgroundColor: `${GREEN}08` }}
+          >
+            <div
+              className="relative w-full max-w-[280px] overflow-hidden rounded-2xl bg-white shadow-xl"
+              style={{ boxShadow: "0 20px 50px -20px rgba(31,77,58,0.4)" }}
+            >
+              <div
+                className="flex items-center justify-between px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white"
+                style={{ backgroundColor: GREEN }}
+              >
+                <span>SUTEL 2026</span>
+                <span style={{ color: GOLD }}>{role}</span>
+              </div>
+              <div className="flex flex-col items-center px-5 py-5">
+                <div className="h-44 w-44">
+                  {qrSrc ? (
+                    <img src={qrSrc} alt="QR code badge" className="h-full w-full" />
+                  ) : (
+                    <div className="h-full w-full animate-pulse rounded-md bg-slate-100" />
+                  )}
+                </div>
+                <div className="mt-4 w-full text-center">
+                  <div
+                    className="truncate text-lg font-bold"
+                    style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
+                  >
+                    {fullName || "Votre nom"}
+                  </div>
+                  <div className="mt-0.5 truncate text-xs" style={{ color: `${GREEN}99` }}>
+                    {organization || "Votre organisation"}
+                  </div>
+                </div>
+                <div
+                  className="mt-4 flex w-full items-center justify-between border-t pt-3 text-[9px] uppercase tracking-wider"
+                  style={{ borderColor: `${GREEN}1a`, color: `${GREEN}80` }}
+                >
+                  <span>15–17 sept. 2026</span>
+                  <span>Abidjan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BadgeField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <div>
+      <label
+        className="mb-1.5 block text-xs font-semibold uppercase tracking-wider"
+        style={{ color: `${GREEN}99` }}
+      >
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-xl border-2 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-[color:var(--gold,#C9A24C)]"
+        style={{ borderColor: `${GREEN}1f`, color: GREEN }}
+      />
+    </div>
+  );
+}
