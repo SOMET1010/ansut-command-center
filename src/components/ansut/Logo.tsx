@@ -1,19 +1,20 @@
 import { Link } from "@tanstack/react-router";
-import logoAsset from "@/assets/logo-ansut.jpg.asset.json";
+import ansutLogo from "@/assets/ansut-official-logo.png";
 import { cn } from "@/lib/utils";
 
 type Size = "sm" | "md" | "lg";
 
 const SIZE: Record<Size, { box: string; img: string }> = {
   sm: { box: "h-8 px-2", img: "h-5" },
-  md: { box: "h-10 px-2.5", img: "h-6" },
-  lg: { box: "h-14 px-4", img: "h-9" },
+  md: { box: "h-10 px-2", img: "h-7" },
+  lg: { box: "h-14 px-3", img: "h-10" },
 };
 
 /**
- * Logo officiel ANSUT.
- * - Toujours rendu sur fond blanc (préserve la lisibilité de l'orange + bleu).
- * - Utiliser <AnsutLogo /> partout (header, sidebar, auth, footer) — ne jamais re-uploader le fichier.
+ * Logo officiel ANSUT (charte graphique).
+ * - Source: charte ANSUT officielle (PDF), logo bleu #2256A3 + signature orange.
+ * - Toujours rendu sur fond blanc (préserve la lisibilité).
+ * - Utiliser <AnsutLogo /> partout (header, sidebar, auth, footer).
  */
 export function AnsutLogo({
   size = "md",
@@ -35,7 +36,7 @@ export function AnsutLogo({
         className,
       )}
     >
-      <img src={logoAsset.url} alt={alt} className={cn("w-auto object-contain", s.img)} />
+      <img src={ansutLogo} alt={alt} className={cn("w-auto object-contain", s.img)} />
     </span>
   );
   return withLink ? <Link to="/">{inner}</Link> : inner;

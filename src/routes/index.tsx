@@ -26,9 +26,9 @@ import { cn } from "@/lib/utils";
 import { AnsutLogo } from "@/components/ansut/Logo";
 
 // Palette maquette : vert foncé + or sur fond crème.
-const GREEN = "#1F4D3A";
-const GREEN_DARK = "#173829";
-const GOLD = "#C9A24C";
+const GREEN = "#2256A3";
+const GREEN_DARK = "#1A4A7E";
+const GOLD = "#F08224";
 const CREAM = "#F5EFE6";
 
 function SampleBadgeQr() {
@@ -152,7 +152,7 @@ function Landing() {
               to="/signup"
               className="inline-flex h-10 items-center gap-2 rounded-full px-6 text-[14px] font-semibold text-white shadow-sm transition-colors"
               style={{ backgroundColor: GOLD }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D86F1A")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
             >
               Obtenir mon badge
@@ -205,7 +205,7 @@ function Landing() {
                     params={{ slug: ev.slug }}
                     className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
                     style={{ backgroundColor: GOLD }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D86F1A")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
                   >
                     Obtenir mon badge
@@ -216,7 +216,7 @@ function Landing() {
                     to="/signup"
                     className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
                     style={{ backgroundColor: GOLD }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D86F1A")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
                   >
                     Obtenir mon badge
@@ -224,7 +224,7 @@ function Landing() {
                   </Link>
                 )}
                 <ProgrammeLink
-                  className="inline-flex items-center rounded-xl border-2 border-[#C9A24C] bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors hover:bg-[#C9A24C]/10"
+                  className="inline-flex items-center rounded-xl border-2 border-[#F08224] bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors hover:bg-[#F08224]/10"
                 >
                   <span style={{ color: GOLD }}>Consulter le programme</span>
                 </ProgrammeLink>
@@ -852,7 +852,7 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
                 className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ backgroundColor: GOLD }}
                 onMouseEnter={(e) => {
-                  if (isValid && qrSrc) e.currentTarget.style.backgroundColor = "#A88838";
+                  if (isValid && qrSrc) e.currentTarget.style.backgroundColor = "#D86F1A";
                 }}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
               >
