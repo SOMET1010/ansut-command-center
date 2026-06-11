@@ -206,12 +206,12 @@ function Landing() {
                 Rassembler les acteurs, valoriser les innovations et accélérer l'inclusion numérique pour tous.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-3">
+              <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center">
                 {ev?.slug ? (
                   <Link
                     to="/e/$slug"
                     params={{ slug: ev.slug }}
-                    className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
+                    className="inline-flex w-full items-center justify-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors sm:w-auto sm:justify-start"
                     style={{ backgroundColor: GOLD }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D86F1A")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
@@ -222,7 +222,7 @@ function Landing() {
                 ) : (
                   <Link
                     to="/signup"
-                    className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
+                    className="inline-flex w-full items-center justify-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors sm:w-auto sm:justify-start"
                     style={{ backgroundColor: GOLD }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D86F1A")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
@@ -232,7 +232,7 @@ function Landing() {
                   </Link>
                 )}
                 <ProgrammeLink
-                  className="inline-flex items-center rounded-xl border-2 border-[#F08224] bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors hover:bg-[#F08224]/10"
+                  className="inline-flex w-full items-center justify-center rounded-xl border-2 border-[#F08224] bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors hover:bg-[#F08224]/10 sm:w-auto sm:justify-start"
                 >
                   <span style={{ color: GOLD }}>Consulter le programme</span>
                 </ProgrammeLink>
