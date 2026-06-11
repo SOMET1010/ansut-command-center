@@ -10,6 +10,11 @@ export type CockpitNavTo =
   | "/polls"
   | "/announcements"
   | "/checkin"
+  | "/admin/overview"
+  | "/admin/users"
+  | "/admin/security"
+  | "/admin/audit"
+  | "/admin/bootstrap"
   | "/admin/setup";
 
 export type CockpitNavItem = {
@@ -45,8 +50,17 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
     ],
   },
   {
-    label: "Paramètres",
-    items: [{ to: "/admin/setup", label: "Administration" }],
+    label: "Plateforme",
+    items: [
+      { to: "/admin/overview", label: "Vue d'ensemble" },
+      { to: "/admin/users", label: "Utilisateurs" },
+      { to: "/admin/security", label: "Sécurité" },
+      { to: "/admin/audit", label: "Audit trail" },
+    ],
+  },
+  {
+    label: "Configuration",
+    items: [{ to: "/admin/bootstrap", label: "Bootstrap" }],
   },
 ];
 

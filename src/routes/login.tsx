@@ -91,7 +91,9 @@ function LoginPage() {
           .select("role")
           .eq("user_id", user.id);
         const roles = (rolesRows ?? []).map((r) => r.role as string);
-        if (roles.includes("super_admin") || roles.includes("org_admin")) {
+        if (roles.includes("super_admin")) {
+          target = "/admin/overview";
+        } else if (roles.includes("org_admin")) {
           target = "/dashboard";
         } else if (roles.includes("staff")) {
           target = "/checkin";
