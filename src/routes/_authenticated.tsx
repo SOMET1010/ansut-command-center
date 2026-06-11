@@ -211,9 +211,9 @@ function AuthLayout() {
           <AnsutLogo size={collapsed ? "sm" : "md"} />
           {(!collapsed || mobileOpen) && (
             <div className="min-w-0 flex-1 leading-tight">
-              <div className="truncate font-display text-sm font-bold">ANSUT EVENT</div>
+              <div className="truncate font-display text-sm font-bold">ANSUT Event</div>
               <div className="truncate text-[10px] uppercase tracking-[0.18em] text-sidebar-foreground/55">
-                Console DG · SUTEL 2026
+                Plateforme de gestion
               </div>
             </div>
           )}
@@ -279,8 +279,21 @@ function AuthLayout() {
                 <div className="truncate text-[11px] font-semibold text-sidebar-foreground">
                   {user?.email}
                 </div>
-                <div className="text-[9px] uppercase tracking-wider text-sidebar-foreground/55">
-                  Direction Générale
+                {/* Badge rôle — visible pour identifier rapidement le niveau d'accès */}
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {roles.map((r) => (
+                    <span
+                      key={r}
+                      className={cn(
+                        "rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider",
+                        r === "super_admin" && "bg-secondary/30 text-secondary",
+                        r === "org_admin" && "bg-primary/30 text-primary",
+                        r === "staff" && "bg-signal-ok/20 text-green-400",
+                      )}
+                    >
+                      {r === "super_admin" ? "Admin" : r === "org_admin" ? "Org" : "Staff"}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -344,9 +357,8 @@ function AuthLayout() {
               <AnsutLogo size="sm" />
             </Link>
             <span className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground/70 sm:inline">
-              ANSUT EVENT
+              ANSUT
             </span>
-            <span className="hidden text-muted-foreground/30 sm:inline">·</span>
             {/* M-01 Breadcrumb chain — supports deep nested routes */}
             <nav
               aria-label="Fil d'Ariane"
@@ -384,7 +396,8 @@ function AuthLayout() {
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" aria-label="Notifications" className="relative h-8 w-8">
               <Bell className="h-4 w-4" />
-              <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-secondary" />
+              {/* Notification dot — affiche si des annonces récentes non lues */}
+              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-secondary ring-2 ring-card" />
             </Button>
             <Button asChild variant="ghost" size="sm" className="hidden h-8 text-xs sm:inline-flex">
               <Link to="/">Site public</Link>
