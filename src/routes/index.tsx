@@ -80,21 +80,21 @@ type FeatureItem = {
 const features: FeatureItem[] = [
   {
     icon: Mic,
-    title: "Programme & conférences",
-    items: ["Plénières et panels", "Intervenants & modérateurs", "Salles & sessions"],
-    cta: "Voir le programme",
+    title: "Programme",
+    items: ["Plénières", "Ateliers & panels", "Intervenants", "Salles"],
+    cta: "Consulter le programme",
   },
   {
     icon: QrCode,
     title: "Inscription & badge",
-    items: ["Inscription en ligne guidée", "Badge QR par email", "Accès aux espaces"],
-    cta: "S'inscrire au SUTEL 2026",
+    items: ["Formulaire officiel d'inscription", "Badge QR personnel", "Accès aux espaces"],
+    cta: "M'inscrire au SUTEL 2026",
   },
   {
     icon: Building2,
-    title: "Exposition & partenaires",
+    title: "Exposants & partenaires",
     items: ["Liste des exposants", "Stands & sponsors", "Plan de l'événement"],
-    cta: "Explorer l'événement",
+    cta: "Consulter les exposants",
   },
 ];
 
@@ -269,7 +269,7 @@ function Landing() {
               {/* Eyebrow */}
               <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
                 <span className="h-px w-10 bg-secondary" />
-                <span>Sommet officiel du numérique ivoirien</span>
+                <span>IIIe édition · Salon Universel des Télécommunications</span>
               </div>
 
               {/* Headline — editorial */}
@@ -333,12 +333,12 @@ function Landing() {
                 >
                   {ev?.slug ? (
                     <Link to="/e/$slug" params={{ slug: ev.slug }}>
-                      Obtenir mon badge
+                      M'inscrire au SUTEL 2026
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   ) : (
                     <Link to="/signup">
-                      Obtenir mon badge
+                      M'inscrire au SUTEL 2026
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   )}
@@ -351,7 +351,7 @@ function Landing() {
                 >
                   <ProgrammeLink>
                     <PlayCircle className="mr-2 h-4 w-4" />
-                    Découvrir le programme
+                    Consulter le programme
                   </ProgrammeLink>
                 </Button>
               </div>
@@ -363,9 +363,9 @@ function Landing() {
                 <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
                   <div>
                     <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
-                      À l'agenda
+                      Programme
                     </div>
-                    <h2 className="mt-1 text-base font-semibold text-white">Programme du jour</h2>
+                    <h2 className="mt-1 text-base font-semibold text-white">Sessions à venir</h2>
                   </div>
                   <ProgrammeLink className="text-xs font-semibold text-secondary hover:underline">
                     Voir tout →
@@ -444,11 +444,11 @@ function Landing() {
             <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1">
               <Sparkles className="h-3.5 w-3.5 text-secondary" />
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-secondary">
-                Fonctions principales
+                La plateforme
               </p>
             </div>
             <h2 className="mt-5 text-balance text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-              Fonctions principales
+              Plateforme officielle
               <br />
               du SUTEL 2026
             </h2>
@@ -502,26 +502,26 @@ function Landing() {
           <div className="relative rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-8 lg:p-16">
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <div>
-                <h2 className="text-4xl font-extrabold tracking-tight">Badge QR personnel</h2>
+                <h2 className="text-4xl font-extrabold tracking-tight">Badge QR d'accréditation</h2>
                 <p className="mt-4 text-lg text-white/70">
-                  Chaque participant inscrit reçoit un badge QR personnel lui permettant d'accéder à tous les espaces du SUTEL 2026.
+                  Chaque participant reçoit un badge QR personnel après validation de son inscription. Ce badge donne accès à l'ensemble des espaces du SUTEL 2026.
                 </p>
 
                 <div className="mt-12 space-y-8">
                   <BadgeStep
                     num="1"
                     title="Inscription"
-                    desc="Enregistrez-vous via le formulaire officiel."
+                    desc="Remplissez le formulaire officiel avec vos informations."
                   />
                   <BadgeStep
                     num="2"
                     title="Validation"
-                    desc="L'équipe ANSUT confirme votre participation."
+                    desc="L'équipe ANSUT valide votre demande d'accréditation."
                   />
                   <BadgeStep
                     num="3"
-                    title="Accès"
-                    desc="Un lien d'accès vous est adressé par email."
+                    title="Accréditation"
+                    desc="Un lien d'accès personnel vous est adressé par email."
                   />
                 </div>
               </div>
