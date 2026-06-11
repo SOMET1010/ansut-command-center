@@ -196,7 +196,7 @@ function Landing() {
         />
         <div className="relative mx-auto w-full max-w-6xl px-6">
           <div className="grid items-center gap-8 md:grid-cols-12 md:gap-10">
-            <div className="lg:col-span-7">
+            <div className="md:col-span-7">
               <div
                 className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em]"
                 style={{ color: `${GREEN}99` }}
