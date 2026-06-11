@@ -262,7 +262,7 @@ function NowBlock({
           </div>
           <div className="mt-5">
             <Link
-              to="/agenda/$slug"
+              to="/e/$slug/agenda"
               params={{ slug }}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
             >
@@ -284,7 +284,7 @@ function NowBlock({
           </p>
           <div className="mt-5">
             <Link
-              to="/agenda/$slug"
+              to="/e/$slug/agenda"
               params={{ slug }}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-transform hover:scale-[1.02]"
             >
@@ -311,7 +311,7 @@ function NextBlock({
   if (!session) return null;
   return (
     <Link
-      to="/agenda/$slug"
+      to="/e/$slug/agenda"
       params={{ slug }}
       className="group block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-colors hover:border-primary/40 hover:bg-primary/5"
     >
@@ -391,7 +391,7 @@ function NetworkBlock({
     : `${participants.length} personnes à découvrir`;
   return (
     <Link
-      to="/networking/$slug"
+      to="/e/$slug/reseau"
       params={{ slug }}
       className="group block rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-colors hover:border-primary/40 hover:bg-primary/5"
     >

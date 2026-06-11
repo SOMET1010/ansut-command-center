@@ -4,16 +4,15 @@ import { Home, CalendarDays, Users, Info, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Navigation Participant — 5 entrées (Phase 4.1, finale).
+ * Navigation Participant — 5 entrées (Phase 5, refonte).
  *
- *   Accueil      → /e/$slug
- *   Programme    → /agenda/$slug          (sessions & check-in)
- *   Participants → /networking/$slug      (Découvrir · Messages · Rendez-vous)
- *   Salon        → /salon/$slug           (Infos pratiques · Annonces · Sondages)
- *   Mon Profil   → /me/$slug
+ *   Accueil          → /e/$slug
+ *   Agenda            → /e/$slug/agenda
+ *   Réseau            → /e/$slug/reseau
+ *   Infos pratiques   → /e/$slug/annonces
+ *   Profil            → /e/$slug/profil
  *
- * Position fixed bottom — l'insertion dans le JSX n'a pas d'importance.
- * Padding-bottom appliqué sur <body> pour éviter le recouvrement.
+ * Position fixed bottom — padding-bottom appliqué sur <body>.
  */
 export function ParticipantBottomNav({ slug }: { slug: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -39,29 +38,28 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       matches: (p) => p === `/e/${slug}`,
     },
     {
-      label: "Programme",
+      label: "Agenda",
       icon: CalendarDays,
-      to: `/agenda/${slug}`,
-      matches: (p) =>
-        p.startsWith(`/agenda/${slug}`) || p.startsWith(`/attendance/`),
+      to: `/e/${slug}/agenda`,
+      matches: (p) => p.startsWith(`/e/${slug}/agenda`),
     },
     {
-      label: "Participants",
+      label: "Réseau",
       icon: Users,
-      to: `/networking/${slug}`,
-      matches: (p) => p.startsWith(`/networking/${slug}`),
+      to: `/e/${slug}/reseau`,
+      matches: (p) => p.startsWith(`/e/${slug}/reseau`),
     },
     {
       label: "Infos pratiques",
       icon: Info,
-      to: `/salon/${slug}`,
-      matches: (p) => p.startsWith(`/salon/${slug}`),
+      to: `/e/${slug}/annonces`,
+      matches: (p) => p.startsWith(`/e/${slug}/annonces`),
     },
     {
-      label: "Mon Profil",
+      label: "Profil",
       icon: User,
-      to: `/me/${slug}`,
-      matches: (p) => p.startsWith(`/me/${slug}`),
+      to: `/e/${slug}/profil`,
+      matches: (p) => p.startsWith(`/e/${slug}/profil`),
     },
   ];
 

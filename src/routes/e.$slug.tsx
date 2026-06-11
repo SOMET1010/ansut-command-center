@@ -402,7 +402,7 @@ function PublicEventPage() {
                       {downloadingBadge ? "Génération..." : "Télécharger en PDF"}
                     </Button>
                     <Link
-                      to="/me/$slug"
+                      to="/e/$slug/profil"
                       params={{ slug }}
                       className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
