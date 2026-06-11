@@ -15,7 +15,15 @@ export type CockpitNavTo =
   | "/admin/security"
   | "/admin/audit"
   | "/admin/bootstrap"
-  | "/admin/setup";
+  | "/admin/setup"
+  | "/org/cockpit"
+  | "/org/events"
+  | "/org/participants"
+  | "/org/communication"
+  | "/org/exports"
+  | "/staff/checkin"
+  | "/staff/announcements"
+  | "/staff/participants";
 
 export type CockpitNavItem = {
   to: CockpitNavTo;
@@ -61,6 +69,24 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
   {
     label: "Configuration",
     items: [{ to: "/admin/bootstrap", label: "Bootstrap" }],
+  },
+  {
+    label: "Organisation",
+    items: [
+      { to: "/org/cockpit", label: "Cockpit" },
+      { to: "/org/events", label: "Programme" },
+      { to: "/org/participants", label: "Participants" },
+      { to: "/org/communication", label: "Communication" },
+      { to: "/org/exports", label: "Exports" },
+    ],
+  },
+  {
+    label: "Staff",
+    items: [
+      { to: "/staff/checkin", label: "Check-in" },
+      { to: "/staff/announcements", label: "Annonces" },
+      { to: "/staff/participants", label: "Participants" },
+    ],
   },
 ];
 

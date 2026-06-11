@@ -22,6 +22,10 @@ import {
   Menu,
   X,
   ArrowLeft,
+  Settings,
+  Download,
+  MessageSquare,
+  BarChart3,
 } from "lucide-react";
 import { useAuth, type AppRole } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -62,7 +66,20 @@ const ICONS: Record<CockpitNavTo, IconCmp> = {
   "/polls": Vote,
   "/announcements": Megaphone,
   "/checkin": QrCode,
+  "/admin/overview": BarChart3,
+  "/admin/users": Users,
+  "/admin/security": ShieldCheck,
+  "/admin/audit": Bell,
+  "/admin/bootstrap": Settings,
   "/admin/setup": ShieldCheck,
+  "/org/cockpit": LayoutDashboard,
+  "/org/events": Calendar,
+  "/org/participants": Users,
+  "/org/communication": Megaphone,
+  "/org/exports": Download,
+  "/staff/checkin": QrCode,
+  "/staff/announcements": Megaphone,
+  "/staff/participants": Users,
 };
 
 // Matrice rôle → entrées visibles dans la sidebar.
@@ -73,7 +90,20 @@ const NAV_ALLOWED_ROLES: Record<CockpitNavTo, AppRole[] | "all"> = {
   "/polls": ["super_admin", "org_admin"],
   "/announcements": ["super_admin", "org_admin"],
   "/checkin": ["super_admin", "org_admin", "staff"],
+  "/admin/overview": ["super_admin"],
+  "/admin/users": ["super_admin"],
+  "/admin/security": ["super_admin"],
+  "/admin/audit": ["super_admin"],
+  "/admin/bootstrap": ["super_admin"],
   "/admin/setup": ["super_admin"],
+  "/org/cockpit": ["super_admin", "org_admin"],
+  "/org/events": ["super_admin", "org_admin"],
+  "/org/participants": ["super_admin", "org_admin", "staff"],
+  "/org/communication": ["super_admin", "org_admin"],
+  "/org/exports": ["super_admin", "org_admin"],
+  "/staff/checkin": ["super_admin", "org_admin", "staff"],
+  "/staff/announcements": ["super_admin", "org_admin", "staff"],
+  "/staff/participants": ["super_admin", "org_admin", "staff"],
 };
 
 const ALL_NAV_SECTIONS: NavSection[] = COCKPIT_VISIBLE_NAV_SECTIONS.map((s) => ({
