@@ -19,6 +19,7 @@ import { NewsletterForm } from "@/components/newsletter-form";
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
 import { AnsutLogo } from "@/components/ansut/Logo";
+import { cn } from "@/lib/utils";
 
 function SampleBadgeQr() {
   const [src, setSrc] = useState<string>("");
