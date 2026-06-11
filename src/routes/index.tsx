@@ -344,13 +344,14 @@ function Landing() {
               Notre plateforme
             </p>
             <h2
-              className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl"
+              className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
               style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
             >
               Une plateforme complète
-              <br />
-              pour un événement d'envergure
+              <br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>pour un événement d'envergure
             </h2>
+
           </div>
 
           <div className="mt-10 grid gap-5 md:grid-cols-3">
