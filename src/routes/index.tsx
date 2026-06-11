@@ -415,7 +415,7 @@ function Landing() {
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             {/* Col 1 : logo + tagline + social */}
             <div>
-              <AnsutLogo size="md" />
+              <GreenWordmark light />
               <p className="mt-4 text-sm leading-relaxed text-white/75">
                 L'Autorité Nationale du Service Universel des Télécommunications — Côte d'Ivoire.
               </p>
