@@ -391,7 +391,7 @@ function Landing() {
             className="mt-10 rounded-3xl bg-white px-8 py-9"
             style={{ boxShadow: "0 4px 24px -10px rgba(31,77,58,0.15)" }}
           >
-            <div className="grid gap-10 md:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
               <StepCard
                 num="1"
                 icon={<UserPlus className="h-8 w-8" strokeWidth={1.5} />}
