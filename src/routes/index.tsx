@@ -620,10 +620,10 @@ function StepCard({
   desc: string;
 }) {
   return (
-    <div className="flex gap-5">
+    <div className="flex min-w-0 gap-4">
       <div className="relative shrink-0">
         <div
-          className="flex h-20 w-20 items-center justify-center rounded-full"
+          className="flex h-16 w-16 items-center justify-center rounded-full md:h-20 md:w-20"
           style={{ backgroundColor: `${GOLD}1f`, color: GREEN }}
         >
           {icon}
@@ -635,7 +635,8 @@ function StepCard({
           {num}
         </div>
       </div>
-      <div className="pt-2">
+      <div className="min-w-0 pt-1.5">
+
         <h4
           className="text-xl font-bold"
           style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
