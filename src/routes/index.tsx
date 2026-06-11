@@ -137,37 +137,37 @@ function Landing() {
 
   return (
     <div className="min-h-dvh overflow-x-hidden" style={{ backgroundColor: CREAM }}>
-      {/* BANDEAU OFFICIEL */}
+      {/* BANDEAU OFFICIEL — minimal, 1 seule ligne discrète */}
       <div
         className="fixed top-0 z-[60] w-full border-b backdrop-blur-md"
         style={{ backgroundColor: `${CREAM}f2`, borderColor: `${GREEN}1a` }}
       >
         <div
-          className="mx-auto flex h-8 max-w-7xl items-center justify-center px-4 text-[10px] font-medium uppercase tracking-[0.18em] sm:px-6"
+          className="mx-auto flex h-7 max-w-7xl items-center justify-center px-4 text-[10px] font-medium uppercase tracking-[0.18em] sm:px-6"
           style={{ color: `${GREEN}b3` }}
         >
           <span className="hidden sm:inline">
-            République de Côte d'Ivoire · Ministère de la Transition Numérique et de l'Innovation Technologique
+            République de Côte d'Ivoire · MTNIT
           </span>
           <span className="sm:hidden">RCI · MTNIT</span>
         </div>
       </div>
 
-      {/* NAV */}
+      {/* NAV — épurée, plus respirante */}
       <nav
-        className="fixed top-8 z-50 w-full border-b backdrop-blur-xl"
+        className="fixed top-7 z-50 w-full border-b backdrop-blur-xl"
         style={{ backgroundColor: "rgba(255,255,255,0.85)", borderColor: `${GREEN}1a` }}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <GreenWordmark />
           </Link>
 
-          <div className="hidden items-center gap-8 md:flex">
-            {["Programme", "Exposition", "Partenaires"].map((label) => (
+          <div className="hidden items-center gap-10 md:flex">
+            {["Programme", "Exposition", "Partenaires", "À propos"].map((label) => (
               <ProgrammeLink
                 key={label}
-                className="text-[13px] font-medium transition hover:opacity-100"
+                className="text-[14px] font-medium transition hover:opacity-100"
               >
                 <span style={{ color: GREEN }}>{label}</span>
               </ProgrammeLink>
@@ -177,12 +177,13 @@ function Landing() {
           <div className="flex shrink-0 items-center gap-2">
             <Link
               to="/signup"
-              className="inline-flex h-9 items-center rounded-full px-5 text-[13px] font-semibold text-white shadow-sm transition-colors"
+              className="inline-flex h-10 items-center gap-2 rounded-full px-6 text-[14px] font-semibold text-white shadow-sm transition-colors"
               style={{ backgroundColor: GOLD }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
             >
               Obtenir mon badge
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
@@ -423,15 +424,15 @@ function Landing() {
 
       {/* FOOTER */}
       <footer className="text-sm text-white" style={{ backgroundColor: GREEN_DARK }}>
-        <div className="mx-auto max-w-7xl px-6 py-10">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto max-w-7xl px-6 py-16">
+          <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
             {/* Col 1 : logo + tagline + social */}
             <div>
               <GreenWordmark light />
-              <p className="mt-4 text-sm leading-relaxed text-white/75">
-                L'Agence Nationale du Service Universel des Télécommunications/TIC — Côte d'Ivoire.
+              <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
+                L'Agence Nationale du Service Universel des Télécommunications — Côte d'Ivoire.
               </p>
-              <div className="mt-5 flex gap-3">
+              <div className="mt-6 flex gap-3">
                 <SocialIcon href="#" label="LinkedIn"><Linkedin className="h-4 w-4" /></SocialIcon>
                 <SocialIcon href="#" label="Facebook"><Facebook className="h-4 w-4" /></SocialIcon>
                 <SocialIcon href="#" label="YouTube"><Youtube className="h-4 w-4" /></SocialIcon>
@@ -446,36 +447,29 @@ function Landing() {
               { label: "FAQ", href: "#" },
             ]} />
 
-            {/* Col 3 : Informations */}
-            <FooterCol title="Informations" links={[
-              { label: "Programme", href: "#" },
-              { label: "Exposition", href: "#" },
-              { label: "Partenaires", href: "#" },
-              { label: "Contact", href: "mailto:support@ansut.ci" },
-            ]} />
-
-            {/* Col 4 : CTA carte */}
+            {/* Col 3 : CTA carte (plus respirante) */}
             <div
-              className="rounded-2xl p-6"
+              className="rounded-3xl p-7"
               style={{ backgroundColor: GOLD }}
             >
-              <HelpCircle className="h-7 w-7 text-white/90" strokeWidth={1.5} />
-              <h4 className="mt-3 font-bold text-white">Une question ?</h4>
-              <p className="mt-1.5 text-xs leading-relaxed text-white/85">
-                Notre équipe est à votre disposition pour vous accompagner.
+              <HelpCircle className="h-8 w-8 text-white/90" strokeWidth={1.5} />
+              <h4 className="mt-4 text-lg font-bold text-white">Une question ?</h4>
+              <p className="mt-2 text-sm leading-relaxed text-white/90">
+                Notre équipe est à votre disposition pour vous accompagner dans vos démarches.
               </p>
               <a
                 href="mailto:support@ansut.ci"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-white hover:gap-2 transition-all"
+                className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:gap-3 transition-all"
               >
-                Nous contacter <ArrowRight className="h-3.5 w-3.5" />
+                Nous contacter
+                <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-5 text-xs text-white/60 md:flex-row">
+          <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-7 text-xs text-white/60 md:flex-row">
             <div>© {new Date().getFullYear()} ANSUT — Tous droits réservés</div>
-            <div className="flex gap-6">
+            <div className="flex gap-8">
               <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
               <Link to="/politique-confidentialite" className="hover:text-white">Politique de confidentialité</Link>
             </div>
