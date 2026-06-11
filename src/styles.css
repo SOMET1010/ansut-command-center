@@ -66,46 +66,47 @@
   --color-signal-ok: var(--signal-ok);
 }
 
-/* ANSUT brand — Bleu institutionnel + Orange parcimonie + Violet SUTA (IA only) */
+/* ANSUT brand — Japandi / Modern African : Vert institutionnel + Ocre (CTA) + Ivoire (fonds) */
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.985 0.004 250);          /* #F7F9FB — institutionnel calme */
-  --foreground: oklch(0.22 0.04 255);             /* gris-bleu profond */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.04 255);
+  /* BACKGROUND = Ivoire chaleureux #F5EFE6 */
+  --background: oklch(0.965 0.012 80);          /* #F5EFE6 — ivoire */
+  --foreground: oklch(0.27 0.06 250);            /* #0E2440 — vert institutionnel profond */
+  --card: oklch(1 0 0);                          /* #FFFFFF — cartes blanches */
+  --card-foreground: oklch(0.27 0.06 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 255);
+  --popover-foreground: oklch(0.27 0.06 250);
 
-  /* PRIMARY = ANSUT Blue #2256A3 */
-  --primary: oklch(0.46 0.13 256);
-  --primary-foreground: oklch(0.99 0.005 250);
+  /* PRIMARY = Vert institutionnel #0E2440 */
+  --primary: oklch(0.27 0.06 250);
+  --primary-foreground: oklch(0.985 0.004 250);
 
-  /* SECONDARY = ANSUT Orange #F08224 (parcimonie — CTA majeur) */
-  --secondary: oklch(0.68 0.17 50);
-  --secondary-foreground: oklch(0.99 0.005 250);
+  /* SECONDARY = Ocre / Terre de Sienne #B8763A (parcimonie — CTA majeur) */
+  --secondary: oklch(0.58 0.11 50);
+  --secondary-foreground: oklch(1 0 0);
 
-  --muted: oklch(0.96 0.008 250);
-  --muted-foreground: oklch(0.50 0.03 252);
+  --muted: oklch(0.94 0.012 80);                 /* ivoire léger pour fonds secondaires */
+  --muted-foreground: oklch(0.45 0.04 250);
 
-  /* ACCENT = ANSUT Blue Light — hover backgrounds, soft fills */
-  --accent: oklch(0.93 0.025 250);
-  --accent-foreground: oklch(0.32 0.07 252);
+  /* ACCENT = Ocre light — hover backgrounds, soft fills */
+  --accent: oklch(0.93 0.04 60);
+  --accent-foreground: oklch(0.27 0.06 250);
 
   --destructive: oklch(0.47 0.18 27);
   --destructive-foreground: oklch(0.99 0.005 250);
 
-  --border: oklch(0.92 0.012 250);
-  --input: oklch(0.92 0.012 250);
-  --ring: oklch(0.46 0.13 256);
+  --border: oklch(0.88 0.015 80);
+  --input: oklch(0.88 0.015 80);
+  --ring: oklch(0.58 0.11 50);
 
-  --chart-1: oklch(0.46 0.13 256);   /* ANSUT blue */
-  --chart-2: oklch(0.68 0.17 50);    /* ANSUT orange */
-  --chart-3: oklch(0.59 0.22 275);   /* SUTA purple */
-  --chart-4: oklch(0.43 0.13 150);   /* green-ok */
-  --chart-5: oklch(0.62 0.16 55);    /* warning */
+  --chart-1: oklch(0.27 0.06 250);   /* vert institutionnel */
+  --chart-2: oklch(0.58 0.11 50);    /* ocre */
+  --chart-3: oklch(0.43 0.13 150);   /* vert ok */
+  --chart-4: oklch(0.62 0.16 55);    /* warning */
+  --chart-5: oklch(0.47 0.18 27);    /* critical */
 
-  /* SIDEBAR — dark navy */
+  /* SIDEBAR — dark navy (cockpit) — INCHANGÉ pour garder le contraste cockpit */
   --sidebar: oklch(0.22 0.07 258);
   --sidebar-foreground: oklch(0.95 0.01 250);
   --sidebar-primary: oklch(0.99 0.005 250);
@@ -115,11 +116,11 @@
   --sidebar-border: oklch(0.33 0.07 256);
   --sidebar-ring: oklch(0.62 0.14 256);
 
-  /* ANSUT raw tokens (utilitaires sémantiques métier) */
-  --ansut-blue: oklch(0.46 0.13 256);
-  --ansut-blue-dark: oklch(0.22 0.07 258);
-  --ansut-blue-light: oklch(0.93 0.025 250);
-  --ansut-orange: oklch(0.68 0.17 50);
+  /* ANSUT raw tokens — bascule vers palette Japandi */
+  --ansut-blue: oklch(0.27 0.06 250);
+  --ansut-blue-dark: oklch(0.20 0.05 250);
+  --ansut-blue-light: oklch(0.94 0.012 80);
+  --ansut-orange: oklch(0.58 0.11 50);
   --ansut-orange-light: oklch(0.95 0.04 60);
   --ansut-danger-light: oklch(0.95 0.025 25);
   --suta-purple: oklch(0.59 0.22 275);
@@ -131,16 +132,16 @@
   --signal-stable: oklch(0.45 0.11 250);
   --signal-ok: oklch(0.43 0.13 150);
 
-  /* Gradients institutionnels */
+  /* Gradients institutionnels — cockpit navy INCHANGÉ, hero public basculé clair */
   --gradient-sidebar: linear-gradient(180deg, oklch(0.26 0.08 258) 0%, oklch(0.16 0.06 258) 100%);
   --gradient-header: linear-gradient(90deg, oklch(0.22 0.07 258) 0%, oklch(0.46 0.13 256) 100%);
   --gradient-kpi-hero: linear-gradient(135deg, oklch(0.22 0.07 258) 0%, oklch(0.46 0.13 256) 100%);
-  /* Legacy alias (kept for landing page compatibility) */
-  --gradient-hero: linear-gradient(135deg, oklch(0.22 0.07 258) 0%, oklch(0.32 0.10 256) 50%, oklch(0.26 0.08 258) 100%);
+  /* Legacy alias — landing hero public (Japandi clair) */
+  --gradient-hero: linear-gradient(135deg, oklch(0.965 0.012 80) 0%, oklch(0.93 0.04 60) 100%);
 
-  --shadow-elegant: 0 18px 50px -22px color-mix(in oklab, oklch(0.22 0.07 258) 35%, transparent);
-  --shadow-card: 0 1px 3px color-mix(in oklab, oklch(0.22 0.07 258) 5%, transparent),
-                 0 4px 12px -4px color-mix(in oklab, oklch(0.22 0.07 258) 8%, transparent);
+  --shadow-elegant: 0 18px 50px -22px color-mix(in oklab, oklch(0.27 0.06 250) 35%, transparent);
+  --shadow-card: 0 1px 3px color-mix(in oklab, oklch(0.27 0.06 250) 5%, transparent),
+                 0 4px 12px -4px color-mix(in oklab, oklch(0.27 0.06 250) 8%, transparent);
 }
 
 .dark {

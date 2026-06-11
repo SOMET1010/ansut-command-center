@@ -9,13 +9,12 @@ export const OFFICIAL_MENTION =
 
 export function OfficialBanner() {
   return (
-    <div className="w-full border-b border-white/10 bg-[#08172E] text-white/80">
-      <div className="mx-auto flex h-8 max-w-7xl items-center justify-between gap-3 px-4 text-[10px] font-medium uppercase tracking-[0.18em] sm:px-6">
-        <span className="truncate">
+    <div className="w-full border-b border-[#0E2440]/10 bg-[#F5EFE6] text-[#0E2440]/70">
+      <div className="mx-auto flex h-8 max-w-7xl items-center justify-center gap-3 px-4 text-[10px] font-medium uppercase tracking-[0.18em] sm:px-6">
+        <span className="truncate text-center">
           <span className="hidden sm:inline">{OFFICIAL_MENTION}</span>
           <span className="sm:hidden">RCI · MTNIT</span>
         </span>
-        <span className="hidden opacity-60 md:inline">Édition officielle 2026</span>
       </div>
     </div>
   );
@@ -23,7 +22,7 @@ export function OfficialBanner() {
 
 export function OfficialFooter() {
   return (
-    <footer className="w-full border-t border-border bg-[#08172E] text-white/75">
+    <footer className="w-full border-t border-[#0E2440]/10 bg-[#0E2440] text-white/75">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-3 text-center text-[11px] sm:flex-row sm:text-left sm:px-6">
         <span className="font-medium">{OFFICIAL_MENTION}</span>
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 opacity-80 sm:justify-end">

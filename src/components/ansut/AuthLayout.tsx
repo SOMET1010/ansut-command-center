@@ -37,66 +37,56 @@ export function AuthLayout({
   footer,
 }: AuthLayoutProps) {
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
-      {/* LEFT — Branded navy panel */}
-      <div
-        className="relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex"
-        style={{ background: "var(--gradient-hero)" }}
-      >
+    <div className="grid min-h-dvh bg-[#F5EFE6] lg:grid-cols-2">
+      {/* LEFT — Panneau Japandi : fond ivoire + accents vert + ocre */}
+      <div className="relative hidden flex-col justify-between overflow-hidden p-12 text-[#0E2440] lg:flex">
+        {/* Décor feuille très subtile */}
         <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
+          className="pointer-events-none absolute -left-32 top-1/2 h-[420px] w-[420px] -translate-y-1/2 opacity-[0.05]"
+          style={{ background: "radial-gradient(circle, #0E2440 0%, transparent 60%)" }}
         />
-        <div className="absolute -right-32 top-10 h-[420px] w-[420px] rounded-full bg-secondary/25 blur-[120px]" />
+        <div
+          className="pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full opacity-[0.06]"
+          style={{ background: "radial-gradient(circle, #B8763A 0%, transparent 60%)" }}
+        />
 
         <Link to="/" className="relative flex items-center gap-3">
           <AnsutLogo size="lg" />
-          <div className="leading-tight">
-            <div className="font-display text-lg font-bold">EVENT</div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-white/75">
-              Plateforme officielle du SUTEL
-            </div>
-          </div>
         </Link>
 
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1">
-            <span className="flex h-2 w-2 animate-pulse rounded-full bg-secondary" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-secondary">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#B8763A]/30 bg-[#B8763A]/10 px-3 py-1">
+            <span className="flex h-2 w-2 rounded-full bg-[#B8763A]" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#B8763A]">
               {eyebrow}
             </span>
           </div>
-          <h2 className="mt-6 font-display text-4xl font-extrabold leading-tight text-white">
+          <h2 className="mt-6 font-display text-4xl font-extrabold leading-tight text-[#0E2440] sm:text-5xl">
             {headline}
           </h2>
-          <p className="mt-4 max-w-md text-base text-white/75">{description}</p>
+          <p className="mt-4 max-w-md text-base leading-relaxed text-[#0E2440]/70">{description}</p>
           {highlights ? <div className="mt-8">{highlights}</div> : null}
         </div>
 
-        <div className="relative text-xs text-white/60">© 2026 ANSUT. Tous droits réservés.</div>
+        <div className="relative text-xs text-[#0E2440]/60">© 2026 ANSUT. Tous droits réservés.</div>
       </div>
 
-      {/* RIGHT — Form panel */}
-      <div className="flex items-center justify-center bg-background px-6 py-12">
-        <div className="w-full max-w-md">
+      {/* RIGHT — Form panel — fond ivoire, carte blanche centrée */}
+      <div className="flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md rounded-2xl border border-[#0E2440]/10 bg-white p-8 shadow-sm">
           <Link to="/" className="mb-8 inline-flex items-center gap-2 lg:hidden">
             <AnsutLogo size="md" />
-            <span className="text-lg font-semibold">EVENT</span>
           </Link>
 
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-[#0E2440]">
             {title}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
+          <p className="mt-2 text-sm text-[#0E2440]/60">{subtitle}</p>
 
           <div className="mt-8">{children}</div>
 
           {footer ? (
-            <p className="mt-6 text-center text-sm text-muted-foreground">{footer}</p>
+            <p className="mt-6 text-center text-sm text-[#0E2440]/60">{footer}</p>
           ) : null}
         </div>
       </div>
