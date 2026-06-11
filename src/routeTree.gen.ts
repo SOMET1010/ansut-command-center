@@ -33,6 +33,11 @@ import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
 import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated/announcements'
+import { Route as ESlugReseauRouteImport } from './routes/e.$slug/reseau'
+import { Route as ESlugProfilRouteImport } from './routes/e.$slug/profil'
+import { Route as ESlugMessagesRouteImport } from './routes/e.$slug/messages'
+import { Route as ESlugAnnoncesRouteImport } from './routes/e.$slug/annonces'
+import { Route as ESlugAgendaRouteImport } from './routes/e.$slug/agenda'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
 import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
@@ -164,6 +169,31 @@ const AuthenticatedAnnouncementsRoute =
     path: '/announcements',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ESlugReseauRoute = ESlugReseauRouteImport.update({
+  id: '/reseau',
+  path: '/reseau',
+  getParentRoute: () => ESlugRoute,
+} as any)
+const ESlugProfilRoute = ESlugProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => ESlugRoute,
+} as any)
+const ESlugMessagesRoute = ESlugMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => ESlugRoute,
+} as any)
+const ESlugAnnoncesRoute = ESlugAnnoncesRouteImport.update({
+  id: '/annonces',
+  path: '/annonces',
+  getParentRoute: () => ESlugRoute,
+} as any)
+const ESlugAgendaRoute = ESlugAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => ESlugRoute,
+} as any)
 const AuthenticatedEventsNewRoute = AuthenticatedEventsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -222,13 +252,18 @@ export interface FileRoutesByFullPath {
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
-  '/e/$slug': typeof ESlugRoute
+  '/e/$slug': typeof ESlugRouteWithChildren
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/salon/$slug': typeof SalonSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
+  '/e/$slug/agenda': typeof ESlugAgendaRoute
+  '/e/$slug/annonces': typeof ESlugAnnoncesRoute
+  '/e/$slug/messages': typeof ESlugMessagesRoute
+  '/e/$slug/profil': typeof ESlugProfilRoute
+  '/e/$slug/reseau': typeof ESlugReseauRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
@@ -254,13 +289,18 @@ export interface FileRoutesByTo {
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
-  '/e/$slug': typeof ESlugRoute
+  '/e/$slug': typeof ESlugRouteWithChildren
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/salon/$slug': typeof SalonSlugRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
+  '/e/$slug/agenda': typeof ESlugAgendaRoute
+  '/e/$slug/annonces': typeof ESlugAnnoncesRoute
+  '/e/$slug/messages': typeof ESlugMessagesRoute
+  '/e/$slug/profil': typeof ESlugProfilRoute
+  '/e/$slug/reseau': typeof ESlugReseauRoute
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
@@ -288,13 +328,18 @@ export interface FileRoutesById {
   '/_authenticated/security-audit': typeof AuthenticatedSecurityAuditRoute
   '/agenda/$slug': typeof AgendaSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
-  '/e/$slug': typeof ESlugRoute
+  '/e/$slug': typeof ESlugRouteWithChildren
   '/me/$slug': typeof MeSlugRoute
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/salon/$slug': typeof SalonSlugRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
+  '/e/$slug/agenda': typeof ESlugAgendaRoute
+  '/e/$slug/annonces': typeof ESlugAnnoncesRoute
+  '/e/$slug/messages': typeof ESlugMessagesRoute
+  '/e/$slug/profil': typeof ESlugProfilRoute
+  '/e/$slug/reseau': typeof ESlugReseauRoute
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/_authenticated/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/_authenticated/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
@@ -329,6 +374,11 @@ export interface FileRouteTypes {
     | '/salon/$slug'
     | '/admin/setup'
     | '/events/new'
+    | '/e/$slug/agenda'
+    | '/e/$slug/annonces'
+    | '/e/$slug/messages'
+    | '/e/$slug/profil'
+    | '/e/$slug/reseau'
     | '/events/$id/edit'
     | '/events/$id/registrations'
     | '/events/$id/sessions'
@@ -361,6 +411,11 @@ export interface FileRouteTypes {
     | '/salon/$slug'
     | '/admin/setup'
     | '/events/new'
+    | '/e/$slug/agenda'
+    | '/e/$slug/annonces'
+    | '/e/$slug/messages'
+    | '/e/$slug/profil'
+    | '/e/$slug/reseau'
     | '/events/$id/edit'
     | '/events/$id/registrations'
     | '/events/$id/sessions'
@@ -394,6 +449,11 @@ export interface FileRouteTypes {
     | '/salon/$slug'
     | '/_authenticated/admin/setup'
     | '/_authenticated/events/new'
+    | '/e/$slug/agenda'
+    | '/e/$slug/annonces'
+    | '/e/$slug/messages'
+    | '/e/$slug/profil'
+    | '/e/$slug/reseau'
     | '/_authenticated/events/$id/edit'
     | '/_authenticated/events/$id/registrations'
     | '/_authenticated/events/$id/sessions'
@@ -413,7 +473,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   AgendaSlugRoute: typeof AgendaSlugRoute
   AttendanceSessionIdRoute: typeof AttendanceSessionIdRoute
-  ESlugRoute: typeof ESlugRoute
+  ESlugRoute: typeof ESlugRouteWithChildren
   MeSlugRoute: typeof MeSlugRoute
   MeRoleRoute: typeof MeRoleRoute
   NetworkingSlugRoute: typeof NetworkingSlugRoute
@@ -592,6 +652,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/e/$slug/reseau': {
+      id: '/e/$slug/reseau'
+      path: '/reseau'
+      fullPath: '/e/$slug/reseau'
+      preLoaderRoute: typeof ESlugReseauRouteImport
+      parentRoute: typeof ESlugRoute
+    }
+    '/e/$slug/profil': {
+      id: '/e/$slug/profil'
+      path: '/profil'
+      fullPath: '/e/$slug/profil'
+      preLoaderRoute: typeof ESlugProfilRouteImport
+      parentRoute: typeof ESlugRoute
+    }
+    '/e/$slug/messages': {
+      id: '/e/$slug/messages'
+      path: '/messages'
+      fullPath: '/e/$slug/messages'
+      preLoaderRoute: typeof ESlugMessagesRouteImport
+      parentRoute: typeof ESlugRoute
+    }
+    '/e/$slug/annonces': {
+      id: '/e/$slug/annonces'
+      path: '/annonces'
+      fullPath: '/e/$slug/annonces'
+      preLoaderRoute: typeof ESlugAnnoncesRouteImport
+      parentRoute: typeof ESlugRoute
+    }
+    '/e/$slug/agenda': {
+      id: '/e/$slug/agenda'
+      path: '/agenda'
+      fullPath: '/e/$slug/agenda'
+      preLoaderRoute: typeof ESlugAgendaRouteImport
+      parentRoute: typeof ESlugRoute
+    }
     '/_authenticated/events/new': {
       id: '/_authenticated/events/new'
       path: '/new'
@@ -690,6 +785,24 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface ESlugRouteChildren {
+  ESlugAgendaRoute: typeof ESlugAgendaRoute
+  ESlugAnnoncesRoute: typeof ESlugAnnoncesRoute
+  ESlugMessagesRoute: typeof ESlugMessagesRoute
+  ESlugProfilRoute: typeof ESlugProfilRoute
+  ESlugReseauRoute: typeof ESlugReseauRoute
+}
+
+const ESlugRouteChildren: ESlugRouteChildren = {
+  ESlugAgendaRoute: ESlugAgendaRoute,
+  ESlugAnnoncesRoute: ESlugAnnoncesRoute,
+  ESlugMessagesRoute: ESlugMessagesRoute,
+  ESlugProfilRoute: ESlugProfilRoute,
+  ESlugReseauRoute: ESlugReseauRoute,
+}
+
+const ESlugRouteWithChildren = ESlugRoute._addFileChildren(ESlugRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -702,7 +815,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   AgendaSlugRoute: AgendaSlugRoute,
   AttendanceSessionIdRoute: AttendanceSessionIdRoute,
-  ESlugRoute: ESlugRoute,
+  ESlugRoute: ESlugRouteWithChildren,
   MeSlugRoute: MeSlugRoute,
   MeRoleRoute: MeRoleRoute,
   NetworkingSlugRoute: NetworkingSlugRoute,
@@ -713,13 +826,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
