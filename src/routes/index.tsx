@@ -138,7 +138,7 @@ function Landing() {
   const stats = data.stats;
 
   // Pas de page /events publique : on route les liens "programme" vers
-  // /agenda/$slug si un événement est connu, sinon vers /signup.
+  // /e/:slug/agenda si un événement est connu, sinon vers /signup.
   function ProgrammeLink({
     className,
     children,
@@ -148,7 +148,7 @@ function Landing() {
   }) {
     if (ev?.slug) {
       return (
-        <Link to="/agenda/$slug" params={{ slug: ev.slug }} className={className}>
+        <Link to="/e/$slug/agenda" params={{ slug: ev.slug }} className={className}>
           {children}
         </Link>
       );
