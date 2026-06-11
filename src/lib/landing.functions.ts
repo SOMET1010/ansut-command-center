@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabase as supabaseAdmin } from "@/integrations/supabase/client";
 
 export type AgendaItem = {
   id: string;
