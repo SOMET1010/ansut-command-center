@@ -206,11 +206,12 @@ function Landing() {
               </div>
 
               <h1
-                className="mt-5 text-6xl font-bold leading-[0.95] tracking-[-0.025em] sm:text-7xl lg:text-[88px]"
+                className="mt-5 text-5xl font-bold leading-[0.95] tracking-[-0.025em] sm:text-6xl md:text-7xl lg:text-[88px]"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
               >
                 SUTEL 2026
               </h1>
+
               <p
                 className="mt-3 text-2xl italic sm:text-3xl"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GOLD }}
