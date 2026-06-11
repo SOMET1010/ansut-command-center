@@ -186,21 +186,21 @@ function Landing() {
               </div>
 
               <h1
-                className="mt-4 text-[44px] font-bold leading-[0.95] tracking-[-0.025em] sm:mt-5 sm:text-6xl md:text-7xl lg:text-[88px]"
+                className="mt-5 text-[44px] font-bold leading-[1.02] tracking-[-0.02em] sm:mt-6 sm:text-6xl sm:leading-[1] md:text-7xl lg:text-[88px] lg:leading-[0.98]"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
               >
                 SUTEL 2026
               </h1>
 
               <p
-                className="mt-3 text-xl italic leading-snug sm:text-3xl"
+                className="mt-4 text-xl italic leading-[1.25] sm:mt-5 sm:text-2xl md:text-3xl md:leading-[1.2]"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GOLD }}
               >
                 Le rendez-vous du service universel.
               </p>
 
               <p
-                className="mt-4 max-w-lg text-[15px] leading-relaxed sm:mt-5 sm:text-base"
+                className="mt-5 max-w-lg text-[15px] leading-[1.6] sm:mt-6 sm:text-base sm:leading-[1.65]"
                 style={{ color: `${GREEN}b3` }}
               >
                 Rassembler les acteurs, valoriser les innovations et accélérer l'inclusion numérique pour tous.
