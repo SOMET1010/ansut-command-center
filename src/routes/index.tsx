@@ -135,7 +135,7 @@ function Landing() {
   }
 
   return (
-    <div className="min-h-dvh" style={{ backgroundColor: CREAM }}>
+    <div className="min-h-dvh overflow-x-hidden" style={{ backgroundColor: CREAM }}>
       {/* BANDEAU OFFICIEL */}
       <div
         className="fixed top-0 z-[60] w-full border-b backdrop-blur-md"
