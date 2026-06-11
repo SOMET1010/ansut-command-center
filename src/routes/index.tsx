@@ -699,11 +699,35 @@ function SocialIcon({
   );
 }
 
+const badgeSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, { message: "Le nom doit contenir au moins 2 caractères." })
+    .max(80, { message: "Le nom doit faire moins de 80 caractères." })
+    .regex(/^[\p{L}\p{M}\s'’\-.]+$/u, {
+      message: "Caractères non autorisés dans le nom.",
+    }),
+  organization: z
+    .string()
+    .trim()
+    .min(2, { message: "L'organisation doit contenir au moins 2 caractères." })
+    .max(100, { message: "L'organisation doit faire moins de 100 caractères." }),
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Adresse email invalide." })
+    .max(255, { message: "L'email doit faire moins de 255 caractères." }),
+});
+
+type BadgeErrors = Partial<Record<"fullName" | "organization" | "email", string>>;
+
 function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
   const [fullName, setFullName] = useState("");
   const [organization, setOrganization] = useState("");
   const [role, setRole] = useState("Participant");
   const [email, setEmail] = useState("");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [qrSrc, setQrSrc] = useState<string>("");
 
   const origin =
@@ -711,18 +735,39 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
       ? window.location.origin
       : "https://ansut-craft-kit.lovable.app";
 
-  const payload = JSON.stringify({
-    event: "SUTEL 2026",
-    slug: eventSlug ?? "sutel-2026",
-    name: fullName || "Invité ANSUT",
-    org: organization || "—",
-    role,
-    email: email || "—",
-    url: `${origin}/signup`,
-    ts: Date.now(),
-  });
+  const validation = useMemo(
+    () => badgeSchema.safeParse({ fullName, organization, email }),
+    [fullName, organization, email],
+  );
+
+  const errors: BadgeErrors = useMemo(() => {
+    if (validation.success) return {};
+    const map: BadgeErrors = {};
+    for (const issue of validation.error.issues) {
+      const key = issue.path[0] as keyof BadgeErrors;
+      if (key && !map[key]) map[key] = issue.message;
+    }
+    return map;
+  }, [validation]);
+
+  const isValid = validation.success;
 
   useEffect(() => {
+    if (!isValid) {
+      setQrSrc("");
+      return;
+    }
+    const data = validation.data;
+    const payload = JSON.stringify({
+      event: "SUTEL 2026",
+      slug: eventSlug ?? "sutel-2026",
+      name: data.fullName,
+      org: data.organization,
+      role,
+      email: data.email,
+      url: `${origin}/signup`,
+      ts: Date.now(),
+    });
     QRCode.toDataURL(payload, {
       margin: 1,
       width: 360,
@@ -731,13 +776,19 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
     })
       .then(setQrSrc)
       .catch(() => setQrSrc(""));
-  }, [payload]);
+  }, [isValid, validation, role, eventSlug, origin]);
+
+  const markAllTouched = () =>
+    setTouched({ fullName: true, organization: true, email: true });
 
   const handleDownload = () => {
-    if (!qrSrc) return;
+    markAllTouched();
+    if (!isValid || !qrSrc) return;
     const a = document.createElement("a");
     a.href = qrSrc;
-    a.download = `badge-sutel-${(fullName || "invite").toLowerCase().replace(/\s+/g, "-")}.png`;
+    a.download = `badge-sutel-${validation.data.fullName
+      .toLowerCase()
+      .replace(/\s+/g, "-")}.png`;
     a.click();
   };
 
