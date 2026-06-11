@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Search, Users, CheckCircle2, Clock } from "lucide-react";
 
-export const Route = createFileRoute("/staff/participants")({
+export const Route = createFileRoute("/_authenticated/staff/participants")({
   head: () => ({ meta: [{ title: "Participants staff — ANSUT EVENT" }] }),
   component: StaffParticipants,
 });

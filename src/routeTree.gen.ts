@@ -25,26 +25,45 @@ import { Route as MeSlugRouteImport } from './routes/me.$slug'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as AttendanceSessionIdRouteImport } from './routes/attendance.$sessionId'
 import { Route as AgendaSlugRouteImport } from './routes/agenda.$slug'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedSecurityAuditRouteImport } from './routes/_authenticated/security-audit'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedParticipantsRouteImport } from './routes/_authenticated/participants'
+import { Route as AuthenticatedOrgRouteImport } from './routes/_authenticated/org'
 import { Route as AuthenticatedExportsRouteImport } from './routes/_authenticated/exports'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
 import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated/announcements'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ESlugReseauRouteImport } from './routes/e.$slug/reseau'
 import { Route as ESlugProfilRouteImport } from './routes/e.$slug/profil'
 import { Route as ESlugMessagesRouteImport } from './routes/e.$slug/messages'
 import { Route as ESlugAnnoncesRouteImport } from './routes/e.$slug/annonces'
 import { Route as ESlugAgendaRouteImport } from './routes/e.$slug/agenda'
+import { Route as AuthenticatedStaffParticipantsRouteImport } from './routes/_authenticated/staff/participants'
+import { Route as AuthenticatedStaffCheckinRouteImport } from './routes/_authenticated/staff/checkin'
+import { Route as AuthenticatedStaffAnnouncementsRouteImport } from './routes/_authenticated/staff/announcements'
+import { Route as AuthenticatedOrgParticipantsRouteImport } from './routes/_authenticated/org/participants'
+import { Route as AuthenticatedOrgExportsRouteImport } from './routes/_authenticated/org/exports'
+import { Route as AuthenticatedOrgEventsRouteImport } from './routes/_authenticated/org/events'
+import { Route as AuthenticatedOrgCommunicationRouteImport } from './routes/_authenticated/org/communication'
+import { Route as AuthenticatedOrgCockpitRouteImport } from './routes/_authenticated/org/cockpit'
 import { Route as AuthenticatedEventsNewRouteImport } from './routes/_authenticated/events.new'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated/admin.setup'
+import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin/security'
+import { Route as AuthenticatedAdminOverviewRouteImport } from './routes/_authenticated/admin/overview'
+import { Route as AuthenticatedAdminBootstrapRouteImport } from './routes/_authenticated/admin/bootstrap'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 import { Route as ApiPublicAuthTokenRouteImport } from './routes/api/public/auth/token'
 import { Route as ApiPublicAuthRecoverRouteImport } from './routes/api/public/auth/recover'
+import { Route as AuthenticatedOrgEventsNewRouteImport } from './routes/_authenticated/org/events/new'
 import { Route as AuthenticatedEventsIdSessionsRouteImport } from './routes/_authenticated/events.$id.sessions'
 import { Route as AuthenticatedEventsIdRegistrationsRouteImport } from './routes/_authenticated/events.$id.registrations'
 import { Route as AuthenticatedEventsIdEditRouteImport } from './routes/_authenticated/events.$id.edit'
+import { Route as AuthenticatedOrgEventsIdSessionsRouteImport } from './routes/_authenticated/org/events.$id.sessions'
+import { Route as AuthenticatedOrgEventsIdEditRouteImport } from './routes/_authenticated/org/events.$id.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -126,6 +145,11 @@ const AgendaSlugRoute = AgendaSlugRouteImport.update({
   path: '/agenda/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedSecurityAuditRoute =
   AuthenticatedSecurityAuditRouteImport.update({
     id: '/security-audit',
@@ -143,6 +167,11 @@ const AuthenticatedParticipantsRoute =
     path: '/participants',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOrgRoute = AuthenticatedOrgRouteImport.update({
+  id: '/org',
+  path: '/org',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedExportsRoute = AuthenticatedExportsRouteImport.update({
   id: '/exports',
   path: '/exports',
@@ -169,6 +198,11 @@ const AuthenticatedAnnouncementsRoute =
     path: '/announcements',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const ESlugReseauRoute = ESlugReseauRouteImport.update({
   id: '/reseau',
   path: '/reseau',
@@ -194,15 +228,88 @@ const ESlugAgendaRoute = ESlugAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => ESlugRoute,
 } as any)
+const AuthenticatedStaffParticipantsRoute =
+  AuthenticatedStaffParticipantsRouteImport.update({
+    id: '/participants',
+    path: '/participants',
+    getParentRoute: () => AuthenticatedStaffRoute,
+  } as any)
+const AuthenticatedStaffCheckinRoute =
+  AuthenticatedStaffCheckinRouteImport.update({
+    id: '/checkin',
+    path: '/checkin',
+    getParentRoute: () => AuthenticatedStaffRoute,
+  } as any)
+const AuthenticatedStaffAnnouncementsRoute =
+  AuthenticatedStaffAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
+    getParentRoute: () => AuthenticatedStaffRoute,
+  } as any)
+const AuthenticatedOrgParticipantsRoute =
+  AuthenticatedOrgParticipantsRouteImport.update({
+    id: '/participants',
+    path: '/participants',
+    getParentRoute: () => AuthenticatedOrgRoute,
+  } as any)
+const AuthenticatedOrgExportsRoute = AuthenticatedOrgExportsRouteImport.update({
+  id: '/exports',
+  path: '/exports',
+  getParentRoute: () => AuthenticatedOrgRoute,
+} as any)
+const AuthenticatedOrgEventsRoute = AuthenticatedOrgEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AuthenticatedOrgRoute,
+} as any)
+const AuthenticatedOrgCommunicationRoute =
+  AuthenticatedOrgCommunicationRouteImport.update({
+    id: '/communication',
+    path: '/communication',
+    getParentRoute: () => AuthenticatedOrgRoute,
+  } as any)
+const AuthenticatedOrgCockpitRoute = AuthenticatedOrgCockpitRouteImport.update({
+  id: '/cockpit',
+  path: '/cockpit',
+  getParentRoute: () => AuthenticatedOrgRoute,
+} as any)
 const AuthenticatedEventsNewRoute = AuthenticatedEventsNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AuthenticatedEventsRoute,
 } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminSetupRoute = AuthenticatedAdminSetupRouteImport.update({
-  id: '/admin/setup',
-  path: '/admin/setup',
-  getParentRoute: () => AuthenticatedRoute,
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminSecurityRoute =
+  AuthenticatedAdminSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOverviewRoute =
+  AuthenticatedAdminOverviewRouteImport.update({
+    id: '/overview',
+    path: '/overview',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBootstrapRoute =
+  AuthenticatedAdminBootstrapRouteImport.update({
+    id: '/bootstrap',
+    path: '/bootstrap',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const ApiPublicAuthTokenRoute = ApiPublicAuthTokenRouteImport.update({
   id: '/api/public/auth/token',
@@ -214,6 +321,12 @@ const ApiPublicAuthRecoverRoute = ApiPublicAuthRecoverRouteImport.update({
   path: '/api/public/auth/recover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOrgEventsNewRoute =
+  AuthenticatedOrgEventsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedOrgEventsRoute,
+  } as any)
 const AuthenticatedEventsIdSessionsRoute =
   AuthenticatedEventsIdSessionsRouteImport.update({
     id: '/$id/sessions',
@@ -232,6 +345,18 @@ const AuthenticatedEventsIdEditRoute =
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedEventsRoute,
   } as any)
+const AuthenticatedOrgEventsIdSessionsRoute =
+  AuthenticatedOrgEventsIdSessionsRouteImport.update({
+    id: '/$id/sessions',
+    path: '/$id/sessions',
+    getParentRoute: () => AuthenticatedOrgEventsRoute,
+  } as any)
+const AuthenticatedOrgEventsIdEditRoute =
+  AuthenticatedOrgEventsIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AuthenticatedOrgEventsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -242,14 +367,17 @@ export interface FileRoutesByFullPath {
   '/politique-confidentialite': typeof PolitiqueConfidentialiteRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/exports': typeof AuthenticatedExportsRoute
+  '/org': typeof AuthenticatedOrgRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
+  '/staff': typeof AuthenticatedStaffRouteWithChildren
   '/agenda/$slug': typeof AgendaSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRouteWithChildren
@@ -257,8 +385,21 @@ export interface FileRoutesByFullPath {
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/salon/$slug': typeof SalonSlugRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bootstrap': typeof AuthenticatedAdminBootstrapRoute
+  '/admin/overview': typeof AuthenticatedAdminOverviewRoute
+  '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
+  '/org/cockpit': typeof AuthenticatedOrgCockpitRoute
+  '/org/communication': typeof AuthenticatedOrgCommunicationRoute
+  '/org/events': typeof AuthenticatedOrgEventsRouteWithChildren
+  '/org/exports': typeof AuthenticatedOrgExportsRoute
+  '/org/participants': typeof AuthenticatedOrgParticipantsRoute
+  '/staff/announcements': typeof AuthenticatedStaffAnnouncementsRoute
+  '/staff/checkin': typeof AuthenticatedStaffCheckinRoute
+  '/staff/participants': typeof AuthenticatedStaffParticipantsRoute
   '/e/$slug/agenda': typeof ESlugAgendaRoute
   '/e/$slug/annonces': typeof ESlugAnnoncesRoute
   '/e/$slug/messages': typeof ESlugMessagesRoute
@@ -267,8 +408,11 @@ export interface FileRoutesByFullPath {
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
+  '/org/events/new': typeof AuthenticatedOrgEventsNewRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
+  '/org/events/$id/edit': typeof AuthenticatedOrgEventsIdEditRoute
+  '/org/events/$id/sessions': typeof AuthenticatedOrgEventsIdSessionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -279,14 +423,17 @@ export interface FileRoutesByTo {
   '/politique-confidentialite': typeof PolitiqueConfidentialiteRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/events': typeof AuthenticatedEventsRouteWithChildren
   '/exports': typeof AuthenticatedExportsRoute
+  '/org': typeof AuthenticatedOrgRouteWithChildren
   '/participants': typeof AuthenticatedParticipantsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/security-audit': typeof AuthenticatedSecurityAuditRoute
+  '/staff': typeof AuthenticatedStaffRouteWithChildren
   '/agenda/$slug': typeof AgendaSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRouteWithChildren
@@ -294,8 +441,21 @@ export interface FileRoutesByTo {
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/salon/$slug': typeof SalonSlugRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/bootstrap': typeof AuthenticatedAdminBootstrapRoute
+  '/admin/overview': typeof AuthenticatedAdminOverviewRoute
+  '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/setup': typeof AuthenticatedAdminSetupRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/events/new': typeof AuthenticatedEventsNewRoute
+  '/org/cockpit': typeof AuthenticatedOrgCockpitRoute
+  '/org/communication': typeof AuthenticatedOrgCommunicationRoute
+  '/org/events': typeof AuthenticatedOrgEventsRouteWithChildren
+  '/org/exports': typeof AuthenticatedOrgExportsRoute
+  '/org/participants': typeof AuthenticatedOrgParticipantsRoute
+  '/staff/announcements': typeof AuthenticatedStaffAnnouncementsRoute
+  '/staff/checkin': typeof AuthenticatedStaffCheckinRoute
+  '/staff/participants': typeof AuthenticatedStaffParticipantsRoute
   '/e/$slug/agenda': typeof ESlugAgendaRoute
   '/e/$slug/annonces': typeof ESlugAnnoncesRoute
   '/e/$slug/messages': typeof ESlugMessagesRoute
@@ -304,8 +464,11 @@ export interface FileRoutesByTo {
   '/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
+  '/org/events/new': typeof AuthenticatedOrgEventsNewRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
+  '/org/events/$id/edit': typeof AuthenticatedOrgEventsIdEditRoute
+  '/org/events/$id/sessions': typeof AuthenticatedOrgEventsIdSessionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -318,14 +481,17 @@ export interface FileRoutesById {
   '/politique-confidentialite': typeof PolitiqueConfidentialiteRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/announcements': typeof AuthenticatedAnnouncementsRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/events': typeof AuthenticatedEventsRouteWithChildren
   '/_authenticated/exports': typeof AuthenticatedExportsRoute
+  '/_authenticated/org': typeof AuthenticatedOrgRouteWithChildren
   '/_authenticated/participants': typeof AuthenticatedParticipantsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/_authenticated/security-audit': typeof AuthenticatedSecurityAuditRoute
+  '/_authenticated/staff': typeof AuthenticatedStaffRouteWithChildren
   '/agenda/$slug': typeof AgendaSlugRoute
   '/attendance/$sessionId': typeof AttendanceSessionIdRoute
   '/e/$slug': typeof ESlugRouteWithChildren
@@ -333,8 +499,21 @@ export interface FileRoutesById {
   '/me/role': typeof MeRoleRoute
   '/networking/$slug': typeof NetworkingSlugRoute
   '/salon/$slug': typeof SalonSlugRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/bootstrap': typeof AuthenticatedAdminBootstrapRoute
+  '/_authenticated/admin/overview': typeof AuthenticatedAdminOverviewRoute
+  '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/events/new': typeof AuthenticatedEventsNewRoute
+  '/_authenticated/org/cockpit': typeof AuthenticatedOrgCockpitRoute
+  '/_authenticated/org/communication': typeof AuthenticatedOrgCommunicationRoute
+  '/_authenticated/org/events': typeof AuthenticatedOrgEventsRouteWithChildren
+  '/_authenticated/org/exports': typeof AuthenticatedOrgExportsRoute
+  '/_authenticated/org/participants': typeof AuthenticatedOrgParticipantsRoute
+  '/_authenticated/staff/announcements': typeof AuthenticatedStaffAnnouncementsRoute
+  '/_authenticated/staff/checkin': typeof AuthenticatedStaffCheckinRoute
+  '/_authenticated/staff/participants': typeof AuthenticatedStaffParticipantsRoute
   '/e/$slug/agenda': typeof ESlugAgendaRoute
   '/e/$slug/annonces': typeof ESlugAnnoncesRoute
   '/e/$slug/messages': typeof ESlugMessagesRoute
@@ -343,8 +522,11 @@ export interface FileRoutesById {
   '/_authenticated/events/$id/edit': typeof AuthenticatedEventsIdEditRoute
   '/_authenticated/events/$id/registrations': typeof AuthenticatedEventsIdRegistrationsRoute
   '/_authenticated/events/$id/sessions': typeof AuthenticatedEventsIdSessionsRoute
+  '/_authenticated/org/events/new': typeof AuthenticatedOrgEventsNewRoute
   '/api/public/auth/recover': typeof ApiPublicAuthRecoverRoute
   '/api/public/auth/token': typeof ApiPublicAuthTokenRoute
+  '/_authenticated/org/events/$id/edit': typeof AuthenticatedOrgEventsIdEditRoute
+  '/_authenticated/org/events/$id/sessions': typeof AuthenticatedOrgEventsIdSessionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -357,14 +539,17 @@ export interface FileRouteTypes {
     | '/politique-confidentialite'
     | '/reset-password'
     | '/signup'
+    | '/admin'
     | '/announcements'
     | '/checkin'
     | '/dashboard'
     | '/events'
     | '/exports'
+    | '/org'
     | '/participants'
     | '/polls'
     | '/security-audit'
+    | '/staff'
     | '/agenda/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
@@ -372,8 +557,21 @@ export interface FileRouteTypes {
     | '/me/role'
     | '/networking/$slug'
     | '/salon/$slug'
+    | '/admin/audit'
+    | '/admin/bootstrap'
+    | '/admin/overview'
+    | '/admin/security'
     | '/admin/setup'
+    | '/admin/users'
     | '/events/new'
+    | '/org/cockpit'
+    | '/org/communication'
+    | '/org/events'
+    | '/org/exports'
+    | '/org/participants'
+    | '/staff/announcements'
+    | '/staff/checkin'
+    | '/staff/participants'
     | '/e/$slug/agenda'
     | '/e/$slug/annonces'
     | '/e/$slug/messages'
@@ -382,8 +580,11 @@ export interface FileRouteTypes {
     | '/events/$id/edit'
     | '/events/$id/registrations'
     | '/events/$id/sessions'
+    | '/org/events/new'
     | '/api/public/auth/recover'
     | '/api/public/auth/token'
+    | '/org/events/$id/edit'
+    | '/org/events/$id/sessions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -394,14 +595,17 @@ export interface FileRouteTypes {
     | '/politique-confidentialite'
     | '/reset-password'
     | '/signup'
+    | '/admin'
     | '/announcements'
     | '/checkin'
     | '/dashboard'
     | '/events'
     | '/exports'
+    | '/org'
     | '/participants'
     | '/polls'
     | '/security-audit'
+    | '/staff'
     | '/agenda/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
@@ -409,8 +613,21 @@ export interface FileRouteTypes {
     | '/me/role'
     | '/networking/$slug'
     | '/salon/$slug'
+    | '/admin/audit'
+    | '/admin/bootstrap'
+    | '/admin/overview'
+    | '/admin/security'
     | '/admin/setup'
+    | '/admin/users'
     | '/events/new'
+    | '/org/cockpit'
+    | '/org/communication'
+    | '/org/events'
+    | '/org/exports'
+    | '/org/participants'
+    | '/staff/announcements'
+    | '/staff/checkin'
+    | '/staff/participants'
     | '/e/$slug/agenda'
     | '/e/$slug/annonces'
     | '/e/$slug/messages'
@@ -419,8 +636,11 @@ export interface FileRouteTypes {
     | '/events/$id/edit'
     | '/events/$id/registrations'
     | '/events/$id/sessions'
+    | '/org/events/new'
     | '/api/public/auth/recover'
     | '/api/public/auth/token'
+    | '/org/events/$id/edit'
+    | '/org/events/$id/sessions'
   id:
     | '__root__'
     | '/'
@@ -432,14 +652,17 @@ export interface FileRouteTypes {
     | '/politique-confidentialite'
     | '/reset-password'
     | '/signup'
+    | '/_authenticated/admin'
     | '/_authenticated/announcements'
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/events'
     | '/_authenticated/exports'
+    | '/_authenticated/org'
     | '/_authenticated/participants'
     | '/_authenticated/polls'
     | '/_authenticated/security-audit'
+    | '/_authenticated/staff'
     | '/agenda/$slug'
     | '/attendance/$sessionId'
     | '/e/$slug'
@@ -447,8 +670,21 @@ export interface FileRouteTypes {
     | '/me/role'
     | '/networking/$slug'
     | '/salon/$slug'
+    | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/bootstrap'
+    | '/_authenticated/admin/overview'
+    | '/_authenticated/admin/security'
     | '/_authenticated/admin/setup'
+    | '/_authenticated/admin/users'
     | '/_authenticated/events/new'
+    | '/_authenticated/org/cockpit'
+    | '/_authenticated/org/communication'
+    | '/_authenticated/org/events'
+    | '/_authenticated/org/exports'
+    | '/_authenticated/org/participants'
+    | '/_authenticated/staff/announcements'
+    | '/_authenticated/staff/checkin'
+    | '/_authenticated/staff/participants'
     | '/e/$slug/agenda'
     | '/e/$slug/annonces'
     | '/e/$slug/messages'
@@ -457,8 +693,11 @@ export interface FileRouteTypes {
     | '/_authenticated/events/$id/edit'
     | '/_authenticated/events/$id/registrations'
     | '/_authenticated/events/$id/sessions'
+    | '/_authenticated/org/events/new'
     | '/api/public/auth/recover'
     | '/api/public/auth/token'
+    | '/_authenticated/org/events/$id/edit'
+    | '/_authenticated/org/events/$id/sessions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -596,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/security-audit': {
       id: '/_authenticated/security-audit'
       path: '/security-audit'
@@ -615,6 +861,13 @@ declare module '@tanstack/react-router' {
       path: '/participants'
       fullPath: '/participants'
       preLoaderRoute: typeof AuthenticatedParticipantsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/org': {
+      id: '/_authenticated/org'
+      path: '/org'
+      fullPath: '/org'
+      preLoaderRoute: typeof AuthenticatedOrgRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/exports': {
@@ -652,6 +905,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/e/$slug/reseau': {
       id: '/e/$slug/reseau'
       path: '/reseau'
@@ -687,6 +947,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ESlugAgendaRouteImport
       parentRoute: typeof ESlugRoute
     }
+    '/_authenticated/staff/participants': {
+      id: '/_authenticated/staff/participants'
+      path: '/participants'
+      fullPath: '/staff/participants'
+      preLoaderRoute: typeof AuthenticatedStaffParticipantsRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
+    }
+    '/_authenticated/staff/checkin': {
+      id: '/_authenticated/staff/checkin'
+      path: '/checkin'
+      fullPath: '/staff/checkin'
+      preLoaderRoute: typeof AuthenticatedStaffCheckinRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
+    }
+    '/_authenticated/staff/announcements': {
+      id: '/_authenticated/staff/announcements'
+      path: '/announcements'
+      fullPath: '/staff/announcements'
+      preLoaderRoute: typeof AuthenticatedStaffAnnouncementsRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
+    }
+    '/_authenticated/org/participants': {
+      id: '/_authenticated/org/participants'
+      path: '/participants'
+      fullPath: '/org/participants'
+      preLoaderRoute: typeof AuthenticatedOrgParticipantsRouteImport
+      parentRoute: typeof AuthenticatedOrgRoute
+    }
+    '/_authenticated/org/exports': {
+      id: '/_authenticated/org/exports'
+      path: '/exports'
+      fullPath: '/org/exports'
+      preLoaderRoute: typeof AuthenticatedOrgExportsRouteImport
+      parentRoute: typeof AuthenticatedOrgRoute
+    }
+    '/_authenticated/org/events': {
+      id: '/_authenticated/org/events'
+      path: '/events'
+      fullPath: '/org/events'
+      preLoaderRoute: typeof AuthenticatedOrgEventsRouteImport
+      parentRoute: typeof AuthenticatedOrgRoute
+    }
+    '/_authenticated/org/communication': {
+      id: '/_authenticated/org/communication'
+      path: '/communication'
+      fullPath: '/org/communication'
+      preLoaderRoute: typeof AuthenticatedOrgCommunicationRouteImport
+      parentRoute: typeof AuthenticatedOrgRoute
+    }
+    '/_authenticated/org/cockpit': {
+      id: '/_authenticated/org/cockpit'
+      path: '/cockpit'
+      fullPath: '/org/cockpit'
+      preLoaderRoute: typeof AuthenticatedOrgCockpitRouteImport
+      parentRoute: typeof AuthenticatedOrgRoute
+    }
     '/_authenticated/events/new': {
       id: '/_authenticated/events/new'
       path: '/new'
@@ -694,12 +1010,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsNewRouteImport
       parentRoute: typeof AuthenticatedEventsRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/setup': {
       id: '/_authenticated/admin/setup'
-      path: '/admin/setup'
+      path: '/setup'
       fullPath: '/admin/setup'
       preLoaderRoute: typeof AuthenticatedAdminSetupRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/security': {
+      id: '/_authenticated/admin/security'
+      path: '/security'
+      fullPath: '/admin/security'
+      preLoaderRoute: typeof AuthenticatedAdminSecurityRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/overview': {
+      id: '/_authenticated/admin/overview'
+      path: '/overview'
+      fullPath: '/admin/overview'
+      preLoaderRoute: typeof AuthenticatedAdminOverviewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/bootstrap': {
+      id: '/_authenticated/admin/bootstrap'
+      path: '/bootstrap'
+      fullPath: '/admin/bootstrap'
+      preLoaderRoute: typeof AuthenticatedAdminBootstrapRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/api/public/auth/token': {
       id: '/api/public/auth/token'
@@ -714,6 +1065,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/auth/recover'
       preLoaderRoute: typeof ApiPublicAuthRecoverRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/org/events/new': {
+      id: '/_authenticated/org/events/new'
+      path: '/new'
+      fullPath: '/org/events/new'
+      preLoaderRoute: typeof AuthenticatedOrgEventsNewRouteImport
+      parentRoute: typeof AuthenticatedOrgEventsRoute
     }
     '/_authenticated/events/$id/sessions': {
       id: '/_authenticated/events/$id/sessions'
@@ -736,8 +1094,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsIdEditRouteImport
       parentRoute: typeof AuthenticatedEventsRoute
     }
+    '/_authenticated/org/events/$id/sessions': {
+      id: '/_authenticated/org/events/$id/sessions'
+      path: '/$id/sessions'
+      fullPath: '/org/events/$id/sessions'
+      preLoaderRoute: typeof AuthenticatedOrgEventsIdSessionsRouteImport
+      parentRoute: typeof AuthenticatedOrgEventsRoute
+    }
+    '/_authenticated/org/events/$id/edit': {
+      id: '/_authenticated/org/events/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/org/events/$id/edit'
+      preLoaderRoute: typeof AuthenticatedOrgEventsIdEditRouteImport
+      parentRoute: typeof AuthenticatedOrgEventsRoute
+    }
   }
 }
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminBootstrapRoute: typeof AuthenticatedAdminBootstrapRoute
+  AuthenticatedAdminOverviewRoute: typeof AuthenticatedAdminOverviewRoute
+  AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
+  AuthenticatedAdminSetupRoute: typeof AuthenticatedAdminSetupRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+  AuthenticatedAdminBootstrapRoute: AuthenticatedAdminBootstrapRoute,
+  AuthenticatedAdminOverviewRoute: AuthenticatedAdminOverviewRoute,
+  AuthenticatedAdminSecurityRoute: AuthenticatedAdminSecurityRoute,
+  AuthenticatedAdminSetupRoute: AuthenticatedAdminSetupRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedEventsRouteChildren {
   AuthenticatedEventsNewRoute: typeof AuthenticatedEventsNewRoute
@@ -757,28 +1150,85 @@ const AuthenticatedEventsRouteChildren: AuthenticatedEventsRouteChildren = {
 const AuthenticatedEventsRouteWithChildren =
   AuthenticatedEventsRoute._addFileChildren(AuthenticatedEventsRouteChildren)
 
+interface AuthenticatedOrgEventsRouteChildren {
+  AuthenticatedOrgEventsNewRoute: typeof AuthenticatedOrgEventsNewRoute
+  AuthenticatedOrgEventsIdEditRoute: typeof AuthenticatedOrgEventsIdEditRoute
+  AuthenticatedOrgEventsIdSessionsRoute: typeof AuthenticatedOrgEventsIdSessionsRoute
+}
+
+const AuthenticatedOrgEventsRouteChildren: AuthenticatedOrgEventsRouteChildren =
+  {
+    AuthenticatedOrgEventsNewRoute: AuthenticatedOrgEventsNewRoute,
+    AuthenticatedOrgEventsIdEditRoute: AuthenticatedOrgEventsIdEditRoute,
+    AuthenticatedOrgEventsIdSessionsRoute:
+      AuthenticatedOrgEventsIdSessionsRoute,
+  }
+
+const AuthenticatedOrgEventsRouteWithChildren =
+  AuthenticatedOrgEventsRoute._addFileChildren(
+    AuthenticatedOrgEventsRouteChildren,
+  )
+
+interface AuthenticatedOrgRouteChildren {
+  AuthenticatedOrgCockpitRoute: typeof AuthenticatedOrgCockpitRoute
+  AuthenticatedOrgCommunicationRoute: typeof AuthenticatedOrgCommunicationRoute
+  AuthenticatedOrgEventsRoute: typeof AuthenticatedOrgEventsRouteWithChildren
+  AuthenticatedOrgExportsRoute: typeof AuthenticatedOrgExportsRoute
+  AuthenticatedOrgParticipantsRoute: typeof AuthenticatedOrgParticipantsRoute
+}
+
+const AuthenticatedOrgRouteChildren: AuthenticatedOrgRouteChildren = {
+  AuthenticatedOrgCockpitRoute: AuthenticatedOrgCockpitRoute,
+  AuthenticatedOrgCommunicationRoute: AuthenticatedOrgCommunicationRoute,
+  AuthenticatedOrgEventsRoute: AuthenticatedOrgEventsRouteWithChildren,
+  AuthenticatedOrgExportsRoute: AuthenticatedOrgExportsRoute,
+  AuthenticatedOrgParticipantsRoute: AuthenticatedOrgParticipantsRoute,
+}
+
+const AuthenticatedOrgRouteWithChildren =
+  AuthenticatedOrgRoute._addFileChildren(AuthenticatedOrgRouteChildren)
+
+interface AuthenticatedStaffRouteChildren {
+  AuthenticatedStaffAnnouncementsRoute: typeof AuthenticatedStaffAnnouncementsRoute
+  AuthenticatedStaffCheckinRoute: typeof AuthenticatedStaffCheckinRoute
+  AuthenticatedStaffParticipantsRoute: typeof AuthenticatedStaffParticipantsRoute
+}
+
+const AuthenticatedStaffRouteChildren: AuthenticatedStaffRouteChildren = {
+  AuthenticatedStaffAnnouncementsRoute: AuthenticatedStaffAnnouncementsRoute,
+  AuthenticatedStaffCheckinRoute: AuthenticatedStaffCheckinRoute,
+  AuthenticatedStaffParticipantsRoute: AuthenticatedStaffParticipantsRoute,
+}
+
+const AuthenticatedStaffRouteWithChildren =
+  AuthenticatedStaffRoute._addFileChildren(AuthenticatedStaffRouteChildren)
+
 interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAnnouncementsRoute: typeof AuthenticatedAnnouncementsRoute
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRouteWithChildren
   AuthenticatedExportsRoute: typeof AuthenticatedExportsRoute
+  AuthenticatedOrgRoute: typeof AuthenticatedOrgRouteWithChildren
   AuthenticatedParticipantsRoute: typeof AuthenticatedParticipantsRoute
   AuthenticatedPollsRoute: typeof AuthenticatedPollsRoute
   AuthenticatedSecurityAuditRoute: typeof AuthenticatedSecurityAuditRoute
-  AuthenticatedAdminSetupRoute: typeof AuthenticatedAdminSetupRoute
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAnnouncementsRoute: AuthenticatedAnnouncementsRoute,
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEventsRoute: AuthenticatedEventsRouteWithChildren,
   AuthenticatedExportsRoute: AuthenticatedExportsRoute,
+  AuthenticatedOrgRoute: AuthenticatedOrgRouteWithChildren,
   AuthenticatedParticipantsRoute: AuthenticatedParticipantsRoute,
   AuthenticatedPollsRoute: AuthenticatedPollsRoute,
   AuthenticatedSecurityAuditRoute: AuthenticatedSecurityAuditRoute,
-  AuthenticatedAdminSetupRoute: AuthenticatedAdminSetupRoute,
+  AuthenticatedStaffRoute: AuthenticatedStaffRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -826,3 +1276,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -4,7 +4,7 @@
  */
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/org/events/new")({
+export const Route = createFileRoute("/_authenticated/org/events/new")({
   beforeLoad: () => {
     throw redirect({ to: "/events/new" });
   },

@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Calendar, Users, QrCode, CheckCircle2, ArrowRight, CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/org/cockpit")({
+export const Route = createFileRoute("/_authenticated/org/cockpit")({
   head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
   component: OrgCockpit,
 });

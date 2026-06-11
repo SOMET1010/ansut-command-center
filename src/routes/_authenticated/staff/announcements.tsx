@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Megaphone, Plus, Pin } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/staff/announcements")({
+export const Route = createFileRoute("/_authenticated/staff/announcements")({
   head: () => ({ meta: [{ title: "Annonces staff — ANSUT EVENT" }] }),
   component: StaffAnnouncements,
 });

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ShieldCheck, Plus, Trash2, RefreshCw } from "lucide-react";
 
-export const Route = createFileRoute("/admin/users")({
+export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "Utilisateurs & rôles — ANSUT EVENT" }] }),
   component: AdminUsers,
 });

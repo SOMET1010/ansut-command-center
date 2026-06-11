@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/admin/security")({
+export const Route = createFileRoute("/_authenticated/admin/security")({
   head: () => ({ meta: [{ title: "Audit de sécurité — ANSUT EVENT" }] }),
   component: SecurityAuditPage,
 });
