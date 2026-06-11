@@ -352,7 +352,7 @@ function Landing() {
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-3">
             <FeatureCard
               icon={<CalendarDays className="h-6 w-6" strokeWidth={1.5} />}
               title="Programme"
