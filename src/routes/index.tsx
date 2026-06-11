@@ -174,15 +174,17 @@ function Landing() {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <Button
-              asChild
-              size="sm"
-              className="rounded-full px-5 text-white shadow-sm"
+            <Link
+              to="/signup"
+              className="inline-flex h-9 items-center rounded-full px-5 text-[13px] font-semibold text-white shadow-sm transition-colors"
               style={{ backgroundColor: GOLD }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
             >
-              <Link to="/signup">Obtenir mon badge</Link>
-            </Button>
+              Obtenir mon badge
+            </Link>
           </div>
+
         </div>
       </nav>
 
