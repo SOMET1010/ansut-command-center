@@ -167,241 +167,168 @@ function Landing() {
   return (
     <div className="min-h-dvh bg-background">
       {/* TOP UTILITY BAR */}
-      <div className="fixed top-0 z-[60] w-full border-b border-white/10 bg-[#08172E]/95 backdrop-blur-md">
-        <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 text-[10px] font-medium uppercase tracking-[0.18em] text-white/70 sm:px-6">
+      {/* BANDEAU OFFICIEL FIN */}
+      <div className="fixed top-0 z-[60] w-full border-b border-[#0E2440]/10 bg-[#F5EFE6]/95 backdrop-blur-md">
+        <div className="mx-auto flex h-8 max-w-7xl items-center justify-center px-4 text-[10px] font-medium uppercase tracking-[0.18em] text-[#0E2440]/70 sm:px-6">
           <span className="hidden sm:inline">
             République de Côte d'Ivoire · Ministère de la Transition Numérique et de l'Innovation Technologique
           </span>
-          <span className="sm:hidden">RCI · ANSUT</span>
-          <div className="flex items-center gap-4">
-            <span className="opacity-60">Édition officielle 2026</span>
-          </div>
+          <span className="sm:hidden">RCI · MTNIT</span>
         </div>
       </div>
 
-      {/* STICKY NAV */}
-      <nav className="fixed top-8 z-50 w-full border-b border-white/5 bg-[#0E2440]/80 backdrop-blur-xl">
+      {/* STICKY NAV — fond clair, epuré */}
+      <nav className="fixed top-8 z-50 w-full border-b border-[#0E2440]/10 bg-white/85 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <AnsutLogo size="md" className="shrink-0" />
-            <div className="min-w-0 leading-tight">
-              <div className="truncate font-display text-[15px] font-semibold tracking-[0.02em] text-white">
-                ANSUT Event
-              </div>
-              <div className="hidden text-[9px] uppercase tracking-[0.25em] text-white/55 md:block">
-                SUTEL 2026 — Plateforme officielle
-              </div>
-            </div>
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex">
-            <Link to="/" className="text-[13px] font-medium text-white">
-              Accueil
-            </Link>
-            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
+          <div className="hidden items-center gap-10 lg:flex">
+            <ProgrammeLink className="text-[13px] font-medium text-[#0E2440]/75 transition hover:text-[#0E2440]">
               Programme
             </ProgrammeLink>
-            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
+            <ProgrammeLink className="text-[13px] font-medium text-[#0E2440]/75 transition hover:text-[#0E2440]">
               Exposition
             </ProgrammeLink>
-            <ProgrammeLink className="text-[13px] font-medium text-white/65 transition hover:text-white">
+            <ProgrammeLink className="text-[13px] font-medium text-[#0E2440]/75 transition hover:text-[#0E2440]">
               Partenaires
             </ProgrammeLink>
-            <Link
-              to="/signup"
-              className="text-[13px] font-medium text-white/65 transition hover:text-white"
-            >
-              Obtenir mon badge
-            </Link>
           </div>
 
-          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <Button
               asChild
-              variant="ghost"
+              variant="default"
               size="sm"
-              className="text-white/80 hover:bg-white/10 hover:text-white"
+              className="rounded-full bg-[#B8763A] px-5 text-white shadow-sm hover:bg-[#A6692F]"
             >
-              <Link to="/login">Connexion</Link>
-            </Button>
-            <Button
-              asChild
-              variant="ansut-orange"
-              size="sm"
-              className="rounded-full px-4 shadow-sm"
-            >
-              <Link to="/signup">
-                <span className="sm:hidden">Badge</span>
-                <span className="hidden sm:inline">Créer un compte</span>
-              </Link>
+              <Link to="/signup">Obtenir mon badge</Link>
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* HERO — full bleed institutional */}
-      <section className="relative flex min-h-[100svh] items-end overflow-hidden pb-16 pt-40 text-white lg:pb-24 lg:pt-44">
-        {/* Background */}
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt=""
-            width={1920}
-            height={1080}
-            className="h-full w-full object-cover object-center"
-          />
-          {/* Cinematic overlays */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(34,86,163,0.45),transparent_60%)]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#08172E]/95 via-[#08172E]/75 to-[#08172E]/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#08172E] via-[#08172E]/30 to-transparent" />
-          {/* Fine grid */}
-          <div
-            className="absolute inset-0 opacity-[0.05]"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-              backgroundSize: "80px 80px",
-            }}
-          />
-        </div>
+      {/* HERO — clair, asymétrique 60/40, image à droite */}
+      <section className="relative overflow-hidden bg-[#F5EFE6] pb-20 pt-40 text-[#0E2440] lg:pb-28 lg:pt-44">
+        {/* Décor feuille gauche */}
+        <div
+          className="pointer-events-none absolute -left-20 top-1/2 h-96 w-96 -translate-y-1/2 opacity-[0.06]"
+          style={{ background: "radial-gradient(circle, #0E2440 0%, transparent 60%)" }}
+        />
 
         <div className="relative mx-auto w-full max-w-7xl px-6">
-          <div className="grid items-end gap-16 lg:grid-cols-12">
-            {/* LEFT */}
+          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+            {/* LEFT — 60% texte */}
             <div className="lg:col-span-7">
-              {/* Eyebrow — premier élément visuel, espacé de la nav */}
-              <div className="flex items-center gap-3 pt-8 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
-                <span className="h-px w-10 bg-secondary" />
-                <span>IIIe édition · 15 – 17 sept. 2026</span>
+              <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#0E2440]/60">
+                <span className="h-px w-10 bg-[#B8763A]" />
+                <span>IIIe Édition · Salon Universel des Télécommunications</span>
               </div>
 
-              {/* Headline — editorial */}
-              <h1 className="mt-8 font-display text-[44px] font-bold leading-[0.98] tracking-[-0.025em] sm:text-6xl lg:text-[88px]">
+              <h1 className="mt-6 font-display text-[64px] font-bold leading-[0.95] tracking-[-0.025em] text-[#0E2440] sm:text-7xl lg:text-[104px]">
                 SUTEL{" "}
                 <span
                   style={{ fontFamily: "'Instrument Serif', serif" }}
-                  className="italic font-normal text-white/90"
+                  className="italic font-normal text-[#0E2440]"
                 >
                   2026
                 </span>
-                <br />
-                <span className="text-white/85">Le rendez-vous du</span>
-                <br />
-                <span
-                  style={{ fontFamily: "'Instrument Serif', serif" }}
-                  className="italic font-normal text-secondary"
-                >
-                  service universel
-                </span>
-                <span className="text-white/85"> des télécommunications.</span>
               </h1>
-
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
-                Le rendez-vous africain des acteurs du service universel — agences FSU, régulateurs
-                et opérateurs. Trois jours de plénières, ateliers et networking.
+              <p
+                style={{ fontFamily: "'Instrument Serif', serif" }}
+                className="mt-4 text-2xl italic text-[#B8763A] sm:text-3xl lg:text-4xl"
+              >
+                Le rendez-vous du service universel.
               </p>
 
-              {/* Bandeau de réassurance — 3 infos clés, ultra-aérées */}
-              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/80">
-                <span className="inline-flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-secondary" />
-                  <span className="font-semibold">15 – 17 sept. 2026</span>
-                </span>
-                <span className="hidden h-3 w-px bg-white/20 sm:inline" />
-                <span className="inline-flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-secondary" />
-                  <span className="font-semibold">Abidjan, Côte d'Ivoire</span>
-                </span>
-                <span className="hidden h-3 w-px bg-white/20 sm:inline" />
-                <span className="inline-flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-secondary" />
-                  <span className="font-semibold">Sous l'égide de l'UAT</span>
-                </span>
-              </div>
+              <p className="mt-6 max-w-lg text-base leading-relaxed text-[#0E2440]/70 sm:text-lg">
+                Rassembler les acteurs, valoriser les innovations et accélérer l'inclusion numérique pour tous.
+              </p>
 
-              {/* CTAs — primary dominant, secondary plus léger */}
-              <div className="mt-10 flex flex-wrap items-center gap-4">
+              <div className="mt-10 flex flex-wrap items-center gap-3">
                 <Button
                   asChild
                   size="lg"
-                  variant="ansut-orange"
-                  className="rounded-full px-8 py-6 text-[15px] font-semibold shadow-[0_10px_40px_-10px_rgba(240,130,36,0.6)]"
+                  className="rounded-xl bg-[#B8763A] px-7 py-6 text-[15px] font-semibold text-white shadow-sm hover:bg-[#A6692F]"
                 >
                   {ev?.slug ? (
                     <Link to="/e/$slug" params={{ slug: ev.slug }}>
-                      M'inscrire au SUTEL 2026
+                      Obtenir mon badge
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   ) : (
                     <Link to="/signup">
-                      M'inscrire au SUTEL 2026
+                      Obtenir mon badge
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   )}
                 </Button>
                 <Button
                   asChild
-                  size="sm"
-                  variant="ghost"
-                  className="rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-[13px] font-medium text-white/80 backdrop-blur-sm hover:border-white/40 hover:bg-white/10 hover:text-white"
+                  variant="outline"
+                  size="lg"
+                  className="rounded-xl border-[#0E2440]/20 bg-transparent px-6 py-6 text-[15px] font-semibold text-[#0E2440] hover:bg-[#0E2440]/5"
                 >
                   <ProgrammeLink>
-                    <PlayCircle className="mr-2 h-4 w-4" />
                     Consulter le programme
                   </ProgrammeLink>
                 </Button>
               </div>
             </div>
 
-            {/* RIGHT — Carte épurée : une stat clé + lien programme */}
-            <aside className="lg:col-span-5">
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl">
-                {/* Stat principale — espace respiré */}
-                <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
-                  Édition 2026
-                </div>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="font-display text-6xl font-bold tabular-nums leading-none text-white">
-                    1 200
-                  </span>
-                  <span className="text-2xl font-bold text-secondary">+</span>
-                </div>
-                <p className="mt-2 text-sm text-white/70">
-                  participants attendus · Agences FSU, régulateurs et opérateurs africains
-                </p>
-
-                <div className="my-6 h-px bg-white/10" />
-
-                {/* 2 infos clés, en colonne aérée */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-sm text-white/85">
-                    <Calendar className="h-4 w-4 shrink-0 text-secondary" />
-                    <span className="font-semibold">15 – 17 septembre 2026</span>
+            {/* RIGHT — 40% image + stat overlay */}
+            <aside className="relative lg:col-span-5">
+              <div className="relative overflow-hidden rounded-3xl shadow-[0_30px_80px_-20px_rgba(14,36,64,0.25)]">
+                <img
+                  src={heroImage}
+                  alt="Vue intérieure d'un centre de conférence moderne"
+                  className="h-[480px] w-full object-cover"
+                />
+                <div className="absolute bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-[#0E2440]/95 px-5 py-4 backdrop-blur-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#B8763A]/20">
+                    <Users className="h-5 w-5 text-[#B8763A]" />
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-white/85">
-                    <MapPin className="h-4 w-4 shrink-0 text-secondary" />
-                    <span className="font-semibold">Abidjan, Côte d'Ivoire</span>
+                  <div>
+                    <div className="font-display text-2xl font-bold leading-none text-white">
+                      1 200<span className="text-[#B8763A]">+</span>
+                    </div>
+                    <div className="mt-1 text-[10px] uppercase tracking-wider text-white/70">
+                      participants attendus
+                    </div>
                   </div>
                 </div>
-
-                <ProgrammeLink className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:underline">
-                  Consulter le programme →
-                </ProgrammeLink>
-              </div>
-
-              {/* Key figures strip — minimal, pas de surcharge */}
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                <MiniStat label="Inscrits" value={stats.participants.toLocaleString("fr-FR")} />
-                <MiniStat label="Conférences" value={stats.conferences.toString()} />
-                <MiniStat label="Partenaires" value={stats.partners.toString()} />
               </div>
             </aside>
           </div>
+        </div>
+      </section>
 
-          {/* Scroll cue */}
-          <div className="mt-16 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/40">
-            <span className="h-px w-12 bg-white/20" />
-            <span>En savoir plus sur la plateforme</span>
+      {/* BANDEAU RÉASSURANCE — 3 infos claires, aérées */}
+      <section className="border-y border-[#0E2440]/10 bg-white py-10">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-0">
+            <div className="flex items-center justify-center gap-4 sm:border-r sm:border-[#0E2440]/10">
+              <Calendar className="h-6 w-6 shrink-0 text-[#0E2440]" strokeWidth={1.5} />
+              <div>
+                <div className="text-sm font-bold text-[#0E2440]">15 – 17 septembre 2026</div>
+                <div className="mt-0.5 text-xs text-[#0E2440]/60">Trois jours d'échanges et d'innovations</div>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-4 sm:border-r sm:border-[#0E2440]/10">
+              <MapPin className="h-6 w-6 shrink-0 text-[#0E2440]" strokeWidth={1.5} />
+              <div>
+                <div className="text-sm font-bold text-[#0E2440]">Abidjan, Côte d'Ivoire</div>
+                <div className="mt-0.5 text-xs text-[#0E2440]/60">Sofitel Abidjan Hôtel Ivoire</div>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-4">
+              <ShieldCheck className="h-6 w-6 shrink-0 text-[#0E2440]" strokeWidth={1.5} />
+              <div>
+                <div className="text-sm font-bold text-[#0E2440]">Sous l'égide de l'UAT</div>
+                <div className="mt-0.5 text-xs text-[#0E2440]/60">Union Africaine des Télécommunications</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
