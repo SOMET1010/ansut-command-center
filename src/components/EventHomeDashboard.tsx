@@ -242,10 +242,16 @@ function NowBlock({
               </span>
             )}
             {statusLabel}
+            {/* Countdown vers la prochaine si session en cours */}
+            {current && upcoming && minutesUntilUpcoming !== null && minutesUntilUpcoming > 0 && (
+              <span className="ml-auto rounded-full bg-white/15 px-2.5 py-0.5 text-[10px] font-medium">
+                Suivante dans {minutesUntilUpcoming} min
+              </span>
+            )}
           </div>
           <h2
             id="home-now-heading"
-            className="mt-2 text-xl font-bold leading-tight sm:text-2xl"
+            className="mt-2 text-xl font-bold leading-tight line-clamp-2 sm:text-2xl"
           >
             {featured.title}
           </h2>

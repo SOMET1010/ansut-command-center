@@ -144,10 +144,12 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
   return (
     <section
       aria-label="Mon badge"
-      className="mb-8 overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-[var(--shadow-card)]"
+      className="mb-8 overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]"
     >
+      {/* Header gradient ANSUT */}
+      <div className="h-1.5 bg-gradient-to-r from-primary via-secondary to-primary" />
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
-        <div className="shrink-0 self-center rounded-xl bg-white p-3 shadow-sm">
+        <div className="shrink-0 self-center rounded-xl bg-white p-3 shadow-sm ring-1 ring-border">
           {qrDataUrl ? (
             <img src={qrDataUrl} alt="Mon QR Code" className="h-32 w-32" />
           ) : (
@@ -159,7 +161,7 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
             <IdCard className="h-3.5 w-3.5" />
-            Mon badge
+            Badge d'accréditation
           </div>
           <h2 className="mt-1.5 truncate text-xl font-bold tracking-tight text-foreground">
             {me.full_name}
@@ -182,14 +184,16 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
               Ce badge n'est plus valide. Contactez l'organisation ANSUT.
             </p>
           )}
+          {/* CTA proéminents */}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               size="sm"
               variant="default"
               onClick={() => setOpen(true)}
-              className="gap-1.5"
+              className="gap-1.5 rounded-xl"
             >
-              <Maximize2 className="h-4 w-4" /> Agrandir
+              <Maximize2 className="h-4 w-4" />
+              Agrandir le QR
             </Button>
             <Button
               size="sm"
@@ -205,10 +209,10 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
                   setDownloading(false);
                 }
               }}
-              className="gap-1.5"
+              className="gap-1.5 rounded-xl"
             >
               <Download className="h-4 w-4" />
-              {downloading ? "Génération…" : "Télécharger le PDF"}
+              {downloading ? "Génération…" : "Exporter le PDF"}
             </Button>
           </div>
           <p className="mt-3 text-[11px] text-muted-foreground">
@@ -230,7 +234,7 @@ export function MyBadgeCard({ qrToken }: { qrToken: string }) {
             </button>
             <DialogTitle className="sr-only">Mon badge — {me.full_name}</DialogTitle>
             <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-              Mon badge
+              Badge d'accréditation
             </div>
             <h3 className="mt-2 text-2xl font-bold">{me.full_name}</h3>
             {me.organization && (

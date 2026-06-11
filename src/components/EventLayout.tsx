@@ -24,7 +24,7 @@ const items = [
   { label: "Agenda", icon: CalendarDays, to: (slug: string) => `/e/${slug}/agenda` },
   { label: "Annuaire", icon: Users, to: (slug: string) => `/e/${slug}/reseau` },
   { label: "Infos pratiques", icon: MessageSquare, to: (slug: string) => `/e/${slug}/annonces` },
-  { label: "Mon profil", icon: User, to: (slug: string) => `/e/${slug}/profil` },
+  { label: "Profil", icon: User, to: (slug: string) => `/e/${slug}/profil` },
 ];
 
 export function EventLayout({ eventId, eventName, slug, qrToken, children }: EventLayoutProps) {
