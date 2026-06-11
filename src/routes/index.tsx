@@ -173,28 +173,36 @@ function Landing() {
           <div className="grid items-center gap-8 md:grid-cols-12 md:gap-10">
             <div className="md:col-span-7">
               <div
-                className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em]"
+                className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.3em]"
                 style={{ color: `${GREEN}99` }}
               >
-                <span className="h-px w-10" style={{ backgroundColor: GOLD }} />
-                <span>IIIᵉ Édition · Salon Universel des Télécommunications</span>
+                <span className="hidden h-px w-10 sm:block" style={{ backgroundColor: GOLD }} />
+                <span className="break-words">
+                  <span className="sm:hidden">IIIᵉ Édition · SUTEL</span>
+                  <span className="hidden sm:inline">
+                    IIIᵉ Édition · Salon Universel des Télécommunications
+                  </span>
+                </span>
               </div>
 
               <h1
-                className="mt-5 text-5xl font-bold leading-[0.95] tracking-[-0.025em] sm:text-6xl md:text-7xl lg:text-[88px]"
+                className="mt-4 text-[44px] font-bold leading-[0.95] tracking-[-0.025em] sm:mt-5 sm:text-6xl md:text-7xl lg:text-[88px]"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
               >
                 SUTEL 2026
               </h1>
 
               <p
-                className="mt-3 text-2xl italic sm:text-3xl"
+                className="mt-3 text-xl italic leading-snug sm:text-3xl"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GOLD }}
               >
                 Le rendez-vous du service universel.
               </p>
 
-              <p className="mt-5 max-w-lg text-base leading-relaxed" style={{ color: `${GREEN}b3` }}>
+              <p
+                className="mt-4 max-w-lg text-[15px] leading-relaxed sm:mt-5 sm:text-base"
+                style={{ color: `${GREEN}b3` }}
+              >
                 Rassembler les acteurs, valoriser les innovations et accélérer l'inclusion numérique pour tous.
               </p>
 
