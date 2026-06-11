@@ -21,8 +21,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
-import { AnsutLogo } from "@/components/ansut/Logo";
 import { cn } from "@/lib/utils";
+
+// Wordmark vert spécifique à la landing (le logo officiel bleu jure avec la palette).
+function GreenWordmark({ color = "#1F4D3A", light = false }: { color?: string; light?: boolean }) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span
+        className="flex h-9 w-9 items-center justify-center rounded-full"
+        style={{ backgroundColor: light ? "rgba(255,255,255,0.15)" : `${color}14` }}
+      >
+        <span className="grid grid-cols-3 gap-[2px]">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span
+              key={i}
+              className="h-1 w-1 rounded-full"
+              style={{ backgroundColor: light ? "#ffffff" : color, opacity: 0.85 - (i % 3) * 0.15 }}
+            />
+          ))}
+        </span>
+      </span>
+      <span
+        className="text-xl font-bold tracking-tight"
+        style={{ color: light ? "#ffffff" : color, fontFamily: "'Instrument Serif', serif" }}
+      >
+        ANSUT
+      </span>
+    </div>
+  );
+}
 
 // Palette maquette : vert foncé + or sur fond crème.
 const GREEN = "#1F4D3A";
@@ -132,7 +159,7 @@ function Landing() {
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <AnsutLogo size="md" className="shrink-0" />
+            <GreenWordmark />
           </Link>
 
           <div className="hidden items-center gap-10 lg:flex">
@@ -160,7 +187,7 @@ function Landing() {
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden pb-20 pt-40 lg:pb-28 lg:pt-44" style={{ color: GREEN }}>
+      <section className="relative overflow-hidden pb-12 pt-32 lg:pb-16 lg:pt-36" style={{ color: GREEN }}>
         <div
           className="pointer-events-none absolute -left-20 top-1/2 h-96 w-96 -translate-y-1/2 opacity-[0.06]"
           style={{ background: `radial-gradient(circle, ${GREEN} 0%, transparent 60%)` }}
@@ -279,7 +306,7 @@ function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section className="relative py-20">
+      <section className="relative py-12">
         {/* feuille décorative gauche */}
         <div
           className="pointer-events-none absolute -left-8 top-32 hidden h-64 w-64 opacity-30 lg:block"
@@ -319,7 +346,7 @@ function Landing() {
             </h2>
           </div>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <FeatureCard
               icon={<CalendarDays className="h-6 w-6" strokeWidth={1.5} />}
               title="Programme"
@@ -340,7 +367,7 @@ function Landing() {
       </section>
 
       {/* 3 ÉTAPES */}
-      <section className="py-20">
+      <section className="pb-16 pt-8">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: GOLD }}>
@@ -355,7 +382,7 @@ function Landing() {
           </div>
 
           <div
-            className="mt-12 rounded-3xl bg-white px-8 py-12"
+            className="mt-10 rounded-3xl bg-white px-8 py-9"
             style={{ boxShadow: "0 4px 24px -10px rgba(31,77,58,0.15)" }}
           >
             <div className="grid gap-10 md:grid-cols-3">
@@ -384,11 +411,11 @@ function Landing() {
 
       {/* FOOTER */}
       <footer className="text-sm text-white" style={{ backgroundColor: GREEN_DARK }}>
-        <div className="mx-auto max-w-7xl px-6 py-14">
+        <div className="mx-auto max-w-7xl px-6 py-10">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             {/* Col 1 : logo + tagline + social */}
             <div>
-              <AnsutLogo size="md" />
+              <GreenWordmark light />
               <p className="mt-4 text-sm leading-relaxed text-white/75">
                 L'Autorité Nationale du Service Universel des Télécommunications — Côte d'Ivoire.
               </p>
@@ -434,7 +461,7 @@ function Landing() {
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/60 md:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-5 text-xs text-white/60 md:flex-row">
             <div>© {new Date().getFullYear()} ANSUT — Tous droits réservés</div>
             <div className="flex gap-6">
               <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
