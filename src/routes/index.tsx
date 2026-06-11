@@ -461,7 +461,7 @@ function Landing() {
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/60 md:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-5 text-xs text-white/60 md:flex-row">
             <div>© {new Date().getFullYear()} ANSUT — Tous droits réservés</div>
             <div className="flex gap-6">
               <Link to="/mentions-legales" className="hover:text-white">Mentions légales</Link>
