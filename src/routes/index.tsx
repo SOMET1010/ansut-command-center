@@ -272,7 +272,7 @@ function Landing() {
               {/* Eyebrow — premier élément visuel, espacé de la nav */}
               <div className="flex items-center gap-3 pt-8 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/60">
                 <span className="h-px w-10 bg-secondary" />
-                <span>IIIe édition · Salon Universel des Télécommunications</span>
+                <span>IIIe édition · 15 – 17 sept. 2026</span>
               </div>
 
               {/* Headline — editorial */}
@@ -297,52 +297,27 @@ function Landing() {
               </h1>
 
               <p className="mt-6 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
-                Le SUTEL réunit les acteurs africains du service universel des télécommunications
-                — agences FSU, régulateurs, opérateurs et partenaires institutionnels — pour
-                trois jours de plénières, ateliers et mises en relation. Plateforme officielle
-                de gestion des inscriptions, accréditations et du programme.
+                Le rendez-vous africain des acteurs du service universel — agences FSU, régulateurs
+                et opérateurs. Trois jours de plénières, ateliers et networking.
               </p>
 
-              {/* Meta line — séparateur visuel fort */}
-              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-white/10 py-5 text-sm">
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Dates</div>
-                  <div className="mt-1 font-semibold text-white">
-                    {formatDates(ev?.starts_at, ev?.ends_at)}
-                  </div>
-                </div>
-                {ev?.location && (
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Lieu</div>
-                    <div className="mt-1 flex items-center gap-1.5 font-semibold text-white">
-                      <MapPin className="h-3.5 w-3.5 text-secondary" />
-                      {ev.location}
-                    </div>
-                  </div>
-                )}
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
-                    Organisateur
-                  </div>
-                  <div className="mt-1 font-semibold text-white">ANSUT</div>
-                </div>
+              {/* Bandeau de réassurance — 3 infos clés, ultra-aérées */}
+              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/80">
+                <span className="inline-flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-secondary" />
+                  <span className="font-semibold">15 – 17 sept. 2026</span>
+                </span>
+                <span className="hidden h-3 w-px bg-white/20 sm:inline" />
+                <span className="inline-flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-secondary" />
+                  <span className="font-semibold">Abidjan, Côte d'Ivoire</span>
+                </span>
+                <span className="hidden h-3 w-px bg-white/20 sm:inline" />
+                <span className="inline-flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-secondary" />
+                  <span className="font-semibold">Sous l'égide de l'UAT</span>
+                </span>
               </div>
-
-              {/* Countdown — only shown when event is in the future */}
-              {ev?.starts_at && (() => {
-                const daysLeft = Math.ceil(
-                  (new Date(ev.starts_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-                );
-                if (daysLeft <= 0) return null;
-                return (
-                  <div className="mt-8 flex items-center gap-3 rounded-full border border-secondary/30 bg-secondary/10 px-5 py-2.5 w-fit">
-                    <Clock className="h-4 w-4 shrink-0 text-secondary" />
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-secondary">
-                      J-{daysLeft} avant le SUTEL 2026
-                    </span>
-                  </div>
-                );
-              })()}
 
               {/* CTAs — primary dominant, secondary plus léger */}
               <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -378,66 +353,43 @@ function Landing() {
               </div>
             </div>
 
-            {/* RIGHT — Stat block institutionnel */}
+            {/* RIGHT — Carte épurée : une stat clé + lien programme */}
             <aside className="lg:col-span-5">
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-                <div className="mb-5 border-b border-white/10 pb-4">
-                  <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
-                    À retenir
-                  </div>
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl">
+                {/* Stat principale — espace respiré */}
+                <div className="text-[10px] uppercase tracking-[0.25em] text-white/45">
+                  Édition 2026
                 </div>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="font-display text-6xl font-bold tabular-nums leading-none text-white">
+                    1 200
+                  </span>
+                  <span className="text-2xl font-bold text-secondary">+</span>
+                </div>
+                <p className="mt-2 text-sm text-white/70">
+                  participants attendus · Agences FSU, régulateurs et opérateurs africains
+                </p>
 
-                <div className="space-y-5">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
-                      <MapPin className="h-4 w-4 text-secondary" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Lieu</div>
-                      <p className="mt-0.5 font-semibold text-white">{ev?.location ?? "Abidjan, Côte d'Ivoire"}</p>
-                    </div>
+                <div className="my-6 h-px bg-white/10" />
+
+                {/* 2 infos clés, en colonne aérée */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 text-sm text-white/85">
+                    <Calendar className="h-4 w-4 shrink-0 text-secondary" />
+                    <span className="font-semibold">15 – 17 septembre 2026</span>
                   </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
-                      <Calendar className="h-4 w-4 text-secondary" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Dates</div>
-                      <p className="mt-0.5 font-semibold text-white">15 – 17 septembre 2026</p>
-                      <p className="mt-0.5 text-xs text-white/55">3 jours de conférences</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
-                      <Users className="h-4 w-4 text-secondary" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Participants</div>
-                      <p className="mt-0.5 font-semibold text-white">1 200+ attendus</p>
-                      <p className="mt-0.5 text-xs text-white/55">Agences FSU · Régulateurs · Opérateurs</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary/20">
-                      <Mic className="h-4 w-4 text-secondary" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.15em] text-white/45">Format</div>
-                      <p className="mt-0.5 font-semibold text-white">Plénières · Ateliers · Networking</p>
-                      <p className="mt-0.5 text-xs text-white/55">Sous l'égide de l'UAT</p>
-                    </div>
+                  <div className="flex items-center gap-3 text-sm text-white/85">
+                    <MapPin className="h-4 w-4 shrink-0 text-secondary" />
+                    <span className="font-semibold">Abidjan, Côte d'Ivoire</span>
                   </div>
                 </div>
 
                 <ProgrammeLink className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:underline">
-                  Consulter le programme complet →
+                  Consulter le programme →
                 </ProgrammeLink>
               </div>
 
-              {/* Key figures strip */}
+              {/* Key figures strip — minimal, pas de surcharge */}
               <div className="mt-4 grid grid-cols-3 gap-2">
                 <MiniStat label="Inscrits" value={stats.participants.toLocaleString("fr-FR")} />
                 <MiniStat label="Conférences" value={stats.conferences.toString()} />
