@@ -162,7 +162,7 @@ function Landing() {
             <GreenWordmark />
           </Link>
 
-          <div className="hidden items-center gap-10 lg:flex">
+          <div className="hidden items-center gap-8 md:flex">
             {["Programme", "Exposition", "Partenaires"].map((label) => (
               <ProgrammeLink
                 key={label}
