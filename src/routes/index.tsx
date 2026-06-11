@@ -847,13 +847,21 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               label="Nom complet"
               value={fullName}
               onChange={setFullName}
+              onBlur={() => setTouched((t) => ({ ...t, fullName: true }))}
               placeholder="Aïcha Koné"
+              error={touched.fullName ? errors.fullName : undefined}
+              maxLength={80}
+              autoComplete="name"
             />
             <BadgeField
               label="Organisation"
               value={organization}
               onChange={setOrganization}
+              onBlur={() => setTouched((t) => ({ ...t, organization: true }))}
               placeholder="ANSUT"
+              error={touched.organization ? errors.organization : undefined}
+              maxLength={100}
+              autoComplete="organization"
             />
             <div>
               <label
@@ -886,9 +894,15 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
             <BadgeField
               label="Email"
               value={email}
-              onChange={setEmail}
+              onChange={(v) => setEmail(v.replace(/\s+/g, ""))}
+              onBlur={() => setTouched((t) => ({ ...t, email: true }))}
               placeholder="vous@exemple.ci"
               type="email"
+              error={touched.email ? errors.email : undefined}
+              maxLength={254}
+              autoComplete="email"
+              inputMode="email"
+              spellCheck={false}
             />
 
             <div className="mt-2 flex flex-wrap gap-3">
