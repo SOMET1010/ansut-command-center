@@ -699,7 +699,6 @@ function SocialIcon({
   );
 }
 
-function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
 // Validation stricte du badge.
 // Email : RFC 5322 simplifiée + 1 seul "@", pas d'espace interne après normalisation,
 // label local en [A-Za-z0-9._%+-], domaine en labels alphanum/tirets séparés par "."
