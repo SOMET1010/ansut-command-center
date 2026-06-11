@@ -13,6 +13,7 @@ import {
   Sparkles,
   Clock,
   Users,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/newsletter-form";
