@@ -294,9 +294,10 @@ function Landing() {
               </h1>
 
               <p className="mt-8 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
-                Le rendez-vous institutionnel des décideurs, opérateurs et partenaires du service
-                universel des télécommunications. Plateforme officielle d'inscription,
-                d'accréditation, de programme et d'analytics temps réel.
+                Le SUTEL réunit les acteurs africains du service universel des télécommunications
+                — agences FSU, régulateurs, opérateurs et partenaires institutionnels — pour
+                trois jours de plénières, ateliers et mises en relation. Plateforme officielle
+                de gestion des inscriptions, accréditations et du programme.
               </p>
 
               {/* Meta line */}
@@ -318,9 +319,9 @@ function Landing() {
                 )}
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">
-                    Édition
+                    Organisateur
                   </div>
-                  <div className="mt-1 font-semibold text-white">III · Officielle</div>
+                  <div className="mt-1 font-semibold text-white">ANSUT</div>
                 </div>
               </div>
 
