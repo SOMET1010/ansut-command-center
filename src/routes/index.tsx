@@ -429,7 +429,7 @@ function Landing() {
             <div>
               <GreenWordmark light />
               <p className="mt-4 text-sm leading-relaxed text-white/75">
-                L'Autorité Nationale du Service Universel des Télécommunications — Côte d'Ivoire.
+                L'Agence Nationale du Service Universel des Télécommunications/TIC — Côte d'Ivoire.
               </p>
               <div className="mt-5 flex gap-3">
                 <SocialIcon href="#" label="LinkedIn"><Linkedin className="h-4 w-4" /></SocialIcon>
