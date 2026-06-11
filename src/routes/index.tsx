@@ -905,14 +905,17 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               spellCheck={false}
             />
 
-            <div className="mt-2 flex flex-wrap gap-3">
+            <div className="mt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={handleDownload}
-                disabled={!qrSrc}
-                className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50"
+                disabled={!isValid || !qrSrc}
+                aria-disabled={!isValid || !qrSrc}
+                className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ backgroundColor: GOLD }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                onMouseEnter={(e) => {
+                  if (isValid && qrSrc) e.currentTarget.style.backgroundColor = "#A88838";
+                }}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
               >
                 Télécharger le QR
@@ -925,6 +928,11 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               >
                 Valider l'inscription
               </Link>
+              {!isValid && (
+                <span className="text-xs" style={{ color: `${GREEN}99` }}>
+                  Remplissez tous les champs pour générer le QR.
+                </span>
+              )}
             </div>
           </div>
 
