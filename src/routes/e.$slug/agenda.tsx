@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/e/$slug/agenda")({
-  head: () => ({ meta: [{ title: "Programme — ANSUT EVENT" }] }),
+  head: () => ({ meta: [{ title: "Programme du SUTEL 2026 — ANSUT EVENT" }] }),
   component: AgendaPage,
 });
 

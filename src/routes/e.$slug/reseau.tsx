@@ -9,7 +9,7 @@ import { Search, Users, MessageSquare, CalendarClock, User } from "lucide-react"
 import { getParticipantToken } from "@/lib/token";
 
 export const Route = createFileRoute("/e/$slug/reseau")({
-  head: () => ({ meta: [{ title: "Réseau & rencontres — ANSUT EVENT" }] }),
+  head: () => ({ meta: [{ title: "Annuaire participants — SUTEL 2026 | ANSUT EVENT" }] }),
   component: ReseauPage,
 });
 
@@ -87,7 +87,7 @@ function ReseauPage() {
       <EventLayout eventId="" eventName="" slug={slug} qrToken={null}>
         <div className="text-center py-12">
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-xl font-semibold">Réseau indisponible</h1>
+          <h1 className="text-xl font-semibold">Événement indisponible</h1>
           <p className="text-muted-foreground">Cet événement n'existe pas ou n'est pas encore publié.</p>
         </div>
       </EventLayout>
@@ -100,7 +100,7 @@ function ReseauPage() {
         {/* En-tête */}
         <div>
           <h1 className="text-2xl font-bold">Réseau &amp; rencontres</h1>
-          <p className="text-sm text-muted-foreground">Découvrir · Messages · Rendez-vous</p>
+          <p className="text-sm text-muted-foreground">Annuaire · Messages · Rendez-vous</p>
         </div>
 
         <Tabs defaultValue="discover" className="w-full">

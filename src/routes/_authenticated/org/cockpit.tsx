@@ -6,7 +6,7 @@ import { Calendar, Users, QrCode, CheckCircle2, ArrowRight, CalendarPlus } from 
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/org/cockpit")({
-  head: () => ({ meta: [{ title: "Cockpit — ANSUT EVENT" }] }),
+  head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
   component: OrgCockpit,
 });
 
@@ -71,7 +71,7 @@ function OrgCockpit() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Cockpit</h1>
+        <h1 className="text-2xl font-bold">Tableau de bord</h1>
         <p className="text-muted-foreground mt-1">Vue d'ensemble de vos événements</p>
       </div>
 

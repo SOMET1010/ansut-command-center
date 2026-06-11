@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Wifi, Megaphone, Vote, Pin } from "lucide-react";
 
 export const Route = createFileRoute("/e/$slug/annonces")({
-  head: () => ({ meta: [{ title: "Annonces — ANSUT EVENT" }] }),
+  head: () => ({ meta: [{ title: "Infos pratiques — SUTEL 2026 | ANSUT EVENT" }] }),
   component: AnnoncesPage,
 });
 
@@ -70,7 +70,7 @@ function AnnoncesPage() {
     return (
       <EventLayout eventId="" eventName="" slug={slug} qrToken={null}>
         <div className="text-center py-12">
-          <h1 className="text-xl font-semibold">Salon indisponible</h1>
+          <h1 className="text-xl font-semibold">Événement indisponible</h1>
           <p className="text-muted-foreground">Cet événement n'existe pas ou n'est pas encore publié.</p>
         </div>
       </EventLayout>

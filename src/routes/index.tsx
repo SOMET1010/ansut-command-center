@@ -93,8 +93,8 @@ const features: FeatureItem[] = [
   {
     icon: Building2,
     title: "Exposition & partenaires",
-    items: ["Liste des exposants", "Stands & sponsors", "Plan du salon"],
-    cta: "Découvrir le salon",
+    items: ["Liste des exposants", "Stands & sponsors", "Plan de l'événement"],
+    cta: "Explorer l'événement",
   },
 ];
 
@@ -432,7 +432,7 @@ function Landing() {
           {/* Scroll cue */}
           <div className="mt-16 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/40">
             <span className="h-px w-12 bg-white/20" />
-            <span>Défiler pour explorer la plateforme</span>
+            <span>En savoir plus sur la plateforme</span>
           </div>
         </div>
       </section>
@@ -444,13 +444,13 @@ function Landing() {
             <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1">
               <Sparkles className="h-3.5 w-3.5 text-secondary" />
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-secondary">
-                Tout en un seul endroit
+                Fonctions principales
               </p>
             </div>
             <h2 className="mt-5 text-balance text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-              Une plateforme complète
+              Fonctions principales
               <br />
-              pour un événement réussi
+              du SUTEL 2026
             </h2>
             <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-primary" />
           </div>
@@ -502,26 +502,26 @@ function Landing() {
           <div className="relative rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-8 lg:p-16">
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <div>
-                <h2 className="text-4xl font-extrabold tracking-tight">Votre badge, votre accès</h2>
+                <h2 className="text-4xl font-extrabold tracking-tight">Badge QR personnel</h2>
                 <p className="mt-4 text-lg text-white/70">
-                  Téléchargez votre badge QR et accédez facilement à tous les espaces du SUTEL 2026.
+                  Chaque participant inscrit reçoit un badge QR personnel lui permettant d'accéder à tous les espaces du SUTEL 2026.
                 </p>
 
                 <div className="mt-12 space-y-8">
                   <BadgeStep
                     num="1"
                     title="Inscription"
-                    desc="Créez votre compte en quelques clics."
+                    desc="Enregistrez-vous via le formulaire officiel."
                   />
                   <BadgeStep
                     num="2"
                     title="Validation"
-                    desc="Votre demande est examinée et validée."
+                    desc="L'équipe ANSUT confirme votre participation."
                   />
                   <BadgeStep
                     num="3"
                     title="Accès"
-                    desc="Recevez votre badge QR personnel par email."
+                    desc="Un lien d'accès vous est adressé par email."
                   />
                 </div>
               </div>

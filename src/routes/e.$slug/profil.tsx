@@ -8,7 +8,7 @@ import { User as UserIcon, Bookmark, LogOut, Globe } from "lucide-react";
 import { getParticipantToken, clearParticipantToken } from "@/lib/token";
 
 export const Route = createFileRoute("/e/$slug/profil")({
-  head: () => ({ meta: [{ title: "Mon profil — ANSUT EVENT" }] }),
+  head: () => ({ meta: [{ title: "Mon profil — SUTEL 2026 | ANSUT EVENT" }] }),
   component: ProfilPage,
 });
 
@@ -88,7 +88,7 @@ function ProfilPage() {
           <UserIcon className="h-12 w-12 text-muted-foreground mb-4" />
           <h2 className="text-xl font-semibold">Aucun badge sur cet appareil</h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-            Pour accéder à votre profil, ouvrez le lien personnel reçu par email ou inscrivez-vous à l'événement.
+            Ouvrez le lien d'accès reçu par email ou inscrivez-vous pour accéder à votre profil SUTEL 2026.
           </p>
           <a
             href={`/e/${slug}`}

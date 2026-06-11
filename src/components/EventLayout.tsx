@@ -22,9 +22,9 @@ interface EventLayoutProps {
 const items = [
   { label: "Accueil", icon: Home, to: (slug: string) => `/e/${slug}` },
   { label: "Agenda", icon: CalendarDays, to: (slug: string) => `/e/${slug}/agenda` },
-  { label: "Réseau", icon: Users, to: (slug: string) => `/e/${slug}/reseau` },
-  { label: "Messages", icon: MessageSquare, to: (slug: string) => `/e/${slug}/messages` },
-  { label: "Profil", icon: User, to: (slug: string) => `/e/${slug}/profil` },
+  { label: "Annuaire", icon: Users, to: (slug: string) => `/e/${slug}/reseau` },
+  { label: "Infos pratiques", icon: MessageSquare, to: (slug: string) => `/e/${slug}/annonces` },
+  { label: "Mon profil", icon: User, to: (slug: string) => `/e/${slug}/profil` },
 ];
 
 export function EventLayout({ eventId, eventName, slug, qrToken, children }: EventLayoutProps) {

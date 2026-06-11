@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/overview")({
-  head: () => ({ meta: [{ title: "Plateforme — ANSUT EVENT" }] }),
+  head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
   component: AdminOverview,
 });
 
@@ -30,8 +30,8 @@ function AdminOverview() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Plateforme ANSUT</h1>
-        <p className="text-muted-foreground mt-1">Vue agrégée multi-organisations</p>
+        <h1 className="text-2xl font-bold">Tableau de bord</h1>
+        <p className="text-muted-foreground mt-1">Vue d'ensemble multi-organisations</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

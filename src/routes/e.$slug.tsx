@@ -23,8 +23,8 @@ import { EventHomeDashboard } from "@/components/EventHomeDashboard";
 export const Route = createFileRoute("/e/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Inscription — ${params.slug} | ANSUT EVENT` },
-      { name: "description", content: "Inscrivez-vous à cet événement ANSUT." },
+      { title: `SUTEL 2026 — Accès & inscription | ANSUT EVENT` },
+      { name: "description", content: "Plateforme officielle d'inscription et d'accréditation du SUTEL 2026, organisée par l'ANSUT." },
     ],
   }),
   component: PublicEventPage,

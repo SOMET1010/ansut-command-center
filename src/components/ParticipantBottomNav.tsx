@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  *
  *   Accueil          → /e/$slug
  *   Agenda            → /e/$slug/agenda
- *   Réseau            → /e/$slug/reseau
+ *   Annuaire          → /e/$slug/reseau
  *   Infos pratiques   → /e/$slug/annonces
  *   Profil            → /e/$slug/profil
  *
@@ -44,7 +44,7 @@ export function ParticipantBottomNav({ slug }: { slug: string }) {
       matches: (p) => p.startsWith(`/e/${slug}/agenda`),
     },
     {
-      label: "Réseau",
+      label: "Annuaire",
       icon: Users,
       to: `/e/${slug}/reseau`,
       matches: (p) => p.startsWith(`/e/${slug}/reseau`),

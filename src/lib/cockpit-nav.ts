@@ -73,7 +73,7 @@ export const COCKPIT_NAV_SECTIONS: CockpitNavSection[] = [
   {
     label: "Organisation",
     items: [
-      { to: "/org/cockpit", label: "Cockpit" },
+      { to: "/org/cockpit", label: "Tableau de bord" },
       { to: "/org/events", label: "Programme" },
       { to: "/org/participants", label: "Participants" },
       { to: "/org/communication", label: "Communication" },

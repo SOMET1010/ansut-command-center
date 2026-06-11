@@ -184,8 +184,8 @@ export function EventHomeDashboard({
       {/* Bloc 3 — ALERTES */}
       <AlertsBlock announcements={announcements} slug={slug} />
 
-      {/* Bloc 4 — RÉSEAU */}
-      <NetworkBlock
+      {/* Bloc 4 — ANNUAIRE */}
+      <AnnuaireBlock
         participants={participants}
         slug={slug}
         sameCategory={!!myCategory}
@@ -376,7 +376,7 @@ function AlertsBlock({
   );
 }
 
-function NetworkBlock({
+function AnnuaireBlock({
   participants,
   slug,
   sameCategory,
