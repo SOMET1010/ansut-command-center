@@ -313,7 +313,7 @@ function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section className="relative py-12">
+      <section className="relative overflow-hidden py-12">
         {/* feuille décorative gauche */}
         <div
           className="pointer-events-none absolute -left-8 top-32 hidden h-64 w-64 opacity-30 lg:block"
