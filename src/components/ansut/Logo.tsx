@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import ansutLogo from "@/assets/ansut-official-logo.png";
 import { cn } from "@/lib/utils";
 
+// v2 - logo officiel ANSUT charte graphique PDF (PNG local 76 KB)
+
 type Size = "sm" | "md" | "lg";
 
 const SIZE: Record<Size, { box: string; img: string }> = {
