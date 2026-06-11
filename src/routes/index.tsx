@@ -189,13 +189,13 @@ function Landing() {
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden pb-12 pt-32 lg:pb-16 lg:pt-36" style={{ color: GREEN }}>
+      <section className="relative overflow-hidden pb-10 pt-28 lg:pb-14 lg:pt-32" style={{ color: GREEN }}>
         <div
           className="pointer-events-none absolute -left-20 top-1/2 h-96 w-96 -translate-y-1/2 opacity-[0.06]"
           style={{ background: `radial-gradient(circle, ${GREEN} 0%, transparent 60%)` }}
         />
-        <div className="relative mx-auto w-full max-w-7xl px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="relative mx-auto w-full max-w-6xl px-6">
+          <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10">
             <div className="lg:col-span-7">
               <div
                 className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em]"
@@ -206,60 +206,50 @@ function Landing() {
               </div>
 
               <h1
-                className="mt-6 text-[64px] font-bold leading-[0.95] tracking-[-0.025em] sm:text-7xl lg:text-[104px]"
+                className="mt-5 text-6xl font-bold leading-[0.95] tracking-[-0.025em] sm:text-7xl lg:text-[88px]"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
               >
                 SUTEL 2026
               </h1>
               <p
-                className="mt-4 text-2xl italic sm:text-3xl lg:text-4xl"
+                className="mt-3 text-2xl italic sm:text-3xl"
                 style={{ fontFamily: "'Instrument Serif', serif", color: GOLD }}
               >
                 Le rendez-vous du service universel.
               </p>
 
-              <p className="mt-6 max-w-lg text-base leading-relaxed sm:text-lg" style={{ color: `${GREEN}b3` }}>
+              <p className="mt-5 max-w-lg text-base leading-relaxed" style={{ color: `${GREEN}b3` }}>
                 Rassembler les acteurs, valoriser les innovations et accélérer l'inclusion numérique pour tous.
               </p>
 
-              <div className="mt-10 flex flex-wrap items-center gap-3">
-                <Button
-                  asChild
-                  size="lg"
-                  className="rounded-xl px-7 py-6 text-[15px] font-semibold text-white shadow-sm"
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Link
+                  to={ev?.slug ? "/e/$slug" : "/signup"}
+                  params={ev?.slug ? { slug: ev.slug } : undefined}
+                  className="inline-flex items-center rounded-xl px-6 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors"
                   style={{ backgroundColor: GOLD }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
                 >
-                  {ev?.slug ? (
-                    <Link to="/e/$slug" params={{ slug: ev.slug }}>
-                      Obtenir mon badge
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  ) : (
-                    <Link to="/signup">
-                      Obtenir mon badge
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  )}
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="rounded-xl bg-transparent px-6 py-6 text-[15px] font-semibold"
-                  style={{ borderColor: GOLD, color: GOLD }}
+                  Obtenir mon badge
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+                <ProgrammeLink
+                  className="inline-flex items-center rounded-xl border-2 bg-transparent px-5 py-3 text-[15px] font-semibold transition-colors"
                 >
-                  <ProgrammeLink>Consulter le programme</ProgrammeLink>
-                </Button>
+                  <span style={{ color: GOLD }}>Consulter le programme</span>
+                </ProgrammeLink>
               </div>
             </div>
 
             <aside className="relative lg:col-span-5">
-              <div className="relative overflow-hidden rounded-3xl shadow-[0_30px_80px_-20px_rgba(31,77,58,0.3)]">
+              <div className="relative overflow-hidden rounded-3xl shadow-[0_20px_60px_-20px_rgba(31,77,58,0.3)]">
                 <img
                   src={heroImage}
                   alt="Vue d'un centre de conférence avec participants"
-                  className="h-[480px] w-full object-cover"
+                  className="h-[380px] w-full object-cover lg:h-[420px]"
                 />
+
                 <div
                   className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center rounded-2xl px-8 py-4 text-center backdrop-blur-sm"
                   style={{ backgroundColor: `${GREEN}f2` }}
