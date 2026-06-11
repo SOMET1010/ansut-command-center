@@ -699,25 +699,52 @@ function SocialIcon({
   );
 }
 
+// Validation stricte du badge.
+// Email : RFC 5322 simplifiée + 1 seul "@", pas d'espace interne après normalisation,
+// label local en [A-Za-z0-9._%+-], domaine en labels alphanum/tirets séparés par "."
+// et TLD ≥ 2 lettres (anti "a@b", "a@b.c", "foo @bar.com").
+const STRICT_EMAIL_RE =
+  /^[A-Za-z0-9](?:[A-Za-z0-9._%+-]{0,62}[A-Za-z0-9])?@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,24}$/;
+
+const normalizeWhitespace = (v: string) => v.replace(/\s+/g, " ").trim();
+
 const badgeSchema = z.object({
   fullName: z
     .string()
-    .trim()
-    .min(2, { message: "Le nom doit contenir au moins 2 caractères." })
-    .max(80, { message: "Le nom doit faire moins de 80 caractères." })
-    .regex(/^[\p{L}\p{M}\s'’\-.]+$/u, {
-      message: "Caractères non autorisés dans le nom.",
-    }),
+    .transform(normalizeWhitespace)
+    .pipe(
+      z
+        .string()
+        .min(2, { message: "Le nom doit contenir au moins 2 caractères." })
+        .max(80, { message: "Le nom doit faire moins de 80 caractères." })
+        .regex(/^[\p{L}\p{M}][\p{L}\p{M}\s'’\-.]*$/u, {
+          message: "Caractères non autorisés dans le nom.",
+        }),
+    ),
   organization: z
     .string()
-    .trim()
-    .min(2, { message: "L'organisation doit contenir au moins 2 caractères." })
-    .max(100, { message: "L'organisation doit faire moins de 100 caractères." }),
+    .transform(normalizeWhitespace)
+    .pipe(
+      z
+        .string()
+        .min(2, { message: "L'organisation doit contenir au moins 2 caractères." })
+        .max(100, { message: "L'organisation doit faire moins de 100 caractères." }),
+    ),
   email: z
     .string()
-    .trim()
-    .email({ message: "Adresse email invalide." })
-    .max(255, { message: "L'email doit faire moins de 255 caractères." }),
+    // suppression de TOUS les espaces (intérieurs et extérieurs) avant validation
+    .transform((v) => v.replace(/\s+/g, ""))
+    .pipe(
+      z
+        .string()
+        .min(5, { message: "Adresse email trop courte." })
+        .max(254, { message: "L'email doit faire moins de 254 caractères." })
+        .regex(STRICT_EMAIL_RE, { message: "Format d'email invalide (ex. nom@domaine.ci)." })
+        .refine((v) => !v.includes(".."), {
+          message: "Format d'email invalide (points consécutifs).",
+        })
+        .transform((v) => v.toLowerCase()),
+    ),
 });
 
 type BadgeErrors = Partial<Record<"fullName" | "organization" | "email", string>>;
@@ -867,13 +894,15 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
             <BadgeField
               label="Email"
               value={email}
-              onChange={setEmail}
+              onChange={(v) => setEmail(v.replace(/\s+/g, ""))}
               onBlur={() => setTouched((t) => ({ ...t, email: true }))}
               placeholder="vous@exemple.ci"
               type="email"
               error={touched.email ? errors.email : undefined}
-              maxLength={255}
+              maxLength={254}
               autoComplete="email"
+              inputMode="email"
+              spellCheck={false}
             />
 
             <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -901,7 +930,7 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               </Link>
               {!isValid && (
                 <span className="text-xs" style={{ color: `${GREEN}99` }}>
-                  Renseignez tous les champs pour générer le QR.
+                  Remplissez tous les champs pour générer le QR.
                 </span>
               )}
             </div>
@@ -924,16 +953,11 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
                 <span style={{ color: GOLD }}>{role}</span>
               </div>
               <div className="flex flex-col items-center px-5 py-5">
-                <div className="flex h-44 w-44 items-center justify-center">
-                  {isValid && qrSrc ? (
+                <div className="h-44 w-44">
+                  {qrSrc ? (
                     <img src={qrSrc} alt="QR code badge" className="h-full w-full" />
                   ) : (
-                    <div
-                      className="flex h-full w-full items-center justify-center rounded-md p-3 text-center text-[10px] uppercase tracking-wider"
-                      style={{ backgroundColor: `${GREEN}0d`, color: `${GREEN}80` }}
-                    >
-                      QR en attente d'informations valides
-                    </div>
+                    <div className="h-full w-full animate-pulse rounded-md bg-slate-100" />
                   )}
                 </div>
                 <div className="mt-4 w-full text-center">
@@ -941,10 +965,10 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
                     className="truncate text-lg font-bold"
                     style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
                   >
-                    {fullName.trim() || "Votre nom"}
+                    {fullName || "Votre nom"}
                   </div>
                   <div className="mt-0.5 truncate text-xs" style={{ color: `${GREEN}99` }}>
-                    {organization.trim() || "Votre organisation"}
+                    {organization || "Votre organisation"}
                   </div>
                 </div>
                 <div
@@ -973,6 +997,8 @@ function BadgeField({
   error,
   maxLength,
   autoComplete,
+  inputMode,
+  spellCheck,
 }: {
   label: string;
   value: string;
@@ -983,8 +1009,11 @@ function BadgeField({
   error?: string;
   maxLength?: number;
   autoComplete?: string;
+  inputMode?: "text" | "email" | "url" | "numeric" | "tel" | "search" | "none" | "decimal";
+  spellCheck?: boolean;
 }) {
   const hasError = Boolean(error);
+  const errorId = `${label.replace(/\s+/g, "-").toLowerCase()}-error`;
   return (
     <div>
       <label
@@ -1001,8 +1030,10 @@ function BadgeField({
         placeholder={placeholder}
         maxLength={maxLength}
         autoComplete={autoComplete}
+        inputMode={inputMode}
+        spellCheck={spellCheck}
         aria-invalid={hasError}
-        aria-describedby={hasError ? `${label}-error` : undefined}
+        aria-describedby={hasError ? errorId : undefined}
         className="w-full rounded-xl border-2 bg-white px-4 py-2.5 text-sm outline-none transition-colors"
         style={{
           borderColor: hasError ? "#B3261E" : `${GREEN}1f`,
@@ -1010,7 +1041,7 @@ function BadgeField({
         }}
       />
       {hasError && (
-        <p id={`${label}-error`} className="mt-1.5 text-xs" style={{ color: "#B3261E" }}>
+        <p id={errorId} className="mt-1.5 text-xs" style={{ color: "#B3261E" }}>
           {error}
         </p>
       )}
