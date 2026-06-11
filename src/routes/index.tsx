@@ -21,8 +21,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { getLandingData } from "@/lib/landing.functions";
 import heroImage from "@/assets/hero-conference.jpg";
-import { AnsutLogo } from "@/components/ansut/Logo";
 import { cn } from "@/lib/utils";
+
+// Wordmark vert spécifique à la landing (le logo officiel bleu jure avec la palette).
+function GreenWordmark({ color = "#1F4D3A", light = false }: { color?: string; light?: boolean }) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span
+        className="flex h-9 w-9 items-center justify-center rounded-full"
+        style={{ backgroundColor: light ? "rgba(255,255,255,0.15)" : `${color}14` }}
+      >
+        <span className="grid grid-cols-3 gap-[2px]">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span
+              key={i}
+              className="h-1 w-1 rounded-full"
+              style={{ backgroundColor: light ? "#ffffff" : color, opacity: 0.85 - (i % 3) * 0.15 }}
+            />
+          ))}
+        </span>
+      </span>
+      <span
+        className="text-xl font-bold tracking-tight"
+        style={{ color: light ? "#ffffff" : color, fontFamily: "'Instrument Serif', serif" }}
+      >
+        ANSUT
+      </span>
+    </div>
+  );
+}
 
 // Palette maquette : vert foncé + or sur fond crème.
 const GREEN = "#1F4D3A";
