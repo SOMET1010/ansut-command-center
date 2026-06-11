@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/org/communication")({
 });
 
 type Announcement = { id: string; title: string; content: string; is_pinned: boolean; published_at: string; event_id: string };
-type Poll = { id: string; title: string; question: string; is_active: boolean; created_at: string; event_id: string };
+type Poll = { id: string; question: string; is_active: boolean; created_at: string; session_id: string };
 
 function OrgCommunication() {
   const qc = useQueryClient();
@@ -51,11 +51,11 @@ function OrgCommunication() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("live_polls")
-        .select("id, title, question, is_active, created_at, event_id")
+        .select("id, question, is_active, created_at, session_id")
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data as Poll[];
+      return (data ?? []) as Poll[];
     },
   });
 
@@ -80,11 +80,20 @@ function OrgCommunication() {
 
   const createPoll = useMutation({
     mutationFn: async () => {
-      if (!pollTitle.trim() || !selectedEventId) throw new Error("Titre et événement requis");
+      if (!pollQuestion.trim() || !selectedEventId) throw new Error("Question et événement requis");
+      // live_polls is attached to a session; pick first session of the selected event
+      const { data: sess, error: sErr } = await supabase
+        .from("event_sessions")
+        .select("id")
+        .eq("event_id", selectedEventId)
+        .order("starts_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (sErr) throw sErr;
+      if (!sess) throw new Error("Aucune session disponible pour cet événement");
       const { error } = await supabase.from("live_polls").insert({
-        title: pollTitle,
-        question: pollQuestion,
-        event_id: selectedEventId,
+        question: pollQuestion || pollTitle,
+        session_id: sess.id,
       });
       if (error) throw error;
     },
@@ -228,8 +237,8 @@ function OrgCommunication() {
                 <div key={p.id} className="rounded-xl border bg-card p-4 shadow-sm">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-semibold text-sm">{p.title}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">{p.question}</p>
+                      <p className="font-semibold text-sm">{p.question}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Session : {p.session_id}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {new Date(p.created_at).toLocaleString("fr-FR")}
                       </p>

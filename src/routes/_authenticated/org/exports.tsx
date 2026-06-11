@@ -15,7 +15,7 @@ type EventRow = { id: string; name: string; starts_at: string; status: string };
 async function exportRegistrations(eventId: string, eventName: string) {
   const { data, error } = await supabase
     .from("event_registrations")
-    .select("id, full_name, email, phone, organization, job_position, participant_category, status, checked_in_at, created_at")
+    .select("id, full_name, email, phone, organization, position, participant_category, status, checked_in_at, created_at")
     .eq("event_id", eventId);
 
   if (error || !data) return;
@@ -26,7 +26,7 @@ async function exportRegistrations(eventId: string, eventName: string) {
     r.email,
     r.phone ?? "",
     r.organization ?? "",
-    r.job_position ?? "",
+    r.position ?? "",
     r.participant_category ?? "",
     r.status,
     r.checked_in_at ?? "",

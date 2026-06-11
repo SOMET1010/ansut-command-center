@@ -84,7 +84,7 @@ function LoginPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      let target: "/dashboard" | "/checkin" | "/me/role" = "/me/role";
+      let target: "/dashboard" | "/checkin" | "/me/role" | "/admin/overview" = "/me/role";
       if (user) {
         const { data: rolesRows } = await supabase
           .from("user_roles")

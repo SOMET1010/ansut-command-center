@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LayoutDashboard, Users, Building2, Calendar, Activity } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/overview")({
   head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
@@ -13,10 +13,10 @@ function AdminOverview() {
     queryKey: ["admin-overview-stats"],
     queryFn: async () => {
       const [orgs, users, events, registrations] = await Promise.all([
-        supabaseAdmin.from("organizations").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("user_roles").select("user_id", { count: "exact", head: true }),
-        supabaseAdmin.from("events").select("id", { count: "exact", head: true }),
-        supabaseAdmin.from("event_registrations").select("id", { count: "exact", head: true }),
+        supabase.from("organizations").select("id", { count: "exact", head: true }),
+        supabase.from("user_roles").select("user_id", { count: "exact", head: true }),
+        supabase.from("events").select("id", { count: "exact", head: true }),
+        supabase.from("event_registrations").select("id", { count: "exact", head: true }),
       ]);
       return {
         organizations: orgs.count ?? 0,

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { History } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({
@@ -24,7 +24,7 @@ function AuditTrailPage() {
   const { data: entries = [], isLoading } = useQuery({
     queryKey: ["admin-audit-trail"],
     queryFn: async () => {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from("audit_trail")
         .select("*")
         .order("created_at", { ascending: false })

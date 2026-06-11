@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -22,26 +22,30 @@ function AdminUsers() {
   const { data: userRoles = [], isLoading, refetch } = useQuery({
     queryKey: ["admin-user-roles"],
     queryFn: async () => {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from("user_roles")
-        .select("user_id, role, created_at, users(email)")
+        .select("user_id, role, created_at, profiles(email)")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data as (UserRole & { users: { email: string } | null })[];
+      return (data ?? []) as unknown as (UserRole & { profiles: { email: string } | null })[];
     },
   });
 
   const assignRole = useMutation({
     mutationFn: async ({ email, role }: { email: string; role: string }) => {
-      // Find user by email
-      const { data: authUser } = await supabaseAdmin.auth.admin.listUsers();
-      const user = authUser?.users.find((u) => u.email === email);
-      if (!user) throw new Error("Utilisateur non trouvé");
+      // Find user by email via profiles
+      const { data: profile, error: pErr } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+      if (pErr) throw pErr;
+      if (!profile) throw new Error("Utilisateur non trouvé");
 
-      const { error } = await supabaseAdmin.from("user_roles").upsert({
-        user_id: user.id,
-        role,
+      const { error } = await supabase.from("user_roles").upsert({
+        user_id: profile.id,
+        role: role as "super_admin" | "org_admin" | "staff" | "sponsor",
       });
       if (error) throw error;
     },
@@ -55,11 +59,11 @@ function AdminUsers() {
 
   const removeRole = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const { error } = await supabaseAdmin
+      const { error } = await supabase
         .from("user_roles")
         .delete()
         .eq("user_id", userId)
-        .eq("role", role);
+        .eq("role", role as "super_admin" | "org_admin" | "staff" | "sponsor");
       if (error) throw error;
     },
     onSuccess: () => {
@@ -141,7 +145,7 @@ function AdminUsers() {
                 const roleInfo = ROLES.find((r) => r.value === ur.role);
                 return (
                   <tr key={`${ur.user_id}-${ur.role}`}>
-                    <td className="px-4 py-3">{ur.users?.email ?? ur.user_id}</td>
+                    <td className="px-4 py-3">{ur.profiles?.email ?? ur.user_id}</td>
                     <td className="px-4 py-3">
                       <span className={`font-medium ${roleInfo?.color ?? ""}`}>
                         {roleInfo?.label ?? ur.role}
