@@ -382,7 +382,7 @@ function Landing() {
           </div>
 
           <div
-            className="mt-12 rounded-3xl bg-white px-8 py-12"
+            className="mt-10 rounded-3xl bg-white px-8 py-9"
             style={{ boxShadow: "0 4px 24px -10px rgba(31,77,58,0.15)" }}
           >
             <div className="grid gap-10 md:grid-cols-3">
