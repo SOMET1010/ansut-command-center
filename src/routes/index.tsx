@@ -367,7 +367,7 @@ function Landing() {
       </section>
 
       {/* 3 ÉTAPES */}
-      <section className="py-20">
+      <section className="pb-16 pt-8">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: GOLD }}>
