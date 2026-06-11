@@ -967,15 +967,24 @@ function BadgeField({
   label,
   value,
   onChange,
+  onBlur,
   placeholder,
   type = "text",
+  error,
+  maxLength,
+  autoComplete,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   type?: string;
+  error?: string;
+  maxLength?: number;
+  autoComplete?: string;
 }) {
+  const hasError = Boolean(error);
   return (
     <div>
       <label
@@ -988,10 +997,23 @@ function BadgeField({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         placeholder={placeholder}
-        className="w-full rounded-xl border-2 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-[color:var(--gold,#C9A24C)]"
-        style={{ borderColor: `${GREEN}1f`, color: GREEN }}
+        maxLength={maxLength}
+        autoComplete={autoComplete}
+        aria-invalid={hasError}
+        aria-describedby={hasError ? `${label}-error` : undefined}
+        className="w-full rounded-xl border-2 bg-white px-4 py-2.5 text-sm outline-none transition-colors"
+        style={{
+          borderColor: hasError ? "#B3261E" : `${GREEN}1f`,
+          color: GREEN,
+        }}
       />
+      {hasError && (
+        <p id={`${label}-error`} className="mt-1.5 text-xs" style={{ color: "#B3261E" }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
