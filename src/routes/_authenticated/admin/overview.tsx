@@ -3,7 +3,7 @@ import { LayoutDashboard, Users, Building2, Calendar, Activity } from "lucide-re
 import { useQuery } from "@tanstack/react-query";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export const Route = createFileRoute("/admin/overview")({
+export const Route = createFileRoute("/_authenticated/admin/overview")({
   head: () => ({ meta: [{ title: "Tableau de bord — ANSUT EVENT" }] }),
   component: AdminOverview,
 });

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Calendar } from "lucide-react";
 
-export const Route = createFileRoute("/org/exports")({
+export const Route = createFileRoute("/_authenticated/org/exports")({
   head: () => ({ meta: [{ title: "Exports — ANSUT EVENT" }] }),
   component: OrgExports,
 });

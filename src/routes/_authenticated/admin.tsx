@@ -6,7 +6,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { isLovablePreview } from "@/lib/auth-preview";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
     const user = isLovablePreview()
       ? (await supabase.auth.getSession()).data.session?.user

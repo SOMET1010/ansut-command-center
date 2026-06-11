@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabaseAdmin } from "@/lib/supabase";
 import { History } from "lucide-react";
 
-export const Route = createFileRoute("/admin/audit")({
+export const Route = createFileRoute("/_authenticated/admin/audit")({
   head: () => ({ meta: [{ title: "Audit trail — ANSUT EVENT" }] }),
   component: AuditTrailPage,
 });
