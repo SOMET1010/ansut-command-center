@@ -282,15 +282,15 @@ function Landing() {
                   2026
                 </span>
                 <br />
-                <span className="text-white/85">Bâtir l'avenir</span>
+                <span className="text-white/85">Le rendez-vous du</span>
                 <br />
                 <span
                   style={{ fontFamily: "'Instrument Serif', serif" }}
                   className="italic font-normal text-secondary"
                 >
-                  numérique
+                  service universel
                 </span>
-                <span className="text-white/85"> ivoirien.</span>
+                <span className="text-white/85"> des télécommunications.</span>
               </h1>
 
               <p className="mt-8 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">
