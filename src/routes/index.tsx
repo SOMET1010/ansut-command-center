@@ -159,7 +159,7 @@ function Landing() {
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <AnsutLogo size="md" className="shrink-0" />
+            <GreenWordmark />
           </Link>
 
           <div className="hidden items-center gap-10 lg:flex">
