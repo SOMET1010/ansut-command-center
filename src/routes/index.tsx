@@ -820,13 +820,21 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               label="Nom complet"
               value={fullName}
               onChange={setFullName}
+              onBlur={() => setTouched((t) => ({ ...t, fullName: true }))}
               placeholder="Aïcha Koné"
+              error={touched.fullName ? errors.fullName : undefined}
+              maxLength={80}
+              autoComplete="name"
             />
             <BadgeField
               label="Organisation"
               value={organization}
               onChange={setOrganization}
+              onBlur={() => setTouched((t) => ({ ...t, organization: true }))}
               placeholder="ANSUT"
+              error={touched.organization ? errors.organization : undefined}
+              maxLength={100}
+              autoComplete="organization"
             />
             <div>
               <label
@@ -860,18 +868,25 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               label="Email"
               value={email}
               onChange={setEmail}
+              onBlur={() => setTouched((t) => ({ ...t, email: true }))}
               placeholder="vous@exemple.ci"
               type="email"
+              error={touched.email ? errors.email : undefined}
+              maxLength={255}
+              autoComplete="email"
             />
 
-            <div className="mt-2 flex flex-wrap gap-3">
+            <div className="mt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={handleDownload}
-                disabled={!qrSrc}
-                className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50"
+                disabled={!isValid || !qrSrc}
+                aria-disabled={!isValid || !qrSrc}
+                className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ backgroundColor: GOLD }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A88838")}
+                onMouseEnter={(e) => {
+                  if (isValid && qrSrc) e.currentTarget.style.backgroundColor = "#A88838";
+                }}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = GOLD)}
               >
                 Télécharger le QR
@@ -884,6 +899,11 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
               >
                 Valider l'inscription
               </Link>
+              {!isValid && (
+                <span className="text-xs" style={{ color: `${GREEN}99` }}>
+                  Renseignez tous les champs pour générer le QR.
+                </span>
+              )}
             </div>
           </div>
 
@@ -904,11 +924,16 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
                 <span style={{ color: GOLD }}>{role}</span>
               </div>
               <div className="flex flex-col items-center px-5 py-5">
-                <div className="h-44 w-44">
-                  {qrSrc ? (
+                <div className="flex h-44 w-44 items-center justify-center">
+                  {isValid && qrSrc ? (
                     <img src={qrSrc} alt="QR code badge" className="h-full w-full" />
                   ) : (
-                    <div className="h-full w-full animate-pulse rounded-md bg-slate-100" />
+                    <div
+                      className="flex h-full w-full items-center justify-center rounded-md p-3 text-center text-[10px] uppercase tracking-wider"
+                      style={{ backgroundColor: `${GREEN}0d`, color: `${GREEN}80` }}
+                    >
+                      QR en attente d'informations valides
+                    </div>
                   )}
                 </div>
                 <div className="mt-4 w-full text-center">
@@ -916,10 +941,10 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
                     className="truncate text-lg font-bold"
                     style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
                   >
-                    {fullName || "Votre nom"}
+                    {fullName.trim() || "Votre nom"}
                   </div>
                   <div className="mt-0.5 truncate text-xs" style={{ color: `${GREEN}99` }}>
-                    {organization || "Votre organisation"}
+                    {organization.trim() || "Votre organisation"}
                   </div>
                 </div>
                 <div
