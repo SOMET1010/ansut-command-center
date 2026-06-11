@@ -162,7 +162,7 @@ function Landing() {
             <GreenWordmark />
           </Link>
 
-          <div className="hidden items-center gap-10 lg:flex">
+          <div className="hidden items-center gap-8 md:flex">
             {["Programme", "Exposition", "Partenaires"].map((label) => (
               <ProgrammeLink
                 key={label}
@@ -195,8 +195,8 @@ function Landing() {
           style={{ background: `radial-gradient(circle, ${GREEN} 0%, transparent 60%)` }}
         />
         <div className="relative mx-auto w-full max-w-6xl px-6">
-          <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10">
-            <div className="lg:col-span-7">
+          <div className="grid items-center gap-8 md:grid-cols-12 md:gap-10">
+            <div className="md:col-span-7">
               <div
                 className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em]"
                 style={{ color: `${GREEN}99` }}
@@ -256,7 +256,7 @@ function Landing() {
 
             </div>
 
-            <aside className="relative lg:col-span-5">
+            <aside className="relative md:col-span-5">
               <div className="relative overflow-hidden rounded-3xl shadow-[0_20px_60px_-20px_rgba(31,77,58,0.3)]">
                 <img
                   src={heroImage}
@@ -352,7 +352,7 @@ function Landing() {
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-3">
             <FeatureCard
               icon={<CalendarDays className="h-6 w-6" strokeWidth={1.5} />}
               title="Programme"
@@ -391,7 +391,7 @@ function Landing() {
             className="mt-10 rounded-3xl bg-white px-8 py-9"
             style={{ boxShadow: "0 4px 24px -10px rgba(31,77,58,0.15)" }}
           >
-            <div className="grid gap-10 md:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
               <StepCard
                 num="1"
                 icon={<UserPlus className="h-8 w-8" strokeWidth={1.5} />}
@@ -418,7 +418,7 @@ function Landing() {
       {/* FOOTER */}
       <footer className="text-sm text-white" style={{ backgroundColor: GREEN_DARK }}>
         <div className="mx-auto max-w-7xl px-6 py-10">
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {/* Col 1 : logo + tagline + social */}
             <div>
               <GreenWordmark light />
