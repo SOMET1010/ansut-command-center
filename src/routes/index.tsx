@@ -700,10 +700,62 @@ function SocialIcon({
 }
 
 function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
+// Validation stricte du badge.
+// Email : RFC 5322 simplifiée + 1 seul "@", pas d'espace interne après normalisation,
+// label local en [A-Za-z0-9._%+-], domaine en labels alphanum/tirets séparés par "."
+// et TLD ≥ 2 lettres (anti "a@b", "a@b.c", "foo @bar.com").
+const STRICT_EMAIL_RE =
+  /^[A-Za-z0-9](?:[A-Za-z0-9._%+-]{0,62}[A-Za-z0-9])?@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,24}$/;
+
+const normalizeWhitespace = (v: string) => v.replace(/\s+/g, " ").trim();
+
+const badgeSchema = z.object({
+  fullName: z
+    .string()
+    .transform(normalizeWhitespace)
+    .pipe(
+      z
+        .string()
+        .min(2, { message: "Le nom doit contenir au moins 2 caractères." })
+        .max(80, { message: "Le nom doit faire moins de 80 caractères." })
+        .regex(/^[\p{L}\p{M}][\p{L}\p{M}\s'’\-.]*$/u, {
+          message: "Caractères non autorisés dans le nom.",
+        }),
+    ),
+  organization: z
+    .string()
+    .transform(normalizeWhitespace)
+    .pipe(
+      z
+        .string()
+        .min(2, { message: "L'organisation doit contenir au moins 2 caractères." })
+        .max(100, { message: "L'organisation doit faire moins de 100 caractères." }),
+    ),
+  email: z
+    .string()
+    // suppression de TOUS les espaces (intérieurs et extérieurs) avant validation
+    .transform((v) => v.replace(/\s+/g, ""))
+    .pipe(
+      z
+        .string()
+        .min(5, { message: "Adresse email trop courte." })
+        .max(254, { message: "L'email doit faire moins de 254 caractères." })
+        .regex(STRICT_EMAIL_RE, { message: "Format d'email invalide (ex. nom@domaine.ci)." })
+        .refine((v) => !v.includes(".."), {
+          message: "Format d'email invalide (points consécutifs).",
+        })
+        .transform((v) => v.toLowerCase()),
+    ),
+});
+
+type BadgeErrors = Partial<Record<"fullName" | "organization" | "email", string>>;
+
+function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
   const [fullName, setFullName] = useState("");
   const [organization, setOrganization] = useState("");
   const [role, setRole] = useState("Participant");
   const [email, setEmail] = useState("");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [qrSrc, setQrSrc] = useState<string>("");
 
   const origin =
@@ -711,18 +763,39 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
       ? window.location.origin
       : "https://ansut-craft-kit.lovable.app";
 
-  const payload = JSON.stringify({
-    event: "SUTEL 2026",
-    slug: eventSlug ?? "sutel-2026",
-    name: fullName || "Invité ANSUT",
-    org: organization || "—",
-    role,
-    email: email || "—",
-    url: `${origin}/signup`,
-    ts: Date.now(),
-  });
+  const validation = useMemo(
+    () => badgeSchema.safeParse({ fullName, organization, email }),
+    [fullName, organization, email],
+  );
+
+  const errors: BadgeErrors = useMemo(() => {
+    if (validation.success) return {};
+    const map: BadgeErrors = {};
+    for (const issue of validation.error.issues) {
+      const key = issue.path[0] as keyof BadgeErrors;
+      if (key && !map[key]) map[key] = issue.message;
+    }
+    return map;
+  }, [validation]);
+
+  const isValid = validation.success;
 
   useEffect(() => {
+    if (!isValid) {
+      setQrSrc("");
+      return;
+    }
+    const data = validation.data;
+    const payload = JSON.stringify({
+      event: "SUTEL 2026",
+      slug: eventSlug ?? "sutel-2026",
+      name: data.fullName,
+      org: data.organization,
+      role,
+      email: data.email,
+      url: `${origin}/signup`,
+      ts: Date.now(),
+    });
     QRCode.toDataURL(payload, {
       margin: 1,
       width: 360,
@@ -731,13 +804,19 @@ function BadgeQrSection({ eventSlug }: { eventSlug?: string }) {
     })
       .then(setQrSrc)
       .catch(() => setQrSrc(""));
-  }, [payload]);
+  }, [isValid, validation, role, eventSlug, origin]);
+
+  const markAllTouched = () =>
+    setTouched({ fullName: true, organization: true, email: true });
 
   const handleDownload = () => {
-    if (!qrSrc) return;
+    markAllTouched();
+    if (!isValid || !qrSrc) return;
     const a = document.createElement("a");
     a.href = qrSrc;
-    a.download = `badge-sutel-${(fullName || "invite").toLowerCase().replace(/\s+/g, "-")}.png`;
+    a.download = `badge-sutel-${validation.data.fullName
+      .toLowerCase()
+      .replace(/\s+/g, "-")}.png`;
     a.click();
   };
 
