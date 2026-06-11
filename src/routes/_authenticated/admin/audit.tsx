@@ -13,10 +13,8 @@ type AuditEntry = {
   user_id: string | null;
   action: string;
   table_name: string | null;
-  record_id: string | null;
-  old_data: Record<string, unknown> | null;
-  new_data: Record<string, unknown> | null;
-  ip_address: string | null;
+  payload: Record<string, unknown> | null;
+  organization_id: string | null;
   created_at: string;
 };
 
@@ -30,7 +28,7 @@ function AuditTrailPage() {
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
-      return data as AuditEntry[];
+      return (data ?? []) as unknown as AuditEntry[];
     },
   });
 
@@ -60,8 +58,8 @@ function AuditTrailPage() {
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Date</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Action</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Table</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Record</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">IP</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">User</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Org</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -76,8 +74,8 @@ function AuditTrailPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs">{e.table_name ?? "—"}</td>
-                  <td className="px-4 py-3 font-mono text-xs">{e.record_id ?? "—"}</td>
-                  <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{e.ip_address ?? "—"}</td>
+                  <td className="px-4 py-3 font-mono text-xs">{e.user_id ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{e.organization_id ?? "—"}</td>
                 </tr>
               ))}
             </tbody>
