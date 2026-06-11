@@ -382,7 +382,7 @@ function Landing() {
               Votre badge en 3 étapes
             </p>
             <h2
-              className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl"
+              className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
               style={{ fontFamily: "'Instrument Serif', serif", color: GREEN }}
             >
               Simple, rapide, sécurisé
